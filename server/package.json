@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
+		"dev-migrate": "npx typeorm-ts-node-commonjs migration:run -d ./src/datasource.ts",
+		"dev-migrate-down": "npx typeorm-ts-node-commonjs migration:revert -d ./src/datasource.ts",
     "build": "tsc",
     "serve": "node dist/index.js"
   },
