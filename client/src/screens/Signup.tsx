@@ -30,11 +30,17 @@ type SignupForm = yup.InferType<typeof validationScheme>
 
 export default function Signup() {
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignupForm>({
+  const { register, handleSubmit, formState: { errors } } = useForm<SignupForm>({
 		resolver: yupResolver(validationScheme)
 	});
-  const onSubmit:SubmitHandler<SignupForm> = data => {
-		signupRequest(data);
+  const onSubmit:SubmitHandler<SignupForm> = async (data) => {
+		try {
+			const result = await signupRequest(data);
+			console.log(result);
+
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
   return (
