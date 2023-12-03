@@ -9,14 +9,19 @@ type signupData = {
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
-export const signupRequest = (data:signupData) => {
+export type AuthResponse = {
+	success: boolean,
+	message: undefined|string
+}
+
+export const signupRequest = (data:signupData):Promise<AuthResponse> => {
 	return new Promise((resolve, reject) => {
 		axios.post('/auth/signup', data).then(
 			res => res.status == 200
-				? resolve({success: true})
-				: reject({success:false, message: res.data?.message})
+				? resolve({success: true, message: "Signup Successfull"})
+				: reject(new Error(res.data?.message))
 		).catch(
-			e => reject({success: false, message: e.response?.data?.message ?? e.message})
+			e => reject(new Error(e.response?.data?.message ?? e.message))
 		);
 	});
 }
