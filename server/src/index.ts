@@ -3,9 +3,20 @@ import "reflect-metadata"
 import bodyParser from "body-parser";
 import express, { Request, Response } from 'express';
 import AuthController from './controllers/Auth';
+import { AppDataSource } from "./datasource";
 
 const app = express();
 const port = process.env.APP_PORT || 3000;
+
+try {
+	await (async () => {
+		AppDataSource.initialize();
+	})()
+	console.log("Connected to database");
+} catch (error) {
+	console.log("error connecting to database");
+	console.error(error);
+}
 
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
