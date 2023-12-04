@@ -5,6 +5,7 @@ import { useForm, SubmitHandler  } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import {signupRequest} from '../services/Auth'
+import toast, { ToastOptions, Toaster } from 'react-hot-toast';
 
 function Copyright(props: any) {
   return (
@@ -34,12 +35,15 @@ export default function Signup() {
 		resolver: yupResolver(validationScheme)
 	});
   const onSubmit:SubmitHandler<SignupForm> = async (data) => {
+		const toastOpts: ToastOptions = {duration: 3000, position: 'top-center'};
 		try {
 			const result = await signupRequest(data);
-			console.log(result);
-
+			result.success
+				? toast.success("Successfull signup. You can login to your account now", toastOpts)
+				: toast.error(result.message ?? "Error during signup", toastOpts)
 		} catch (error) {
-			console.log(error);
+			toast.error(error instanceof Error ? error.message 	: 'Error Occured, please try again later', toastOpts)
+			console.log(error, error instanceof Error);
 		}
 	}
 
@@ -121,6 +125,7 @@ export default function Signup() {
 				</Box>
 			</Box>
 			<Copyright sx={{ mt: 5 }} />
+			<Toaster />
 		</Container>
   );
 }
