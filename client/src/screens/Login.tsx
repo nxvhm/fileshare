@@ -1,17 +1,8 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
+import {Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-
+import { useForm, SubmitHandler  } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
 
 function Copyright(props: any) {
   return (
@@ -25,17 +16,22 @@ function Copyright(props: any) {
     </Typography>
   );
 }
-// TODO remove, this demo shouldn't need to reset the theme.
+const validationScheme = yup.object({
+  email: yup.string().email().required(),
+	password: yup.string().required().min(6),
+}).required();
+
+type LoginForm = yup.InferType<typeof validationScheme>
 
 function Login() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+
+	const {register, handleSubmit, formState: {errors}} = useForm<LoginForm>({
+		resolver: yupResolver(validationScheme)
+	})
+
+	const onSubmit:SubmitHandler<LoginForm> = async (data) => {
+		console.log(data);
+	}
 
   return (
 		<Container component="main" maxWidth="xs">
@@ -54,37 +50,26 @@ function Login() {
 				<Typography component="h1" variant="h5">
 					Sign in
 				</Typography>
-				<Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
+				<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
+					<TextField margin="normal" fullWidth
+						{...register("email")}
+						error={errors.email ? true : false}
 						id="email"
 						label="Email Address"
-						name="email"
-						autoComplete="email"
-						autoFocus
+						helperText={errors.email?.message || null}
 					/>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
+					<TextField margin="normal" fullWidth label="Password"
+						{...register("password")}
+						error={errors.password ? true : false}
+						helperText={errors.password?.message || null}
 						id="password"
-						autoComplete="current-password"
+						type="password"
 					/>
 					<FormControlLabel
 						control={<Checkbox value="remember" color="primary" />}
 						label="Remember me"
 					/>
-					<Button
-						type="submit"
-						fullWidth
-						variant="contained"
-						sx={{ mt: 3, mb: 2 }}
-					>
+					<Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
 						Sign In
 					</Button>
 					<Grid container>
