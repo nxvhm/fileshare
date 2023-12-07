@@ -2,6 +2,8 @@ import {Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useForm, SubmitHandler  } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
+import { loginRequest } from '../services/Auth';
+import toast, { ToastOptions, Toaster } from 'react-hot-toast';
 import * as yup from "yup";
 
 function Copyright(props: any) {
@@ -30,7 +32,15 @@ function Login() {
 	})
 
 	const onSubmit:SubmitHandler<LoginForm> = async (data) => {
-		console.log(data);
+		const toastOpts: ToastOptions = {duration: 3000, position: 'top-center'};
+		try {
+			const result = await loginRequest(data);
+			console.log(result);
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message 	: 'Error Occured, please try again later', toastOpts)
+			console.log(error, error instanceof Error);
+
+		}
 	}
 
   return (
@@ -87,6 +97,7 @@ function Login() {
 				</Box>
 			</Box>
 			<Copyright sx={{ mt: 8, mb: 4 }} />
+			<Toaster />
 		</Container>
   );
 }
