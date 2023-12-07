@@ -53,7 +53,35 @@ router.post('/signup', checkSchema(signupRequestValidator), async (req: express.
 	}
 })
 
-router.post('/login', (req: express.Request, res: express.Response) => {
+const loginRequestValidator = {
+	email: {
+		isEmail: true
+	},
+	password: {
+		notEmpty: true,
+		isLength: {
+			options: {min: 6, max: 18},
+			errorMessage: "Invalid Password"
+		}
+	}
+}
+
+router.post('/login', async (req: express.Request, res: express.Response) => {
+	const validation = validationResult(req);
+
+	if (validation.array().length)
+		return res.status(422).send(validation.array().shift())
+	console.log(req.body.email);
+	const userRepo = AppDataSource.getRepository(User);
+	const user = await userRepo.findOne({
+		select: {id: true, email: true, password: true},
+		where: {email: req.body.email}
+	})
+
+	if (!user)
+		return res.status(422).send({message: "Invalid email/password combination"});
+
+	return res.status(200).send({message: "Login Successfull"});
 
 })
 
