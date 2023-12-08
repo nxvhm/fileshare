@@ -61,17 +61,17 @@ const loginRequestValidator = {
 		notEmpty: true,
 		isLength: {
 			options: {min: 6, max: 18},
-			errorMessage: "Invalid Password"
+			errorMessage: "Password should be between 6 and 18 characters"
 		}
 	}
 }
 
-router.post('/login', async (req: express.Request, res: express.Response) => {
+router.post('/login', checkSchema(loginRequestValidator), async (req: express.Request, res: express.Response) => {
 	const validation = validationResult(req);
 
 	if (validation.array().length)
 		return res.status(422).send(validation.array().shift())
-	console.log(req.body.email);
+
 	const userRepo = AppDataSource.getRepository(User);
 	const user = await userRepo.findOne({
 		select: {id: true, email: true, password: true},
@@ -81,7 +81,11 @@ router.post('/login', async (req: express.Request, res: express.Response) => {
 	if (!user)
 		return res.status(422).send({message: "Invalid email/password combination"});
 
-	return res.status(200).send({message: "Login Successfull"});
+	const match = await bcrypt.compare(req.body.password, user.password);
+	if(!match)
+		return res.status(422).send({message: "Invalid email/password combination"});
+
+	return res.status(200).send({token: "dasdasdsa"});
 
 })
 
