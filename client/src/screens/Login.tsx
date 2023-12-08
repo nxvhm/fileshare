@@ -35,6 +35,7 @@ function Login() {
 		const toastOpts: ToastOptions = {duration: 3000, position: 'top-center'};
 		try {
 			const result = await loginRequest(data);
+			toast.success("Successfull login");
 			console.log(result);
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message 	: 'Error Occured, please try again later', toastOpts)
