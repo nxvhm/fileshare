@@ -3,7 +3,7 @@ import { validationResult, checkSchema } from "express-validator"
 import { AppDataSource } from "../datasource";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
-
+import {TokenManager} from "../lib/TokenManager";
 const router = express.Router();
 
 const signupRequestValidator = {
@@ -74,7 +74,7 @@ router.post('/login', checkSchema(loginRequestValidator), async (req: express.Re
 
 	const userRepo = AppDataSource.getRepository(User);
 	const user = await userRepo.findOne({
-		select: {id: true, email: true, password: true},
+		select: {id: true, email: true, name: true, password: true},
 		where: {email: req.body.email}
 	})
 
@@ -85,7 +85,8 @@ router.post('/login', checkSchema(loginRequestValidator), async (req: express.Re
 	if(!match)
 		return res.status(422).send({message: "Invalid email/password combination"});
 
-	return res.status(200).send({token: "dasdasdsa"});
+	const token = TokenManager.signUserToken(user.getTokenPayload());
+	return res.status(200).send({token});
 
 })
 
