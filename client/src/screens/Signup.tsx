@@ -1,19 +1,20 @@
-import { Avatar, Button, CssBaseline, TextField, Link} from '@mui/material';
+import { Avatar, Button, CssBaseline, TextField, Link as MuiLink} from '@mui/material';
 import { Grid, Box, Typography, Container} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useForm, SubmitHandler  } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import {signupRequest} from '../services/Auth'
+import {signupRequest} from '../api/Auth'
 import toast, { ToastOptions, Toaster } from 'react-hot-toast';
+import { Link } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="#">
+      <MuiLink component={Link} to={'/'}>
         FileShare
-      </Link>{' '}
+      </MuiLink>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -117,9 +118,9 @@ export default function Signup() {
 					</Button>
 					<Grid container justifyContent="flex-end">
 						<Grid item>
-							<Link href="/login" variant="body2">
+							<MuiLink component={Link} to="/login" variant="body2">
 								Already have an account? Sign in
-							</Link>
+							</MuiLink>
 						</Grid>
 					</Grid>
 				</Box>
