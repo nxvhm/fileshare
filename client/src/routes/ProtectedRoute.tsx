@@ -5,7 +5,6 @@ const ProtectedRoute = ({ children }) => {
 
 	const {user} = useContext(AuthContext);
 
-	console.log("Procted route user:", user);
   if (!user) {
     return <Navigate to="/login" replace />;
   }
