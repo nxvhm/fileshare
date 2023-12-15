@@ -1,12 +1,13 @@
-import { Avatar, Button, CssBaseline, TextField, Link as MuiLink} from '@mui/material';
-import { Grid, Box, Typography, Container} from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { Avatar, Button, CssBaseline, TextField, Link as MuiLink, Grid, Box, Typography, Container} from '@mui/material';
 import { useForm, SubmitHandler  } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
-import {signupRequest} from '../api/Auth'
 import toast, { ToastOptions, Toaster } from 'react-hot-toast';
-import { Link } from "react-router-dom";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { yupResolver } from '@hookform/resolvers/yup';
+import AuthContext from '../lib/context/AuthContext';
+import { Link, Navigate } from "react-router-dom";
+import {signupRequest} from '../api/Auth'
+import { useContext } from 'react';
+import * as yup from "yup";
 
 function Copyright(props: any) {
   return (
@@ -32,6 +33,8 @@ type SignupForm = yup.InferType<typeof validationScheme>
 
 export default function Signup() {
 
+	const {user} = useContext(AuthContext);
+
   const { register, handleSubmit, formState: { errors } } = useForm<SignupForm>({
 		resolver: yupResolver(validationScheme)
 	});
@@ -50,6 +53,7 @@ export default function Signup() {
 
   return (
 		<Container component="main" maxWidth="xs">
+			{user && <Navigate to={'/'} replace />}
 			<CssBaseline />
 			<Box
 				sx={{

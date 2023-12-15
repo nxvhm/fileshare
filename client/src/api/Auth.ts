@@ -20,7 +20,7 @@ export type SignupResponse = {
 }
 
 export type LoginResponse = {
-	token: undefined|string,
+	token: string,
 	message?: string
 }
 

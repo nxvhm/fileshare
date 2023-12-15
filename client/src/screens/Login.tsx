@@ -1,11 +1,13 @@
+import { useContext } from 'react';
+import * as yup from "yup";
+import { Link, Navigate } from "react-router-dom";
 import {Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Grid, Box, Typography, Container, Link as MuiLink} from '@mui/material';
-import { Link } from "react-router-dom";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useForm, SubmitHandler  } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginRequest } from '../api/Auth';
 import toast, { ToastOptions, Toaster } from 'react-hot-toast';
-import * as yup from "yup";
+import { loginRequest } from '../api/Auth';
+import AuthContext from '../lib/context/AuthContext';
 
 function Copyright(props: any) {
   return (
@@ -27,6 +29,7 @@ const validationScheme = yup.object({
 type LoginForm = yup.InferType<typeof validationScheme>
 
 function Login() {
+	const {user, loginUser} = useContext(AuthContext);
 
 	const {register, handleSubmit, formState: {errors}} = useForm<LoginForm>({
 		resolver: yupResolver(validationScheme)
@@ -36,17 +39,19 @@ function Login() {
 		const toastOpts: ToastOptions = {duration: 3000, position: 'top-center'};
 		try {
 			const result = await loginRequest(data);
-			toast.success("Successfull login");
-			console.log(result);
+			if (result.token && typeof loginUser == 'function') {
+				loginUser(result.token);
+				toast.success("Successfull login");
+			}
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message 	: 'Error Occured, please try again later', toastOpts)
 			console.log(error, error instanceof Error);
-
 		}
 	}
 
   return (
 		<Container component="main" maxWidth="xs">
+			{user && <Navigate to={'/'} replace />}
 			<CssBaseline />
 			<Box
 				sx={{
