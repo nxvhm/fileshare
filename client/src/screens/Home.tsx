@@ -1,11 +1,13 @@
-import { Link } from "react-router-dom";
-
+import { useContext } from "react";
+import AuthContext from "../lib/context/AuthContext";
+import { Button } from "@mui/material";
 function Home() {
+	const {user, logoutUser} = useContext(AuthContext);
+
 	return (
 		<>
-			<div>Home page</div>
-			<p><Link to={'/login'}>Login</Link></p>
-			<p><Link to={'/signup'}>Signup</Link></p>
+			<div>Welcome {user?.name}</div>
+			<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
 		</>
 	)
 }

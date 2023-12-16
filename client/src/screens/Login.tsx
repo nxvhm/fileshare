@@ -40,8 +40,8 @@ function Login() {
 		try {
 			const result = await loginRequest(data);
 			if (result.token && typeof loginUser == 'function') {
-				loginUser(result.token);
 				toast.success("Successfull login");
+				setTimeout(() => loginUser(result.token), 500);
 			}
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message 	: 'Error Occured, please try again later', toastOpts)
