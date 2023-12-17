@@ -72,21 +72,28 @@ router.post('/login', checkSchema(loginRequestValidator), async (req: express.Re
 	if (validation.array().length)
 		return res.status(422).send(validation.array().shift())
 
-	const userRepo = AppDataSource.getRepository(User);
-	const user = await userRepo.findOne({
-		select: {id: true, email: true, name: true, password: true},
-		where: {email: req.body.email}
-	})
+	try {
+		const userRepo = AppDataSource.getRepository(User);
+		const user = await userRepo.findOne({
+			select: {id: true, email: true, name: true, password: true},
+			where: {email: req.body.email}
+		})
 
-	if (!user)
-		return res.status(422).send({message: "Invalid email/password combination"});
+		if (!user)
+			return res.status(422).send({message: "Invalid email/password combination"});
 
-	const match = await bcrypt.compare(req.body.password, user.password);
-	if(!match)
-		return res.status(422).send({message: "Invalid email/password combination"});
+		const match = await bcrypt.compare(req.body.password, user.password);
 
-	const token = TokenManager.signUserToken(user.getTokenPayload());
-	return res.status(200).send({token});
+		if(!match)
+			return res.status(422).send({message: "Invalid email/password combination"});
+
+		const token = await TokenManager.signUserToken(user.getTokenPayload());
+
+		return res.status(200).send({token});
+	} catch (error) {
+		return res.status(500).send({message: "Error during login, please try again late"});
+	}
+
 
 })
 
