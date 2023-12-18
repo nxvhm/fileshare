@@ -50,4 +50,14 @@ export const loginRequest = (data:loginData):Promise<LoginResponse> => {
 	})
 }
 
+export const verifyToken = (token:string):Promise<boolean> => {
+	return new Promise((resolve, reject) => {
+		axios.post('/auth/verify', {token}).then(res => {
+			res.status == 200 && res.data.isValid
+				? resolve(true)
+				: reject(false)
+		}).catch(e => reject(new Error(e.response?.data?.msg ?? e.message)));
+	})
+}
+
 
