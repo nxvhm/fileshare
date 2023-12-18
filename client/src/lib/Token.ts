@@ -1,4 +1,5 @@
 import { isExpired, decodeToken } from "react-jwt";
+import { verifyToken } from "../api/Auth";
 
 export type UserTokenData = {
  id: number,
@@ -33,6 +34,14 @@ export class Token {
 			return null
 
 		return decodeToken(Token.get() ?? "");
+	}
+
+	public static async verifiToken(): Promise<boolean> {
+			const token = Token.get();
+			if (!token || Token.isExpired())
+				return new Promise((resolve) => resolve(false));
+
+			return await verifyToken(token);;
 	}
 
 }

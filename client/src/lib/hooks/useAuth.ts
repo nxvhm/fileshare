@@ -12,6 +12,7 @@ export function useAuth():AuthContextData {
 
 	const loginUser = (token:string): void => {
 		Token.set(token);
+		console.log(token, Token.getData());
 		setUser(Token.getData());
 	}
 
