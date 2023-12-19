@@ -93,8 +93,16 @@ router.post('/login', checkSchema(loginRequestValidator), async (req: express.Re
 	} catch (error) {
 		return res.status(500).send({message: "Error during login, please try again late"});
 	}
+})
 
+router.post('/verify', async(req: express.Request, res: express.Response) => {
+	const token = req.body.token;
+	if(!token)
+		res.status(422).send({message: "Token not provided"});
 
+	const isValid = await TokenManager.verifyToken(token);
+	console.log("ctrl, isValid:", isValid);
+	res.send({isValid});
 })
 
 export default router;
