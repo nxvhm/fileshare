@@ -24,4 +24,19 @@ export class TokenManager {
 
 		return token;
 	}
+
+	static verifyToken(token: string): Promise<boolean> {
+		return new Promise<boolean>((resolve, reject) => {
+			const userToken = new UserToken();
+			const tokenRepo = AppDataSource.getRepository(UserToken);
+			const verified = jwt.verify(token, String(process.env.JWT_SECRET), (err, decoded) => {
+				if (err) reject(false);
+
+				resolve(true);
+			});
+		}).catch(err => {
+			return false;
+		})
+
+	}
 }
