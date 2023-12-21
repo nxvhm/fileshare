@@ -1,4 +1,4 @@
-import axios from "axios"
+import {default as axios} from "../lib/Axios";
 
 type signupData = {
 	name: string,
@@ -11,8 +11,6 @@ type loginData = {
 	email: string,
 	password: string
 }
-
-axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 export type SignupResponse = {
 	success: boolean,
