@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import AuthContext from "../lib/context/AuthContext";
-import { Button, Box, Toolbar, IconButton, Typography, Badge } from "@mui/material";
+import { Button, Box, Toolbar, IconButton, Typography, Badge, Container } from "@mui/material";
 import MuiDrawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -70,18 +70,13 @@ function Home() {
 	return (
 		<Box sx={{ display: 'flex' }}>
 			<AppBar position="absolute" open={open}>
-				<Toolbar
-            sx={{
-              pr: '24px', // keep right padding when drawer closed
-            }}
-          >
+				<Toolbar>
             <IconButton
               edge="start"
               color="inherit"
               aria-label="open drawer"
               onClick={toggleDrawer}
               sx={{
-                marginRight: '36px',
                 ...(open && { display: 'none' }),
               }}
             >
@@ -115,10 +110,12 @@ function Home() {
         backgroundColor: theme => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
 				flexGrow: 1, height: '100vh', overflow: 'auto'}}
 			>
+			<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+				<div>Welcome {user?.name}</div>
+				<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
 
-			<div>Welcome {user?.name}</div>
-			<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
-				</Box>
+			</Container>
+			</Box>
 		</Box>
 	)
 }
