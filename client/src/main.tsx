@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -14,12 +14,11 @@ import Home from './screens/Home.tsx';
 import AuthContext from './lib/context/AuthContext.ts';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { useAuth } from './lib/hooks/useAuth.ts';
-
+import {OpenDrawerContextProvider} from './lib/context/OpenDraweContext.tsx';
 
 const App = function() {
 
 	const {user, loginUser, logoutUser} = useAuth();
-
 	const router = createBrowserRouter([
 		{
 			path: "/",
@@ -37,7 +36,9 @@ const App = function() {
 
 	return(
 		<AuthContext.Provider value={{user, loginUser, logoutUser}}>
+		<OpenDrawerContextProvider>
 			<RouterProvider router={router} />
+		</OpenDrawerContextProvider>
 		</AuthContext.Provider>
 	)
 
