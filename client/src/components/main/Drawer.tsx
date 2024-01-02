@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import {IconButton, Toolbar} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-
 import { styled } from '@mui/material/styles';
+import OpenDrawerContext from '../../lib/context/OpenDraweContext';
 
 const drawerWidth: number = 240;
 
@@ -33,15 +33,11 @@ const DrawerComponent = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !=
 	}),
 );
 
-export function Drawer() {
-	const [open, setOpen] = useState(true);
-
-	const toggleDrawer = () => {
-		setOpen(!open);
-	};
+export default function Drawer() {
+	const {drawerOpen, toggleDrawer} = useContext(OpenDrawerContext);
 
 	return (
-		<DrawerComponent variant="permanent" open={open}>
+		<DrawerComponent variant="permanent" open={drawerOpen}>
 			<Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px: [1]}}>
 				<IconButton onClick={toggleDrawer}>
 					<ChevronLeftIcon />
