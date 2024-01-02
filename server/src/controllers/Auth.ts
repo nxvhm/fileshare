@@ -101,7 +101,6 @@ router.post('/verify', async(req: express.Request, res: express.Response) => {
 		res.status(422).send({message: "Token not provided"});
 
 	const isValid = await TokenManager.verifyToken(token);
-	console.log("ctrl, isValid:", isValid);
 	res.send({isValid});
 })
 
