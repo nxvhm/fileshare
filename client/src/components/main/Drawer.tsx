@@ -7,6 +7,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import OpenDrawerContext from '../../lib/context/OpenDraweContext';
 import {ListItemText, ListItemIcon, ListItemButton} from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
+
 const drawerWidth: number = 240;
 
 const DrawerComponent = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -45,6 +47,7 @@ export default function Drawer() {
 					<ChevronLeftIcon />
 			</IconButton>
 		</Toolbar>
+		<Divider />
 		<List component="nav">
 
 			<ListItemButton>
@@ -60,6 +63,14 @@ export default function Drawer() {
 				</ListItemIcon>
 				<ListItemText primary="Settings" />
 			</ListItemButton>
+
+			<ListItemButton>
+				<ListItemIcon>
+					<PersonIcon />
+				</ListItemIcon>
+				<ListItemText primary="Profile" />
+			</ListItemButton>
+
 		</List>
 
 		</DrawerComponent>
