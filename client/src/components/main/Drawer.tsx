@@ -45,34 +45,33 @@ export default function Drawer() {
 			<Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px: [1]}}>
 				<IconButton onClick={toggleDrawer}>
 					<ChevronLeftIcon />
-			</IconButton>
-		</Toolbar>
-		<Divider />
-		<List component="nav">
+				</IconButton>
+			</Toolbar>
+			<Divider />
+			<List component="nav">
 
-			<ListItemButton>
-				<ListItemIcon>
-					<HomeIcon />
-				</ListItemIcon>
-				<ListItemText primary="Home" />
-			</ListItemButton>
+				<ListItemButton>
+					<ListItemIcon>
+						<HomeIcon />
+					</ListItemIcon>
+					<ListItemText primary="Home" />
+				</ListItemButton>
 
-			<ListItemButton>
-				<ListItemIcon>
-					<SettingsIcon />
-				</ListItemIcon>
-				<ListItemText primary="Settings" />
-			</ListItemButton>
+				<ListItemButton>
+					<ListItemIcon>
+						<SettingsIcon />
+					</ListItemIcon>
+					<ListItemText primary="Settings" />
+				</ListItemButton>
 
-			<ListItemButton>
-				<ListItemIcon>
-					<PersonIcon />
-				</ListItemIcon>
-				<ListItemText primary="Profile" />
-			</ListItemButton>
+				<ListItemButton>
+					<ListItemIcon>
+						<PersonIcon />
+					</ListItemIcon>
+					<ListItemText primary="Profile" />
+				</ListItemButton>
 
-		</List>
-
+			</List>
 		</DrawerComponent>
 	)
 }
