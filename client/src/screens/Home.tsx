@@ -5,19 +5,38 @@ import Drawer from '../components/main/Drawer';
 import Topbar from "../components/main/Topbar";
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import axiosInstance from "../lib/Axios";
 
-const HiddenFileInput = styled('input')({
-	height: 1,
-	overflow: 'hidden',
-	position: 'absolute',
-	bottom: 0,
-	left: 0,
-	width: 1,
-})
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 
 function Home() {
 	const {user, logoutUser} = useContext(AuthContext);
+
+	const fileUpload = e => {
+		if(!e.target.files)
+			return;
+
+		const file = e.target.files[0];
+		const formData = new FormData();
+		formData.append("file", file);
+		axiosInstance.post('/upload',formData, { headers: {
+			'Content-Type': 'multipart/form-data'
+		}}).then(res => {
+			console.log(res);
+		})
+	}
 
 	return (
 		<Box sx={{ display: 'flex' }}>
@@ -31,6 +50,12 @@ function Home() {
 			<Toolbar />
 			<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
 				<div>Welcome {user?.name}</div>
+
+				<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+					Upload file
+					<VisuallyHiddenInput type="file" onChange={fileUpload} />
+				</Button>
+
 				<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
 			</Container>
 			</Box>
