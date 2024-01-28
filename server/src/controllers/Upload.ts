@@ -1,12 +1,11 @@
 import express from "express";
-import Multer from "multer";
-
+import multer from 'multer';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' })
 
-router.post('/file', async(req: express.Request, res: express.Response) => {
-	console.log("dasdas");
+router.post('/file', upload.single('file'), async(req: express.Request, res: express.Response) => {
+	console.log("dasdas", req.file);
 })
 
 

@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import express, { Request, Response } from 'express';
 import AuthController from './controllers/Auth';
 import { AppDataSource } from "./datasource";
+import Upload from "./controllers/Upload";
 
 const app = express();
 const port = process.env.APP_PORT || 3000;
@@ -26,6 +27,7 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello TS');
 });
 
+app.use('/upload', Upload);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
