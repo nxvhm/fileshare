@@ -1,13 +1,10 @@
 import jwt from "jsonwebtoken"
 import { UserToken } from "../models/UserToken";
 import { AppDataSource } from "../datasource";
-export type UserTokenPayload = {
-	id: number,
-	name: string,
-	email: string
-}
+import { UserTokenPayload } from "../definitions";
 
 export class TokenManager {
+
 	static async signUserToken(userData: UserTokenPayload): Promise<string> {
 		const userToken = new UserToken();
 		const tokenRepo = AppDataSource.getRepository(UserToken);
@@ -25,10 +22,19 @@ export class TokenManager {
 		return token;
 	}
 
-	static verifyToken(token: string): Promise<boolean> {
-		return new Promise<boolean>((resolve, reject) => {
-			const userToken = new UserToken();
+	static async isValid(token: string): Promise<boolean> {
+		return new Promise<boolean>(async (resolve, reject) => {
 			const tokenRepo = AppDataSource.getRepository(UserToken);
+			const tokenRecord = await tokenRepo.createQueryBuilder()
+				.where("token = :token", {token})
+				.getOne();
+
+			if(!tokenRecord)
+				reject("Token not found or expired");
+
+			if(new Date() < new Date(String(tokenRecord?.expires_at)))
+				reject("Token not found or expired");
+
 			const verified = jwt.verify(token, String(process.env.JWT_SECRET), (err, decoded) => {
 				if (err) reject(false);
 
@@ -38,5 +44,20 @@ export class TokenManager {
 			return false;
 		})
 
+	}
+
+	static decode(token: string): Promise<UserTokenPayload> {
+		return new Promise<UserTokenPayload>((resolve, reject) => {
+			try {
+				jwt.verify(token, String(process.env.JWT_SECRET), (err, decoded) => {
+					if(err)
+						return reject("Invalid token");
+
+					resolve(decoded as UserTokenPayload);
+				});
+			} catch (error) {
+				reject("Invalid token");
+			}
+		});
 	}
 }
