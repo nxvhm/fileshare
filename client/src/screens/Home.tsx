@@ -31,7 +31,7 @@ function Home() {
 		const file = e.target.files[0];
 		const formData = new FormData();
 		formData.append("file", file);
-		axiosInstance.post('/upload',formData, { headers: {
+		axiosInstance.post('/upload/file',formData, { headers: {
 			'Content-Type': 'multipart/form-data'
 		}}).then(res => {
 			console.log(res);
