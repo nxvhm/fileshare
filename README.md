@@ -1,5 +1,6 @@
 ## Installation
 
+Setup mysql server and phpmyadmin containers
 ```
 cp config.example config
 ```
@@ -21,7 +22,7 @@ cp .env.example .env
 #### Run Migrations
 
 ```
-npm run dev-migrations
+npm run dev-migrate
 ```
 
 ### Client
