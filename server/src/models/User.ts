@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { UserTokenPayload } from "../lib/TokenManager";
+import { UserTokenPayload } from "../definitions";
 import "reflect-metadata"
 
 @Entity("users")
