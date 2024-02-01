@@ -17,6 +17,7 @@ export class CreateFilesTable1704566992795 implements MigrationInterface {
 					parent_id BIGINT(11) UNSIGNED NULL DEFAULT NULL,
 					hash VARCHAR(256) NOT NULL,
 					mime VARCHAR(24) NULL DEFAULT NULL,
+					type ENUM('file', 'folder') NOT NULL DEFAULT 'file',
 					created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 				)`
 			);
