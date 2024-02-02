@@ -43,7 +43,7 @@ export const loginRequest = (data:loginData):Promise<LoginResponse> => {
 				? resolve({token: String(res.data.token)})
 				: reject(new Error(res.data?.message))
 		).catch(
-			e => reject(new Error(e.response?.data?.msg ?? e.message))
+			e => reject(new Error(e.response?.data?.message ?? e.message))
 		)
 	})
 }
