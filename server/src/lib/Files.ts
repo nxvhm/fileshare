@@ -8,11 +8,11 @@ export class Files {
 	public static __dirName = path.resolve()
 	public static filesDir = process.env.FILES_DIR ? process.env.FILES_DIR : "files";
 
-	public static getUserFilesDirPath(file?: string|fs.PathLike): string|PathLike {
+	public static getUserFilesDirPath(file?: string|PathLike): string|PathLike {
 		return Files.__dirName + sep + Files.filesDir + (file ? (sep+file) : '');
 	}
 
-	public static exists(filePath: string|fs.PathLike): Promise<boolean> {
+	public static exists(filePath: string|PathLike): Promise<boolean> {
 		return new Promise(async resolve => {
 			try {
 				await fs.promises.access(filePath, fs.promises.constants.W_OK | fs.promises.constants.R_OK);
@@ -24,7 +24,7 @@ export class Files {
 		});
 	}
 
-	public static mkdir(dir: string|fs.PathLike): Promise<boolean> {
+	public static mkdir(dir: string|PathLike): Promise<boolean> {
 		return new Promise(async resolve => {
 			try {
 				await fs.promises.mkdir(dir, { recursive: true });
@@ -36,7 +36,7 @@ export class Files {
 		})
 	}
 
-	public static copyFile(sourcePath: string|fs.PathLike, destinationPath: string|fs.PathLike): Promise<boolean> {
+	public static copyFile(sourcePath: string|PathLike, destinationPath: string|PathLike): Promise<boolean> {
 		return new Promise(async resolve => {
 			try {
 				const source = fs.createReadStream(sourcePath);
