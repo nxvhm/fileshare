@@ -8,6 +8,10 @@ export class Files {
 	public static __dirName = path.resolve()
 	public static filesDir = process.env.FILES_DIR ? process.env.FILES_DIR : "files";
 
+	public static getUserFilesDirPath(file?: string|fs.PathLike): string|PathLike {
+		return Files.__dirName + sep + Files.filesDir + (file ? (sep+file) : '');
+	}
+
 	public static exists(filePath: string|fs.PathLike): Promise<boolean> {
 		return new Promise(async resolve => {
 			try {
@@ -32,8 +36,23 @@ export class Files {
 		})
 	}
 
-	public static getUserFilesDirPath(): string|PathLike {
-		return Files.__dirName + sep + Files.filesDir;
+	public static copyFile(sourcePath: string|fs.PathLike, destinationPath: string|fs.PathLike): Promise<boolean> {
+		return new Promise(async resolve => {
+			try {
+				const source = fs.createReadStream(sourcePath);
+				const destination = fs.createWriteStream(destinationPath);
+				source.pipe(destination);
+				source.on('end', () => resolve(true));
+				source.on('error', err => {
+					console.error("copyFile error", err);
+					resolve(false);
+				})
+			} catch (error) {
+				console.error("copyFile error", error);
+				resolve(false);
+			}
+		})
 	}
+
 
 }
