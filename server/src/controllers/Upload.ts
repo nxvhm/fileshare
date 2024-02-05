@@ -20,10 +20,6 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 	if(!req.file)
 		return res.status(422).send("File not uploaded");
 
-
-	const __dirname = path.resolve();
-	const filesDir = __dirname+sep+"files";
-
 	const exists = await Files.exists(req.file.destination);
 	if(!exists)
 		return res.status(500).send("File not uploaded or not readable");
@@ -35,21 +31,11 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 			return res.status(500).send("Files directory not available at the moment");
 	}
 
-	const source = fs.createReadStream(req.file.path);
-	const dest = fs.createWriteStream(filesDir+sep+req.file.filename);
-
-	source.pipe(dest);
-	source.on('end', function() {
-		return res.send({success: true});
-	});
-
-	source.on('error', function(err) {
-		console.log(err);
+	const copyFile = await Files.copyFile(req.file.path, Files.getUserFilesDirPath(req.file.filename));
+	if(!copyFile)
 		return res.status(500).send("Error while moving uploaded file");
-	});
 
-	console.log(req.user, req.file, __dirname);
-
+	return res.send({success: true});
 
 })
 
