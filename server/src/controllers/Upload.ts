@@ -20,22 +20,14 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 	if(!req.file)
 		return res.status(422).send("File not uploaded");
 
-	const exists = await Files.exists(req.file.destination);
-	if(!exists)
-		return res.status(500).send("File not uploaded or not readable");
+	try {
 
-	const filesDirExists = await Files.exists(Files.getUserFilesDirPath());
-	if(!filesDirExists) {
-		const filesDirCreated = await Files.mkdir(Files.getUserFilesDirPath());
-		if(!filesDirCreated)
-			return res.status(500).send("Files directory not available at the moment");
+		const fileMoved = await Files.moveUploadedFile(req.file);
+		return res.send({success: true});
+
+	} catch (error) {
+		return res.status(500).send(error);
 	}
-
-	const copyFile = await Files.copyFile(req.file.path, Files.getUserFilesDirPath(req.file.filename));
-	if(!copyFile)
-		return res.status(500).send("Error while moving uploaded file");
-
-	return res.send({success: true});
 
 })
 
