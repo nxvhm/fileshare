@@ -1,6 +1,8 @@
 import fs, { PathLike } from "fs";
 import { sep } from "path";
 import path from 'path';
+import { File } from "../models/File";
+import { AppDataSource } from "../datasource";
 
 export class Files {
 
@@ -74,5 +76,12 @@ export class Files {
 		})
 	}
 
+	public static saveInDatabase(file: Express.Multer.File, userId: number, parentId: number|null): Promise<boolean> {
+		return new Promise(async resolve => {
+			const filesRepo = AppDataSource.getRepository(File);
+
+
+		});
+	}
 
 }
