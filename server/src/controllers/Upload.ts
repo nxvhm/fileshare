@@ -1,6 +1,6 @@
 import express from "express";
 import multer from 'multer';
-import AuthMiddleware from "../middleware/Auth";
+import AuthMiddleware from "./../middleware/Auth";
 import { IUserAuthRequest } from "../definitions";
 import fs from 'fs';
 import { sep } from "path";
@@ -23,6 +23,8 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 	try {
 
 		const fileMoved = await Files.moveUploadedFile(req.file);
+		const saved = await Files.saveInDatabase(req.file, req.user?.id, null);
+
 		return res.send({success: true});
 
 	} catch (error) {
