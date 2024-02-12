@@ -95,12 +95,10 @@ export class Files {
 	 */
 	public static moveUploadedFile(file: Express.Multer.File, user: UserTokenPayload): Promise<boolean> {
 		return new Promise(async (resolve, reject) => {
-			const exists = await Files.exists(file.destination);
-			if(!exists)
+			if(!(await Files.exists(file.destination)))
 				return reject("File not uploaded or not readable")
 
-			const rootDirExists = await Files.createRootDirectory();
-			if(!rootDirExists)
+			if(!(await Files.createRootDirectory()))
 					return reject("Files directory not available at the moment");
 
 			const userDir = Files.getUserFilesDirPath(undefined, user.data.id);
