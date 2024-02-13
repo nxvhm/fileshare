@@ -113,11 +113,26 @@ export class Files {
 		})
 	}
 
-	public static saveInDatabase(file: Express.Multer.File, userId: number, parentId: number|null): Promise<boolean> {
+	public static saveInDatabase(file: Express.Multer.File, userId: number, parentId: number|null): Promise<number|boolean> {
 		return new Promise(async resolve => {
-			const filesRepo = AppDataSource.getRepository(File);
 
+			const filesRepo = AppDataSource.getRepository(File),
+						fileRecord = new File();
 
+			fileRecord.user_id = userId;
+			fileRecord.mime = file.mimetype;
+			fileRecord.name = file.originalname;
+			fileRecord.hash = file.filename;
+			fileRecord.parent_id = parentId;
+
+			try {
+				await filesRepo.save(fileRecord);
+			} catch (error) {
+				console.error(error);
+				return resolve(false);
+			}
+
+			return resolve(fileRecord.id);
 		});
 	}
 
