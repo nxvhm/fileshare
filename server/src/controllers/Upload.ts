@@ -2,9 +2,6 @@ import express from "express";
 import multer from 'multer';
 import AuthMiddleware from "./../middleware/Auth";
 import { IUserAuthRequest } from "../definitions";
-import fs from 'fs';
-import { sep } from "path";
-import path from 'path';
 import { Files } from "../lib/Files";
 
 const router = express.Router();
@@ -22,8 +19,11 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 
 	try {
 
-		const fileMoved = await Files.moveUploadedFile(req.file);
-		const saved = await Files.saveInDatabase(req.file, req.user?.id, null);
+		if(!(await Files.moveUploadedFile(req.file, req.user)))
+			return res.status(500).send("File was not copied correctly");
+
+		if(!(await Files.saveInDatabase(req.file, req.user?.data.id, null)))
+			return res.status(500).send("FIle not saved correctly");
 
 		return res.send({success: true});
 
