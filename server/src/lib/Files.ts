@@ -67,6 +67,18 @@ export class Files {
 		})
 	}
 
+	public static removeFIle(filePath: string|PathLike): Promise<boolean> {
+		return new Promise(resolve => {
+			fs.unlink(filePath, err => {
+				if(!err)
+					return resolve(true);
+
+				console.error(err);
+				return resolve(false);
+			})
+		})
+	}
+
 	/**
 	 * Crete the root directory for the uploaded user files
 	 * @returns Promise<boolean> True of dir exists or successfully created, false on error
@@ -109,6 +121,7 @@ export class Files {
 			if(!copyFile)
 				return reject("Error while moving uploaded file");
 
+			await Files.removeFIle(file.path);
 			return resolve(true);
 		})
 	}
