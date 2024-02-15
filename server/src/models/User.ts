@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { UserTokenPayload } from "../definitions";
+import { UserTokenData } from "../definitions";
 import "reflect-metadata"
 
 @Entity("users")
@@ -23,7 +23,7 @@ export class User {
 	@Column("datetime")
 	updated_at!: string
 
-	public getTokenPayload(): UserTokenPayload {
+	public getTokenPayload(): UserTokenData {
 		return {
 			id: this.id,
 			name: this.name,
