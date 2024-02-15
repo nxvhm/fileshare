@@ -1,11 +1,14 @@
 import express from "express";
 
+
+export type UserTokenData = {
+	id: number,
+	name: string,
+	email: string
+}
+
 export type UserTokenPayload = {
-	data: {
-		id: number,
-		name: string,
-		email: string
-	},
+	data: UserTokenData
 	iat: number,
 	exp: number
 }
