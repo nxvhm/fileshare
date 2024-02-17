@@ -4,6 +4,7 @@ import path from 'path';
 import { File } from "../models/File";
 import { AppDataSource } from "../datasource";
 import { UserTokenPayload } from "../definitions";
+import { IsNull } from "typeorm";
 
 export class Files {
 
@@ -147,6 +148,23 @@ export class Files {
 
 			return resolve(fileRecord.id);
 		});
+	}
+
+	public static getUserFiles(userId: number, parentId: number|null = null): Promise<File[]> {
+		return new Promise( async (resolve, reject) => {
+			const filesRepo = AppDataSource.getRepository(File);
+			try {
+				const userFiles = await filesRepo.find({
+					where: {
+						user_id: userId,
+						parent_id: !parentId ? IsNull() : parentId
+					}
+				});
+				resolve(userFiles);
+			} catch (error) {
+				reject(error)
+			}
+		})
 	}
 
 }
