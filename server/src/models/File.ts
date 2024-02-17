@@ -18,8 +18,11 @@ export class File {
 	@Column("varchar")
 	name!: string
 
-	@Column("bigint")
-	parent_id!: number|null
+	@Column({
+		type: "bigint",
+		nullable: true
+	})
+	parent_id!: number | null
 
 	@Column("varchar")
 	hash!: string
