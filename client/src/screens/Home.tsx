@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axiosInstance from "../lib/Axios";
+import FilesList from "../components/files/filesList";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -55,6 +56,8 @@ function Home() {
 					Upload file
 					<VisuallyHiddenInput type="file" onChange={fileUpload} />
 				</Button>
+
+				<FilesList />
 
 				<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
 			</Container>
