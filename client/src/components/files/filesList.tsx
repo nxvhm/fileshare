@@ -7,6 +7,11 @@ import ListItemText from '@mui/material/ListItemText';
 import FolderIcon from '@mui/icons-material/Folder';
 import ImageIcon from '@mui/icons-material/Image';
 import ListItemButton from '@mui/material/ListItemButton';
+import { IconButton } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DownloadIcon from '@mui/icons-material/Download';
+import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function FilesList() {
 
@@ -27,6 +32,16 @@ export default function FilesList() {
 
 	}
 
+	function getFileOptionsButton(file) {
+		return (
+			<>
+			<IconButton><DownloadIcon /></IconButton>
+			<IconButton><ShareIcon /></IconButton>
+			<IconButton><DeleteIcon /></IconButton>
+			</>
+		)
+	}
+
 	function ShowList() {
 		if(!files.length)
 			return;
@@ -36,7 +51,7 @@ export default function FilesList() {
 				{files.map(file => {
 					return(
 						<ListItemButton key={file.hash}>
-							<ListItem>
+							<ListItem secondaryAction={getFileOptionsButton(file)}>
 								<ListItemIcon><ImageIcon /></ListItemIcon>
 								<ListItemText primary={file.name} secondary={getDate(file.created_at)} />
 							</ListItem>
