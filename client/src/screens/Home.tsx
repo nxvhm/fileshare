@@ -8,6 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axiosInstance from "../lib/Axios";
 import FilesList from "../components/files/filesList";
+import toast, { ToastOptions, Toaster } from 'react-hot-toast';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -24,6 +25,7 @@ const VisuallyHiddenInput = styled('input')({
 
 function Home() {
 	const {user, logoutUser} = useContext(AuthContext);
+	const [uploadedFile, setUploadedFile] = useState(null)
 
 	const fileUpload = e => {
 		if(!e.target.files)
@@ -36,6 +38,14 @@ function Home() {
 			'Content-Type': 'multipart/form-data'
 		}}).then(res => {
 			console.log(res);
+			if(res.data?.success && res.data?.file)
+				setUploadedFile(res.data?.file);
+
+		}).catch(error => {
+			toast.error(
+				error instanceof Error ? error.message : 'Error Occured, please try again later',
+				{duration: 3000, position: 'top-center'}
+			);
 		})
 	}
 
@@ -57,11 +67,12 @@ function Home() {
 					<VisuallyHiddenInput type="file" onChange={fileUpload} />
 				</Button>
 
-				<FilesList />
+				<FilesList uploadedFile={uploadedFile}/>
 
 				<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
 			</Container>
 			</Box>
+			<Toaster />
 		</Box>
 	)
 }

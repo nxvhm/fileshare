@@ -4,16 +4,14 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import FolderIcon from '@mui/icons-material/Folder';
 import ImageIcon from '@mui/icons-material/Image';
 import ListItemButton from '@mui/material/ListItemButton';
 import { IconButton } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DownloadIcon from '@mui/icons-material/Download';
 import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export default function FilesList() {
+export default function FilesList(props) {
 
 	const [files, setFiles] = useState([]);
   const [dense, setDense] = useState(false);
@@ -25,6 +23,19 @@ export default function FilesList() {
 			setFiles(res.data);
 		})
 	}, [])
+
+	useEffect(() => {
+		appendFile(props.uploadedFile);
+	}, [props.uploadedFile]);
+
+	function appendFile(file) {
+
+		console.log('appendFile', file);
+		if(!file)
+			return;
+
+		setFiles([file, ...files]);
+	}
 
 	function getDate(dateString: string): string {
 		dateString = dateString.slice(0, 19).replace('T', ' ');
@@ -53,7 +64,7 @@ export default function FilesList() {
 						<ListItemButton key={file.hash}>
 							<ListItem secondaryAction={getFileOptionsButton(file)}>
 								<ListItemIcon><ImageIcon /></ListItemIcon>
-								<ListItemText primary={file.name} secondary={getDate(file.created_at)} />
+								<ListItemText primary={file.name} secondary="dsadsa" />
 							</ListItem>
 						</ListItemButton>
 					)
