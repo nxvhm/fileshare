@@ -127,8 +127,8 @@ export class Files {
 		})
 	}
 
-	public static saveInDatabase(file: Express.Multer.File, userId: number, parentId: number|null): Promise<number|boolean> {
-		return new Promise(async resolve => {
+	public static saveInDatabase(file: Express.Multer.File, userId: number, parentId: number|null): Promise<File> {
+		return new Promise(async (resolve,reject) => {
 
 			const filesRepo = AppDataSource.getRepository(File),
 						fileRecord = new File();
@@ -143,10 +143,10 @@ export class Files {
 				await filesRepo.save(fileRecord);
 			} catch (error) {
 				console.error(error);
-				return resolve(false);
+				return reject(error);
 			}
 
-			return resolve(fileRecord.id);
+			return resolve(fileRecord);
 		});
 	}
 
@@ -158,6 +158,9 @@ export class Files {
 					where: {
 						user_id: userId,
 						parent_id: !parentId ? IsNull() : parentId
+					},
+					order: {
+						id: 'DESC'
 					}
 				});
 				resolve(userFiles);

@@ -8,7 +8,6 @@ router.get('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Resp
 	if(!req.user)
 		return res.status(403).send("Unauthorized");
 
-	console.log(req.params, req.user);
 	const files = await Files.getUserFiles(req.user?.data.id);
 	return res.send(files);
 
