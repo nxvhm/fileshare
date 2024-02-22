@@ -1,5 +1,7 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import "reflect-metadata"
+import { Files } from "../lib/Files";
+import { PathLike } from "fs";
 
 export enum FileTypes  {
 	TYPE_FILE = "file",
@@ -39,4 +41,8 @@ export class File {
 
 	@Column("datetime")
 	created_at!: string
+
+	public getPath(): PathLike|string {
+		return Files.getUserFilesDirPath(this.hash, this.user_id);
+	}
 }
