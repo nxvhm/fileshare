@@ -6,6 +6,8 @@ import AuthController from './controllers/Auth';
 import { AppDataSource } from "./datasource";
 import Upload from "./controllers/Upload";
 import FileList from "./controllers/FileList"
+import DeleteFile from "./controllers/DeleteFIle";
+
 const app = express();
 const port = process.env.APP_PORT || 3000;
 
@@ -29,6 +31,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/upload', Upload);
 app.use('/files/list', FileList);
+app.use('/files/delete', DeleteFile);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
