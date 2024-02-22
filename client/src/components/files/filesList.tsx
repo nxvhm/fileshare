@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import axiosInstance from '../../lib/Axios';
+import { FileModel } from '../../definitions';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -10,12 +11,13 @@ import { IconButton } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ConfirmationDialog from '../main/ConfirmationDIalog';
 
 export default function FilesList(props) {
 
 	const [files, setFiles] = useState([]);
-  const [dense, setDense] = useState(false);
-  const [secondary, setSecondary] = useState(false);
+	const [toDelete, setToDelete] = useState<FileModel|null>(null)
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
 	useEffect(() => {
 		axiosInstance.get('/files/list').then(res => {
@@ -37,20 +39,29 @@ export default function FilesList(props) {
 		setFiles([file, ...files]);
 	}
 
+	function confirmDeletion(file: FileModel) {
+		setToDelete(file);
+		setOpenDeleteConfirmation(true);
+	}
+
 	function getDate(dateString: string): string {
 		dateString = dateString.slice(0, 19).replace('T', ' ');
 		return new Date(dateString).toDateString();
-
 	}
 
-	function getFileOptionsButton(file) {
+	function getFileOptionsButton(file: FileModel) {
 		return (
 			<>
 			<IconButton><DownloadIcon /></IconButton>
 			<IconButton><ShareIcon /></IconButton>
-			<IconButton><DeleteIcon /></IconButton>
+			<IconButton onClick={() => confirmDeletion(file)}><DeleteIcon /></IconButton>
 			</>
 		)
+	}
+
+	function deleteFile() {
+		console.log('deletion confirmed', toDelete);
+		setOpenDeleteConfirmation(false);
 	}
 
 	function ShowList() {
@@ -74,6 +85,15 @@ export default function FilesList(props) {
 	}
 
 	return(
-		<ShowList />
+		<>
+			<ShowList />
+			<ConfirmationDialog
+				isOpen={openDeleteConfirmation}
+				onConfirm={deleteFile}
+				onCancel={() => {setOpenDeleteConfirmation(false)}}
+				dialogText='Are you sure you want to delete this file ?'
+				secondaryDialogText='Action cannot be reverted'
+			></ConfirmationDialog>
+		</>
 	);
 }
