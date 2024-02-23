@@ -1,11 +1,6 @@
 import { isExpired, decodeToken } from "react-jwt";
 import { verifyToken } from "../api/Auth";
-
-export type UserTokenData = {
- id: number,
- name: string,
- email: string
-}
+import { UserTokenData } from "../definitions";
 
 export class Token {
 
