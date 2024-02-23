@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import {Token, UserTokenData} from "../Token";
+import {Token} from "../Token";
 import {AuthContextData} from "../context/AuthContext";
+import { UserTokenData } from "../../definitions";
 
 export function useAuth():AuthContextData {
 	const [user, setUser] = useState(():UserTokenData|null => null);
