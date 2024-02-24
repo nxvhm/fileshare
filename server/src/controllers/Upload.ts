@@ -22,13 +22,15 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 		if(!(await Files.moveUploadedFile(req.file, req.user)))
 			return res.status(500).send("File was not copied correctly");
 
-		if(!(await Files.saveInDatabase(req.file, req.user?.data.id, null)))
-			return res.status(500).send("FIle not saved correctly");
+		const file = await Files.saveInDatabase(req.file, req.user?.data.id, null);
+		if(!file)
+			return res.status(500).send("File not saved correctly");
 
-		return res.send({success: true});
+		return res.send({success: true, file});
 
 	} catch (error) {
-		return res.status(500).send(error);
+		console.log('UploadFIleError', error);
+		return res.status(500).send({success: false});
 	}
 
 })

@@ -1,5 +1,5 @@
 export type FileModel = {
-	id: number|null,
+	id: number,
 	user_id: number|null,
 	name: string,
 	parent_id: number|null,
