@@ -31,7 +31,8 @@ router.post('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Res
 		await AppDataSource.createQueryBuilder()
 			.delete()
 			.from(File)
-			.where("id = :id", {id: file.id});
+			.where("id = :id", {id: file.id})
+			.execute();
 
 		if(exists)
 			await Files.removeFIle(filePath);
