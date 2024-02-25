@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
-import axiosInstance from '../../lib/Axios';
 import { FileModel } from '../../definitions';
+import  * as FilesApi from '../../api/Files';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -11,16 +11,16 @@ import { IconButton } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ConfirmationDialog from '../main/ConfirmationDIalog';
+import ConfirmationDialog from '../main/ConfirmationDialog';
 
 export default function FilesList(props) {
 
-	const [files, setFiles] = useState([]);
-	const [toDelete, setToDelete] = useState<FileModel|null>(null)
+	const [files, setFiles] = useState<FileModel[]>([]);
+	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
 	useEffect(() => {
-		axiosInstance.get('/files/list').then(res => {
+		FilesApi.getFilesList().then(res => {
 			console.log('getLIstResponse', res.data);
 			setFiles(res.data);
 		})
@@ -30,7 +30,7 @@ export default function FilesList(props) {
 		appendFile(props.uploadedFile);
 	}, [props.uploadedFile]);
 
-	function appendFile(file) {
+	function appendFile(file: FileModel) {
 
 		console.log('appendFile', file);
 		if(!file)
@@ -39,8 +39,8 @@ export default function FilesList(props) {
 		setFiles([file, ...files]);
 	}
 
-	function confirmDeletion(file: FileModel) {
-		setToDelete(file);
+	function showDeleteConfirmation(file: FileModel) {
+		setFileToDelete(file);
 		setOpenDeleteConfirmation(true);
 	}
 
@@ -54,14 +54,21 @@ export default function FilesList(props) {
 			<>
 			<IconButton><DownloadIcon /></IconButton>
 			<IconButton><ShareIcon /></IconButton>
-			<IconButton onClick={() => confirmDeletion(file)}><DeleteIcon /></IconButton>
+			<IconButton onClick={() => showDeleteConfirmation(file)}><DeleteIcon /></IconButton>
 			</>
 		)
 	}
 
 	function deleteFile() {
-		console.log('deletion confirmed', toDelete);
-		setOpenDeleteConfirmation(false);
+		if(!fileToDelete || !fileToDelete?.id)
+			return setOpenDeleteConfirmation(false);
+
+		FilesApi.deleteFile(fileToDelete?.id).then(res => {
+			setOpenDeleteConfirmation(false);
+			setFiles(files.filter(file => file.id != fileToDelete.id ));
+		}).catch(e => {
+			console.error('alert deleting file');
+		})
 	}
 
 	function ShowList() {
