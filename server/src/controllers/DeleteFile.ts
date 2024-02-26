@@ -39,10 +39,10 @@ router.post('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Res
 
 	} catch (error) {
 		console.error(error);
-		return res.status(500).send("Error while deleting file");
+		return res.status(500).send({success: false});
 	}
 
-	return res.status(200).send("File deleted");
+	return res.status(200).send({success: true});
 
 });
 
