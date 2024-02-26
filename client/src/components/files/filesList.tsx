@@ -1,19 +1,22 @@
 import {useState, useEffect} from 'react';
-import { FileModel } from '../../definitions';
-import  * as FilesApi from '../../api/Files';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ImageIcon from '@mui/icons-material/Image';
 import ListItemButton from '@mui/material/ListItemButton';
 import { IconButton } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
-import ShareIcon from '@mui/icons-material/Share';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon} from '@mui/icons-material';
 import ConfirmationDialog from '../main/ConfirmationDialog';
+import { FileModel } from '../../definitions';
+import  * as FilesApi from '../../api/Files';
+import toast, { ToastOptions, Toaster } from 'react-hot-toast';
 
-export default function FilesList(props) {
+
+export type FileListProps = {
+	uploadedFile: FileModel|null
+}
+
+export default function FilesList(props: FileListProps) {
 
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
@@ -27,7 +30,8 @@ export default function FilesList(props) {
 	}, [])
 
 	useEffect(() => {
-		appendFile(props.uploadedFile);
+		if(props.uploadedFile)
+			appendFile(props.uploadedFile);
 	}, [props.uploadedFile]);
 
 	function appendFile(file: FileModel) {
@@ -64,9 +68,15 @@ export default function FilesList(props) {
 			return setOpenDeleteConfirmation(false);
 
 		FilesApi.deleteFile(fileToDelete?.id).then(res => {
+			if(res.data.success) {
+				toast.success("File deleted");
+				setFiles(files.filter(file => file.id != fileToDelete.id ));
+			} else {
+				toast.error("Error deleting file");
+			}
 			setOpenDeleteConfirmation(false);
-			setFiles(files.filter(file => file.id != fileToDelete.id ));
 		}).catch(e => {
+			toast.error("Error deleting file");
 			console.error('alert deleting file');
 		})
 	}
