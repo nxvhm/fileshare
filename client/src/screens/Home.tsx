@@ -9,6 +9,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axiosInstance from "../lib/Axios";
 import FilesList from "../components/files/filesList";
 import toast, { ToastOptions, Toaster } from 'react-hot-toast';
+import { FileModel } from "../definitions";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -25,7 +26,7 @@ const VisuallyHiddenInput = styled('input')({
 
 function Home() {
 	const {user, logoutUser} = useContext(AuthContext);
-	const [uploadedFile, setUploadedFile] = useState(null)
+	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
 
 	const fileUpload = e => {
 		if(!e.target.files)

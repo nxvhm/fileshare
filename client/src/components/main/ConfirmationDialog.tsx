@@ -38,8 +38,8 @@ export default function ConfirmationDialog(props: ConfirmationDialogProps) {
 					</DialogContent>
 				}
         <DialogActions>
-          <Button onClick={props.onCancel}>{props.cancelText ? props.cancelText : 'Cancel'}</Button>
-          <Button onClick={props.onConfirm}>{props.confirmText ? props.confirmText : 'Confirm'}</Button>
+          <Button onClick={e => props.onCancel()}>{props.cancelText ? props.cancelText : 'Cancel'}</Button>
+          <Button onClick={e => props.onConfirm()}>{props.confirmText ? props.confirmText : 'Confirm'}</Button>
         </DialogActions>
       </Dialog>
     </>
