@@ -23,7 +23,7 @@ export class User {
 	@Column("datetime")
 	updated_at!: string
 
-	public getTokenPayload(): UserTokenData {
+	public getTokenData(): UserTokenData {
 		return {
 			id: this.id,
 			name: this.name,
