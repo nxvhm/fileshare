@@ -6,7 +6,7 @@ import AuthController from './controllers/Auth';
 import { AppDataSource } from "./datasource";
 import Upload from "./controllers/Upload";
 import FileList from "./controllers/FileList"
-import DeleteFile from "./controllers/DeleteFIle";
+import DeleteFile from "./controllers/DeleteFile";
 
 const app = express();
 const port = process.env.APP_PORT || 3000;
