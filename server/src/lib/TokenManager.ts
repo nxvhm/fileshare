@@ -1,11 +1,12 @@
 import jwt from "jsonwebtoken"
+import { LessThanOrEqual } from "typeorm";
 import { UserToken } from "../models/UserToken";
 import { AppDataSource } from "../datasource";
-import { UserTokenPayload } from "../definitions";
+import { UserTokenData, UserTokenPayload } from "../definitions";
 
 export class TokenManager {
 
-	static async signUserToken(userData: UserTokenPayload): Promise<string> {
+	static async signUserToken(userData: UserTokenData): Promise<string> {
 		const userToken = new UserToken();
 		const tokenRepo = AppDataSource.getRepository(UserToken);
 		const expiresAt = Math.floor(Date.now() / 1000) + (60 * 60);
@@ -58,6 +59,24 @@ export class TokenManager {
 			} catch (error) {
 				reject("Invalid token");
 			}
+		});
+	}
+
+	static deleteExpiredTokens(userId: number): Promise<boolean> {
+		return new Promise(async resolve => {
+			try {
+				await AppDataSource.createQueryBuilder()
+					.delete()
+					.from(UserToken)
+					.where({
+						expires_at: LessThanOrEqual(new Date().toISOString().slice(0, 19).replace('T', ' '))
+					})
+					.execute();
+			} catch (error) {
+				console.error("removeOldTokens error", error);
+			}
+
+			resolve(true);
 		});
 	}
 }

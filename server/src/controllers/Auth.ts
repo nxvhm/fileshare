@@ -87,9 +87,12 @@ router.post('/login', checkSchema(loginRequestValidator), async (req: express.Re
 		if(!match)
 			return res.status(422).send({message: "Invalid email/password combination"});
 
+		await TokenManager.deleteExpiredTokens(user.id);
+
 		const token = await TokenManager.signUserToken(user.getTokenData());
 
 		return res.status(200).send({token});
+
 	} catch (error) {
 		return res.status(500).send({message: "Error during login, please try again late"});
 	}
