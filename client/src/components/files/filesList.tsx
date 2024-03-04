@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react';
+import fileDownload from 'js-file-download';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -34,36 +35,49 @@ export default function FilesList(props: FileListProps) {
 			appendFile(props.uploadedFile);
 	}, [props.uploadedFile]);
 
-	function appendFile(file: FileModel) {
-
-		console.log('appendFile', file);
+	const appendFile = (file: FileModel): void => {
 		if(!file)
 			return;
+
+		if(!file.created_at)
+			file.created_at = new Date().toISOString();
 
 		setFiles([file, ...files]);
 	}
 
-	function showDeleteConfirmation(file: FileModel) {
+	const showDeleteConfirmation = (file: FileModel): void => {
 		setFileToDelete(file);
 		setOpenDeleteConfirmation(true);
 	}
 
-	function getDate(dateString: string): string {
+	const downloadFile = (file: FileModel): void => {
+		if(!file.hash)
+			toast.error("File hash not available. Cannot request download");
+
+		FilesApi.downloadFile(String(file.hash)).then(res => {
+			fileDownload(res.data, file.name);
+		})
+	}
+
+	const getDate = (dateString: string): string => {
+		if(!dateString)
+			return "N/A";
+
 		dateString = dateString.slice(0, 19).replace('T', ' ');
 		return new Date(dateString).toDateString();
 	}
 
-	function getFileOptionsButton(file: FileModel) {
+	const getFileOptionsButton = (file: FileModel): JSX.Element => {
 		return (
 			<>
-			<IconButton><DownloadIcon /></IconButton>
+			<IconButton onClick={() => downloadFile(file)}><DownloadIcon /></IconButton>
 			<IconButton><ShareIcon /></IconButton>
 			<IconButton onClick={() => showDeleteConfirmation(file)}><DeleteIcon /></IconButton>
 			</>
 		)
 	}
 
-	function deleteFile() {
+	const deleteFile = () => {
 		if(!fileToDelete || !fileToDelete?.id)
 			return setOpenDeleteConfirmation(false);
 
@@ -92,7 +106,7 @@ export default function FilesList(props: FileListProps) {
 						<ListItemButton key={file.hash}>
 							<ListItem secondaryAction={getFileOptionsButton(file)}>
 								<ListItemIcon><ImageIcon /></ListItemIcon>
-								<ListItemText primary={file.name} secondary="dsadsa" />
+								<ListItemText primary={file.name} secondary={getDate(String(file.created_at))} />
 							</ListItem>
 						</ListItemButton>
 					)
