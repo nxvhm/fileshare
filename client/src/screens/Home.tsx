@@ -6,9 +6,10 @@ import Topbar from "../components/main/Topbar";
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CreateFolder from "../components/files/createFolder";
 import axiosInstance from "../lib/Axios";
 import FilesList from "../components/files/filesList";
-import toast, { ToastOptions, Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { FileModel } from "../definitions";
 
 const VisuallyHiddenInput = styled('input')({
@@ -61,13 +62,14 @@ function Home() {
 			>
 			<Toolbar />
 			<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-				<div>Welcome {user?.name}</div>
+				<Box sx={{display: 'flex', gap: 1}}>
+					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+						Upload file
+						<VisuallyHiddenInput type="file" onChange={fileUpload} />
+					</Button>
 
-				<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-					Upload file
-					<VisuallyHiddenInput type="file" onChange={fileUpload} />
-				</Button>
-
+					<CreateFolder />
+				</Box>
 				<FilesList uploadedFile={uploadedFile}/>
 
 				<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
