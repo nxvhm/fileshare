@@ -1,7 +1,7 @@
 import axiosInstance from "../lib/Axios"
 
-export const deleteFile = (fileId: number) => {
-	return axiosInstance.post('/files/delete', {id: fileId});
+export const deleteFile = (id: number) => {
+	return axiosInstance.post('/files/delete', {id});
 }
 
 export const getFilesList = () => {
@@ -12,4 +12,8 @@ export const downloadFile = (hash: string) => {
 	return axiosInstance.get('/files/download/'+hash, {
 		responseType: 'blob'
 	});
+}
+
+export const createFolder = (name: string) => {
+	return axiosInstance.post('/upload/create-folder', {name});
 }
