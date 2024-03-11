@@ -1,5 +1,6 @@
 import express from "express";
 import multer from 'multer';
+import { validationResult, checkSchema } from "express-validator"
 import AuthMiddleware from "./../middleware/Auth";
 import { IUserAuthRequest } from "../definitions";
 import { Files } from "../lib/Files";
@@ -9,6 +10,9 @@ const upload = multer({ dest: 'uploads/' })
 
 router.use(AuthMiddleware);
 
+/**
+ * Upload File
+ */
 router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: express.Response) => {
 
 	if(!req.user)
@@ -33,6 +37,35 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 		return res.status(500).send({success: false});
 	}
 
+})
+
+/**
+ * Create folder
+ */
+const createFolderRequestValidator = {
+	name: {
+		isString: true,
+		notEmpty: true,
+		matches: {
+			options: /^[a-zA-Z0-9_-]+$/,
+			errorMessage: 'Only Alphanumeric charasters, underscore & dash are allowed'
+		}
+	}
+}
+
+router.post('/create-folder', checkSchema(createFolderRequestValidator), async(req: IUserAuthRequest, res: express.Response) => {
+	if(!req.user)
+		return res.status(403).send("Unauthorized");
+
+		const validation = validationResult(req);
+		if (validation.array().length)
+			return res.status(422).send(validation.array().shift())
+
+		Files.createFolder(req.body.name, req.user.data.id,  null).then(folder => {
+			return res.send(folder);
+		}).catch(err => {
+			res.status(500).send({message: "Error occured, please try again later"});
+		})
 })
 
 
