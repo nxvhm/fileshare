@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import "reflect-metadata"
 import { Files } from "../lib/Files";
 import { PathLike } from "fs";
-
+import { createHash } from "crypto";
 export enum FileTypes  {
 	TYPE_FILE = "file",
 	TYPE_FOLDER = "folder"
@@ -44,5 +44,14 @@ export class File {
 
 	public getPath(): PathLike|string {
 		return Files.getUserFilesDirPath(this.hash, this.user_id);
+	}
+
+	public static generateHash(userId: number, filename: string): Promise<string> {
+		const hashStream = createHash('md5');
+		hashStream.write(String(userId)+filename+(new Date().valueOf()));
+		hashStream.end();
+		return new Promise(resolve => {
+			hashStream.on('readable', () => resolve(hashStream.read().toString('hex')));
+		})
 	}
 }
