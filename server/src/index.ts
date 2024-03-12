@@ -2,6 +2,7 @@ import "dotenv/config"
 import "reflect-metadata"
 import bodyParser from "body-parser";
 import express, { Request, Response } from 'express';
+import cors from 'cors'
 import AuthController from './controllers/Auth';
 import { AppDataSource } from "./datasource";
 import Upload from "./controllers/Upload";
@@ -12,6 +13,7 @@ import DownloadFile from "./controllers/DownloadFile";
 const app = express();
 const port = process.env.APP_PORT || 3000;
 
+app.use(cors());
 try {
 	await (async () => {
 		AppDataSource.initialize();
