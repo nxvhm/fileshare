@@ -1,15 +1,16 @@
 import { useContext, useState } from "react";
+import { Button, Box, Container, Toolbar } from "@mui/material";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import toast, { Toaster } from 'react-hot-toast';
+import { styled } from '@mui/material/styles';
+
 import AuthContext from "../lib/context/AuthContext";
-import { Button, Box, Container } from "@mui/material";
+import axiosInstance from "../lib/Axios";
+import useFileUpload from "../lib/hooks/useFileUpload";
 import Drawer from '../components/main/Drawer';
 import Topbar from "../components/main/Topbar";
-import { styled } from '@mui/material/styles';
-import Toolbar from '@mui/material/Toolbar';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CreateFolder from "../components/files/createFolder";
-import axiosInstance from "../lib/Axios";
 import FilesList from "../components/files/filesList";
-import toast, { Toaster } from 'react-hot-toast';
 import { FileModel } from "../definitions";
 
 const VisuallyHiddenInput = styled('input')({
@@ -27,29 +28,7 @@ const VisuallyHiddenInput = styled('input')({
 
 function Home() {
 	const {user, logoutUser} = useContext(AuthContext);
-	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
-
-	const fileUpload = e => {
-		if(!e.target.files)
-			return;
-
-		const file = e.target.files[0];
-		const formData = new FormData();
-		formData.append("file", file);
-		axiosInstance.post('/upload/file',formData, { headers: {
-			'Content-Type': 'multipart/form-data'
-		}}).then(res => {
-			console.log(res);
-			if(res.data?.success && res.data?.file)
-				setUploadedFile(res.data?.file);
-
-		}).catch(error => {
-			toast.error(
-				error instanceof Error ? error.message : 'Error Occured, please try again later',
-				{duration: 3000, position: 'top-center'}
-			);
-		})
-	}
+	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload();
 
 	return (
 		<Box sx={{ display: 'flex' }}>
