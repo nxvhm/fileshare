@@ -4,8 +4,8 @@ export const deleteFile = (id: number) => {
 	return axiosInstance.post('/files/delete', {id});
 }
 
-export const getFilesList = () => {
-	return axiosInstance.get('/files/list');
+export const getFilesList = (parentId: Number|undefined) => {
+	return axiosInstance.get('/files/list'+(parentId ? `/${parentId}` : ''));
 }
 
 export const downloadFile = (hash: string) => {

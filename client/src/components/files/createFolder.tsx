@@ -15,7 +15,7 @@ export default function CreateFolder() {
 	const [inputError, setInputError] = useState<boolean|string>(false);
 	const [folderName, setFolderName] = useState<string>('');
 
-	const onChangeFolderName = (e) => {
+	const onChangeFolderName = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const folderName = e.target.value;
 		if(!folderName)
 			return setInputError('Please enter folder name');
@@ -38,7 +38,7 @@ export default function CreateFolder() {
 
 	return (
 		<>
-		<Button component="label" variant="contained" onClick={e => setOpenDialog(true)} startIcon={<CreateNewFolderIcon />}>
+		<Button component="label" variant="contained" onClick={() => setOpenDialog(true)} startIcon={<CreateNewFolderIcon />}>
 			Add Folder
 		</Button>
 		<Dialog open={openDialog} maxWidth={'xs'} fullWidth={true}
@@ -58,8 +58,8 @@ export default function CreateFolder() {
 						{inputError && <FormHelperText error={true} id="folderName-error">{inputError}</FormHelperText>}
 				</DialogContent>
 			<DialogActions>
-				<Button onClick={e => setOpenDialog(false)}>Cancel</Button>
-				<Button onClick={e => createFolder()}>Create</Button>
+				<Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+				<Button onClick={() => createFolder()}>Create</Button>
 			</DialogActions>
 		</Dialog>
 		</>

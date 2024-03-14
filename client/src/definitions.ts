@@ -1,3 +1,8 @@
+export enum FileType {
+	TYPE_FILE = 'file',
+	TYPE_FOLDER = 'folder'
+}
+
 export type FileModel = {
 	id: number,
 	user_id: number|null,
@@ -5,7 +10,8 @@ export type FileModel = {
 	parent_id: number|null,
 	hash: string|null,
 	mime: string|null,
-	created_at: string|null
+	created_at: string|null,
+	type: FileType
 }
 
 export type UserTokenData = {
