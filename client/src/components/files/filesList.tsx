@@ -1,20 +1,16 @@
 import {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import fileDownload from 'js-file-download';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
-import { IconButton } from '@mui/material';
-import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon} from '@mui/icons-material';
+import {List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton} from '@mui/material';
+import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon, Folder as FolderIcon} from '@mui/icons-material';
 import ConfirmationDialog from '../main/ConfirmationDialog';
-import { FileModel } from '../../definitions';
+import { FileModel, FileType } from '../../definitions';
 import  * as FilesApi from '../../api/Files';
-import toast, { ToastOptions, Toaster } from 'react-hot-toast';
-
+import toast from 'react-hot-toast';
 
 export type FileListProps = {
-	uploadedFile: FileModel|null
+	uploadedFile: FileModel|null,
+	parentId?: Number|undefined
 }
 
 export default function FilesList(props: FileListProps) {
@@ -22,9 +18,10 @@ export default function FilesList(props: FileListProps) {
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
-		FilesApi.getFilesList().then(res => {
+		FilesApi.getFilesList(props.parentId).then(res => {
 			console.log('getLIstResponse', res.data);
 			setFiles(res.data);
 		})
@@ -77,6 +74,11 @@ export default function FilesList(props: FileListProps) {
 		)
 	}
 
+	const onFileClick = (file: FileModel) => {
+		if(file.type == FileType.TYPE_FOLDER)
+			return navigate('/folder/'+file.id);
+	}
+
 	const deleteFile = () => {
 		if(!fileToDelete || !fileToDelete?.id)
 			return setOpenDeleteConfirmation(false);
@@ -95,7 +97,15 @@ export default function FilesList(props: FileListProps) {
 		})
 	}
 
-	function ShowList() {
+	const getFileIcon = (file: FileModel) => {
+		return (
+			<>
+				{file.type == FileType.TYPE_FILE ? <ImageIcon /> : <FolderIcon />}
+			</>
+		)
+	}
+
+	const ShowList = () => {
 		if(!files.length)
 			return;
 
@@ -103,9 +113,9 @@ export default function FilesList(props: FileListProps) {
 			<List>
 				{files.map(file => {
 					return(
-						<ListItemButton key={file.hash}>
+						<ListItemButton key={file.hash} onClick={() => onFileClick(file)} style={{paddingTop: 0, paddingBottom: 0}}>
 							<ListItem secondaryAction={getFileOptionsButton(file)}>
-								<ListItemIcon><ImageIcon /></ListItemIcon>
+								<ListItemIcon>{getFileIcon(file)}</ListItemIcon>
 								<ListItemText primary={file.name} secondary={getDate(String(file.created_at))} />
 							</ListItem>
 						</ListItemButton>

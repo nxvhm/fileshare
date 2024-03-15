@@ -11,7 +11,6 @@ import Drawer from '../components/main/Drawer';
 import Topbar from "../components/main/Topbar";
 import CreateFolder from "../components/files/createFolder";
 import FilesList from "../components/files/filesList";
-import { FileModel } from "../definitions";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -27,35 +26,10 @@ const VisuallyHiddenInput = styled('input')({
 
 
 function Home() {
-	const {user, logoutUser} = useContext(AuthContext);
 	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload();
 
 	return (
-		<Box sx={{ display: 'flex' }}>
-			<Topbar />
-			<Drawer />
-
-			<Box component="main" sx={{
-        backgroundColor: theme => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-				flexGrow: 1, height: '100vh', overflow: 'auto'}}
-			>
-			<Toolbar />
-			<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-				<Box sx={{display: 'flex', gap: 1}}>
-					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-						Upload file
-						<VisuallyHiddenInput type="file" onChange={fileUpload} />
-					</Button>
-
-					<CreateFolder />
-				</Box>
-				<FilesList uploadedFile={uploadedFile}/>
-
-				<p><Button variant="contained" onClick={() => logoutUser()}>Logout</Button></p>
-			</Container>
-			</Box>
-			<Toaster />
-		</Box>
+		<FilesList uploadedFile={uploadedFile}/>
 	)
 }
 
