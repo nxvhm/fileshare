@@ -4,13 +4,14 @@ import { IUserAuthRequest } from "../definitions"
 import { Files } from "../lib/Files";
 const router = express.Router();
 
-router.get('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
+router.get('/:parentId?', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
 	if(!req.user)
 		return res.status(403).send("Unauthorized");
 
-	const files = await Files.getUserFiles(req.user?.data.id);
+	const parentId = req.params.parentId ? Number(req.params.parentId) : undefined;
+	console.log("Params are:", req.params.hash);
+	const files = await Files.getUserFiles(req.user?.data.id, parentId);
 	return res.send(files);
-
 });
 
 

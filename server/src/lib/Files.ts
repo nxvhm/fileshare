@@ -1,10 +1,11 @@
 import fs, { PathLike } from "fs";
 import { sep } from "path";
 import path from 'path';
-import { File } from "../models/File";
+import { File, FileTypes } from "../models/File";
 import { AppDataSource } from "../datasource";
 import { UserTokenPayload } from "../definitions";
 import { IsNull } from "typeorm";
+import { createHash } from "crypto";
 
 export class Files {
 
@@ -150,7 +151,7 @@ export class Files {
 		});
 	}
 
-	public static getUserFiles(userId: number, parentId: number|null = null): Promise<File[]> {
+	public static getUserFiles(userId: number, parentId: number|undefined): Promise<File[]> {
 		return new Promise( async (resolve, reject) => {
 			const filesRepo = AppDataSource.getRepository(File);
 			try {
@@ -167,6 +168,28 @@ export class Files {
 			} catch (error) {
 				reject(error)
 			}
+		})
+	}
+
+	public static createFolder(name: string, userId: number, parentId: number|null): Promise<File|boolean> {
+		return new Promise(async (resolve, reject) => {
+			const filesRepo = AppDataSource.getRepository(File),
+						folder = new File();
+
+			folder.user_id = userId;
+			folder.name = name;
+			folder.parent_id = parentId;
+			folder.type = FileTypes.TYPE_FOLDER;
+			folder.hash = await File.generateHash(folder.user_id, name);
+
+			try {
+				await filesRepo.save(folder);
+			} catch (error) {
+				console.error(error);
+				return reject(error);
+			}
+
+			return resolve(folder);
 		})
 	}
 
