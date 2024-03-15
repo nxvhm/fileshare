@@ -3,6 +3,7 @@ import { useContext } from "react";
 import AuthContext from "../lib/context/AuthContext";
 import { Token } from "../lib/Token";
 import { useState, useEffect } from "react";
+import Layout from "../components/main/Layout";
 const ProtectedRoute = ({ children }) => {
 
 	const {user} = useContext(AuthContext);
@@ -16,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-	return children;
+	return <Layout>{children}</Layout>;
 
 };
 
