@@ -3,7 +3,7 @@ import { FileModel } from "../../definitions";
 import axiosInstance from "../Axios";
 import toast from "react-hot-toast";
 
-export default function useFileUpload() {
+export default function useFileUpload(parentId: undefined|number) {
 	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
 
 	const fileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,6 +13,10 @@ export default function useFileUpload() {
 		const file = e.target.files[0];
 		const formData = new FormData();
 		formData.append("file", file);
+
+		if(parentId)
+			formData.set('parentId', String(parentId));
+
 		axiosInstance.post('/upload/file',formData, { headers: {
 			'Content-Type': 'multipart/form-data'
 		}}).then(res => {
