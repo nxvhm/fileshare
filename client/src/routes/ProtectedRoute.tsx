@@ -4,7 +4,7 @@ import AuthContext from "../lib/context/AuthContext";
 import { Token } from "../lib/Token";
 import { useState, useEffect } from "react";
 import Layout from "../components/main/Layout";
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute: React.FC<React.PropsWithChildren> = ({children}) => {
 
 	const {user} = useContext(AuthContext);
 	const [isValid, setIsValid] = useState(true);

@@ -1,17 +1,35 @@
 import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import fileDownload from 'js-file-download';
-import {List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton} from '@mui/material';
-import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon, Folder as FolderIcon} from '@mui/icons-material';
+import toast from 'react-hot-toast';
+
+import {List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton, Box, Button} from '@mui/material';
+import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon, Folder as FolderIcon, CloudUpload as CloudUploadIcon} from '@mui/icons-material';
+
+import { styled } from '@mui/material/styles';
+
 import ConfirmationDialog from '../main/ConfirmationDialog';
 import { FileModel, FileType } from '../../definitions';
 import  * as FilesApi from '../../api/Files';
-import toast from 'react-hot-toast';
+import CreateFolder from './createFolder';
+import useFileUpload from '../../lib/hooks/useFileUpload';
 
 export type FileListProps = {
-	uploadedFile: FileModel|null,
-	parentId?: Number|undefined
+	parentId?: number|undefined
 }
+
+const VisuallyHiddenInput = styled('input')({
+	clip: 'rect(0 0 0 0)',
+	clipPath: 'inset(50%)',
+	height: 1,
+	overflow: 'hidden',
+	position: 'absolute',
+	bottom: 0,
+	left: 0,
+	whiteSpace: 'nowrap',
+	width: 1,
+});
 
 export default function FilesList(props: FileListProps) {
 
@@ -19,18 +37,18 @@ export default function FilesList(props: FileListProps) {
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 	const navigate = useNavigate();
+	const {fileUpload, uploadedFile} = useFileUpload(props.parentId);
 
 	useEffect(() => {
-		FilesApi.getFilesList(props.parentId).then(res => {
-			console.log('getLIstResponse', res.data);
-			setFiles(res.data);
-		})
+		FilesApi.getFilesList(props.parentId).then(res => setFiles(res.data))
 	}, [])
 
 	useEffect(() => {
-		if(props.uploadedFile)
-			appendFile(props.uploadedFile);
-	}, [props.uploadedFile]);
+		if(!uploadedFile)
+			return;
+
+		appendFile(uploadedFile);
+	}, [uploadedFile]);
 
 	const appendFile = (file: FileModel): void => {
 		if(!file)
@@ -127,6 +145,13 @@ export default function FilesList(props: FileListProps) {
 
 	return(
 		<>
+			<Box sx={{display: 'flex', gap: 1}}>
+				<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+					Upload file
+					<VisuallyHiddenInput type="file" onChange={fileUpload} />
+				</Button>
+				<CreateFolder />
+			</Box>
 			<ShowList />
 			<ConfirmationDialog
 				isOpen={openDeleteConfirmation}
