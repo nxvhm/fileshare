@@ -26,7 +26,7 @@ router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: ex
 		if(!(await Files.moveUploadedFile(req.file, req.user)))
 			return res.status(500).send("File was not copied correctly");
 
-		const file = await Files.saveInDatabase(req.file, req.user?.data.id, null);
+		const file = await Files.saveInDatabase(req.file, req.user?.data.id, req.body?.parentId);
 		if(!file)
 			return res.status(500).send("File not saved correctly");
 
