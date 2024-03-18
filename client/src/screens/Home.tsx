@@ -26,10 +26,9 @@ const VisuallyHiddenInput = styled('input')({
 
 
 function Home() {
-	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload();
 
 	return (
-		<FilesList uploadedFile={uploadedFile}/>
+		<FilesList/>
 	)
 }
 

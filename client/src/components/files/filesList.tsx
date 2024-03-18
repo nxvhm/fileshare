@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
@@ -14,6 +14,7 @@ import { FileModel, FileType } from '../../definitions';
 import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
+import Breadcrumbs from './breadcrumbs';
 
 export type FileListProps = {
 	parentId?: number|undefined
@@ -31,16 +32,18 @@ const VisuallyHiddenInput = styled('input')({
 	width: 1,
 });
 
-export default function FilesList(props: FileListProps) {
+export default function FilesList() {
 
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+	const { parentId } = useParams();
 	const navigate = useNavigate();
-	const {fileUpload, uploadedFile} = useFileUpload(props.parentId);
+	const {fileUpload, uploadedFile} = useFileUpload(Number(parentId));
+
 
 	useEffect(() => {
-		FilesApi.getFilesList(props.parentId).then(res => setFiles(res.data))
+		FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
 	}, [])
 
 	useEffect(() => {
@@ -131,7 +134,7 @@ export default function FilesList(props: FileListProps) {
 			<List>
 				{files.map(file => {
 					return(
-						<ListItemButton key={file.hash} onClick={() => onFileClick(file)} style={{paddingTop: 0, paddingBottom: 0}}>
+						<ListItemButton key={file.hash} onClick={() => onFileClick(file)} style={{paddingTop: 0, paddingBottom: 0, paddingLeft: 0}}>
 							<ListItem secondaryAction={getFileOptionsButton(file)}>
 								<ListItemIcon>{getFileIcon(file)}</ListItemIcon>
 								<ListItemText primary={file.name} secondary={getDate(String(file.created_at))} />
@@ -145,12 +148,15 @@ export default function FilesList(props: FileListProps) {
 
 	return(
 		<>
-			<Box sx={{display: 'flex', gap: 1}}>
+			<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
 				<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
 					Upload file
 					<VisuallyHiddenInput type="file" onChange={fileUpload} />
 				</Button>
 				<CreateFolder />
+			</Box>
+			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
+				<Breadcrumbs />
 			</Box>
 			<ShowList />
 			<ConfirmationDialog
