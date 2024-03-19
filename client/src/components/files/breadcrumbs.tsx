@@ -1,13 +1,15 @@
-import * as React from 'react';
+import {useState, useEffect} from 'react';
+import { NavLink } from 'react-router-dom';
+
 import { emphasize, styled } from '@mui/material/styles';
-import {Breadcrumbs as MuiBreadcrumbs} from '@mui/material';
-import Chip from '@mui/material/Chip';
-import HomeIcon from '@mui/icons-material/Home';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {Breadcrumbs as MuiBreadcrumbs, Chip} from '@mui/material';
+import {Home as HomeIcon, Folder as FolderIcon} from '@mui/icons-material';
+
 import { getBreadcrumbs } from '../../api/Files';
+import { FileModel } from '../../definitions';
 
 export type BreadcrumbsProps = {
-	parentId?: number|undefined
+	folderId?: number|undefined
 }
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
@@ -34,29 +36,39 @@ function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
 
 export default function Breadcrumbs(props: BreadcrumbsProps) {
 
-	React.useEffect(() => {
-		getBreadcrumbs(props.parentId).then(res => {
-			console.log('breadcrumbs res', res);
+	const [folders, setFolders] = useState<FileModel[]>([]);
+	useEffect(() => {
+		console.log('breadcrums parent:', props.folderId);
+		getBreadcrumbs(props.folderId).then(res => {
+			setFolders(res.data);
 		}).catch(e => {
 			console.log('breadcrumbs err', e);
 		})
-	}, [props.parentId])
+	}, [props.folderId])
+
+	const RenderElements = () => {
+		if(!folders.length)
+			return;
+
+		return (
+			folders.map(folder => {
+				console.log(folder);
+				return(
+					<NavLink to={`/folder/${folder.id}`} key={folder.id}>
+						<StyledBreadcrumb label={folder.name} icon={<FolderIcon fontSize="small"/>}></StyledBreadcrumb>
+					</NavLink>
+				)
+			})
+		)
+	}
 
   return (
     <div role="presentation" onClick={handleClick}>
       <MuiBreadcrumbs aria-label="breadcrumb">
-        <StyledBreadcrumb
-          component="a"
-          href="#"
-          label="Home"
-          icon={<HomeIcon fontSize="small" />}
-        />
-        <StyledBreadcrumb component="a" href="#" label="Catalog" />
-        <StyledBreadcrumb
-          label="Accessories"
-          deleteIcon={<ExpandMoreIcon />}
-          onDelete={handleClick}
-        />
+				<NavLink to={"/"}>
+					<StyledBreadcrumb label="Home" icon={<HomeIcon fontSize="small" />}/>
+				</NavLink>
+				<RenderElements></RenderElements>
       </MuiBreadcrumbs>
     </div>
   );
