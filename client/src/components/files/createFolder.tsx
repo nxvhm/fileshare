@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button } from "@mui/material";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -14,6 +15,7 @@ export default function CreateFolder() {
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [inputError, setInputError] = useState<boolean|string>(false);
 	const [folderName, setFolderName] = useState<string>('');
+	const {parentId} = useParams();
 
 	const onChangeFolderName = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const folderName = e.target.value;
@@ -31,7 +33,7 @@ export default function CreateFolder() {
 		if(inputError)
 			return false;
 
-		createFolderRequest(folderName).then(res => {
+		createFolderRequest(folderName, parentId ? Number(parentId) : undefined).then(res => {
 			console.log('createFolderResult', res);
 		})
 	}

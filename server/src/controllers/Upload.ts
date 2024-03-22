@@ -50,6 +50,13 @@ const createFolderRequestValidator = {
 			options: /^[a-zA-Z0-9_-]+$/,
 			errorMessage: 'Only Alphanumeric charasters, underscore & dash are allowed'
 		}
+	},
+	parentId: {
+		optional: true,
+		matches: {
+			options: /^[0-9]+$/,
+			errorMessage: 'Parent ID should be either number or empty value'
+		}
 	}
 }
 
@@ -58,10 +65,11 @@ router.post('/create-folder', checkSchema(createFolderRequestValidator), async(r
 		return res.status(403).send("Unauthorized");
 
 		const validation = validationResult(req);
+
 		if (validation.array().length)
 			return res.status(422).send(validation.array().shift())
 
-		Files.createFolder(req.body.name, req.user.data.id,  null).then(folder => {
+		Files.createFolder(req.body.name, Number(req.user?.data?.id),  req.body.parentId).then(folder => {
 			return res.send(folder);
 		}).catch(err => {
 			res.status(500).send({message: "Error occured, please try again later"});
