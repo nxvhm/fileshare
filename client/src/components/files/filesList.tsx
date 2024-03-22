@@ -44,7 +44,7 @@ export default function FilesList() {
 
 	useEffect(() => {
 		FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
-	}, [])
+	}, [parentId])
 
 	useEffect(() => {
 		if(!uploadedFile)
@@ -88,14 +88,20 @@ export default function FilesList() {
 	const getFileOptionsButton = (file: FileModel): JSX.Element => {
 		return (
 			<>
-			<IconButton onClick={() => downloadFile(file)}><DownloadIcon /></IconButton>
+			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)}><DownloadIcon /></IconButton>}
 			<IconButton><ShareIcon /></IconButton>
-			<IconButton onClick={() => showDeleteConfirmation(file)}><DeleteIcon /></IconButton>
+			<IconButton onClick={() => showDeleteConfirmation(file)} className='fileActionButton' id='DeleteIcon'>
+				<DeleteIcon />
+			</IconButton>
 			</>
 		)
 	}
 
-	const onFileClick = (file: FileModel) => {
+	const onFileClick = (e: React.MouseEvent, file: FileModel) => {
+		const target = (e.target as HTMLBodyElement);
+		if(target.classList.contains('fileActionButton') || target.parentElement?.classList.contains('fileActionButton'))
+			return;
+
 		if(file.type == FileType.TYPE_FOLDER)
 			return navigate('/folder/'+file.id);
 	}
@@ -105,13 +111,13 @@ export default function FilesList() {
 			return setOpenDeleteConfirmation(false);
 
 		FilesApi.deleteFile(fileToDelete?.id).then(res => {
-			if(res.data.success) {
-				toast.success("File deleted");
-				setFiles(files.filter(file => file.id != fileToDelete.id ));
-			} else {
-				toast.error("Error deleting file");
-			}
+			if(!res.data.success)
+				return toast.error("Error deleting file");
+
+			toast.success("File deleted");
+			setFiles(files.filter(file => file.id != fileToDelete.id ));
 			setOpenDeleteConfirmation(false);
+
 		}).catch(e => {
 			toast.error("Error deleting file");
 			console.error('alert deleting file');
@@ -134,7 +140,7 @@ export default function FilesList() {
 			<List>
 				{files.map(file => {
 					return(
-						<ListItemButton key={file.hash} onClick={() => onFileClick(file)} style={{paddingTop: 0, paddingBottom: 0, paddingLeft: 0}}>
+						<ListItemButton key={file.hash} onClick={e => onFileClick(e, file)} style={{paddingTop: 0, paddingBottom: 0, paddingLeft: 0}}>
 							<ListItem secondaryAction={getFileOptionsButton(file)}>
 								<ListItemIcon>{getFileIcon(file)}</ListItemIcon>
 								<ListItemText primary={file.name} secondary={getDate(String(file.created_at))} />
@@ -156,7 +162,7 @@ export default function FilesList() {
 				<CreateFolder />
 			</Box>
 			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
-				<Breadcrumbs />
+				<Breadcrumbs folderId={Number(parentId)} />
 			</Box>
 			<ShowList />
 			<ConfirmationDialog
