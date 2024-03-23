@@ -10,8 +10,13 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { createFolder as createFolderRequest} from '../../api/Files';
+import { FileModel } from '../../definitions';
 
-export default function CreateFolder() {
+export type CreateFolderProps = {
+	onFolderCreate: (folder: FileModel) => void;
+}
+
+export default function CreateFolder(props: CreateFolderProps) {
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [inputError, setInputError] = useState<boolean|string>(false);
 	const [folderName, setFolderName] = useState<string>('');
@@ -34,8 +39,12 @@ export default function CreateFolder() {
 			return false;
 
 		createFolderRequest(folderName, parentId ? Number(parentId) : undefined).then(res => {
-			console.log('createFolderResult', res);
-		})
+			if(res.status !== 200)
+				return;
+
+			props.onFolderCreate((res.data as FileModel));
+			setOpenDialog(false);
+		});
 	}
 
 	return (
