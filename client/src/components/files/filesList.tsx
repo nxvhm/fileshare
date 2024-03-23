@@ -39,7 +39,7 @@ export default function FilesList() {
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 	const { parentId } = useParams();
 	const navigate = useNavigate();
-	const {fileUpload, uploadedFile} = useFileUpload(Number(parentId));
+	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload(Number(parentId));
 
 
 	useEffect(() => {
@@ -75,6 +75,10 @@ export default function FilesList() {
 		FilesApi.downloadFile(String(file.hash)).then(res => {
 			fileDownload(res.data, file.name);
 		})
+	}
+
+	const onFolderCreate = (folder: FileModel): void => {
+		setUploadedFile(folder);
 	}
 
 	const getDate = (dateString: string): string => {
@@ -159,7 +163,7 @@ export default function FilesList() {
 					Upload file
 					<VisuallyHiddenInput type="file" onChange={fileUpload} />
 				</Button>
-				<CreateFolder />
+				<CreateFolder onFolderCreate={onFolderCreate} />
 			</Box>
 			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
 				<Breadcrumbs folderId={Number(parentId)} />
