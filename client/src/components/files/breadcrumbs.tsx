@@ -31,14 +31,12 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
   event.preventDefault();
-  console.info('You clicked a breadcrumb.');
 }
 
 export default function Breadcrumbs(props: BreadcrumbsProps) {
 
 	const [folders, setFolders] = useState<FileModel[]>([]);
 	useEffect(() => {
-		console.log('breadcrums parent:', props.folderId);
 		getBreadcrumbs(props.folderId).then(res => {
 			setFolders(res.data);
 		}).catch(e => {
@@ -46,29 +44,26 @@ export default function Breadcrumbs(props: BreadcrumbsProps) {
 		})
 	}, [props.folderId])
 
-	const RenderElements = () => {
+	const breadcrumbsElements = () => {
 		if(!folders.length)
 			return;
 
-		return (
-			folders.map(folder => {
-				console.log(folder);
-				return(
-					<NavLink to={`/folder/${folder.id}`} key={folder.id}>
-						<StyledBreadcrumb label={folder.name} icon={<FolderIcon fontSize="small"/>}></StyledBreadcrumb>
-					</NavLink>
-				)
-			})
-		)
+		return folders.map(folder => {
+			return(
+				<NavLink to={props.folderId != folder.id ? `/folder/${folder.id}` : '#'} key={folder.id}>
+					<StyledBreadcrumb label={folder.name} icon={<FolderIcon fontSize="small"/>} />
+				</NavLink>
+			)
+		})
 	}
 
   return (
     <div role="presentation" onClick={handleClick}>
-      <MuiBreadcrumbs aria-label="breadcrumb">
+      <MuiBreadcrumbs aria-label="breadcrumb" >
 				<NavLink to={"/"}>
 					<StyledBreadcrumb label="Home" icon={<HomeIcon fontSize="small" />}/>
 				</NavLink>
-				<RenderElements></RenderElements>
+				{breadcrumbsElements()}
       </MuiBreadcrumbs>
     </div>
   );

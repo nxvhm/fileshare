@@ -22,18 +22,25 @@ router.get('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Resp
 	if(!folder?.parent_id)
 		return res.send([folder]);
 
-	const query = AppDataSource
-		.createQueryBuilder()
-		.from(File, 'file')
-		.select(['file.id', 'file.name', 'file.hash'])
-		.where('file.id = :parentId', {parentId: folder.parent_id})
-		.andWhere('file.type = "folder"');
+	const folderHierarchy = await AppDataSource.createQueryRunner().manager.query(`
+		WITH RECURSIVE cte (id, name, parent_id) AS (
+			SELECT id, name, parent_id
+			FROM files
+			WHERE parent_id = ? AND type = 'folder' AND user_id = ?
+			UNION ALL
+				SELECT f.id, f.name, f.parent_id
+				FROM files f
+				INNER JOIN cte ON f.id = cte.parent_id
+		) select * from cte;
+	`, [folder.parent_id, req.user?.data.id]);
 
-	const navigation = await query.getMany();
-
-	console.log("NAVIGATION", navigation);
-
-	return res.send(navigation);
+	const result = folderHierarchy.sort((a: File, b: File) => a.id < b.id ? -1 : 1);
+	return res.send(result);
 });
+
+
+/**
+
+ */
 
 export default router;
