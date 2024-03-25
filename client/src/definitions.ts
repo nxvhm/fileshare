@@ -19,3 +19,16 @@ export type UserTokenData = {
 	name: string,
 	email: string
  }
+
+
+export type OpenDrawerContextType = {
+	drawerOpen: boolean,
+	toggleDrawer?: () => void
+}
+
+export type FileDetailsDrawerContextType = {
+	drawerOpen: boolean,
+	toggleDrawer: () => void,
+	selectedFile: FileModel|null,
+	setSelectedFile?: (file: FileModel|null) => void
+}

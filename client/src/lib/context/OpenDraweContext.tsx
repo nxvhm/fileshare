@@ -1,9 +1,6 @@
 import { createContext, PropsWithChildren, useState } from "react";
 
-export type OpenDrawerContextType = {
-	drawerOpen: boolean,
-	toggleDrawer?: () => void
-}
+import { OpenDrawerContextType } from "../../definitions";
 
 const defaultState = {
 	drawerOpen: false
