@@ -19,6 +19,7 @@ import { useAuth } from './lib/hooks/useAuth.ts';
 import AuthContext from './lib/context/AuthContext.ts';
 
 import {OpenDrawerContextProvider} from './lib/context/OpenDraweContext.tsx';
+import { OpenFileDetailsContextProvider } from './lib/context/OpenFileDetailsContext.tsx';
 
 import './assets/main.css';
 const App = function() {
@@ -47,7 +48,9 @@ const App = function() {
 	return(
 		<AuthContext.Provider value={{user, loginUser, logoutUser}}>
 		<OpenDrawerContextProvider>
+		<OpenFileDetailsContextProvider>
 			<RouterProvider router={router} />
+		</OpenFileDetailsContextProvider>
 		</OpenDrawerContextProvider>
 		</AuthContext.Provider>
 	)
