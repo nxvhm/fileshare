@@ -4,11 +4,11 @@ import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 import {ListItemText, ListItemButton, List, ModalProps} from '@mui/material';
 
 export default function FileDetailsDrawer() {
-	const {drawerOpen} = useContext(OpenFileDetailsContext);
+	const {drawerOpen, toggleDrawer} = useContext(OpenFileDetailsContext);
 
 	const backdropProps: Partial<ModalProps> = {
-		slots: {backdrop: "div",},
 		slotProps: {
+			backdrop: {sx: {background: "none"}},
 			root: {
 				style: {
 					position: "absolute",
@@ -19,7 +19,7 @@ export default function FileDetailsDrawer() {
 	}
 
 	return (
-		<Drawer anchor={'right'} open={drawerOpen} PaperProps={{style: {width: 320}}} ModalProps={backdropProps}>
+		<Drawer onClose={toggleDrawer} anchor={'right'} open={drawerOpen} PaperProps={{style: {width: 320}}} ModalProps={backdropProps}>
 			<List component="nav">
 
 				<ListItemButton>
