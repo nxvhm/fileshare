@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import fileDownload from 'js-file-download';
@@ -15,6 +15,7 @@ import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
 import Breadcrumbs from './breadcrumbs';
+import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 
 export type FileListProps = {
 	parentId?: number|undefined
@@ -40,6 +41,7 @@ export default function FilesList() {
 	const { parentId } = useParams();
 	const navigate = useNavigate();
 	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload(Number(parentId));
+	const {toggleDrawer} = useContext(OpenFileDetailsContext);
 
 
 	useEffect(() => {
@@ -108,6 +110,8 @@ export default function FilesList() {
 
 		if(file.type == FileType.TYPE_FOLDER)
 			return navigate('/folder/'+file.id);
+
+		toggleDrawer();
 	}
 
 	const deleteFile = () => {
@@ -124,7 +128,7 @@ export default function FilesList() {
 
 		}).catch(e => {
 			toast.error("Error deleting file");
-			console.error('alert deleting file');
+			console.error("Error deleting file", e);
 		})
 	}
 
