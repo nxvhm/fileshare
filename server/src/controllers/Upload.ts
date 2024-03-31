@@ -3,7 +3,7 @@ import multer from 'multer';
 import { validationResult, checkSchema } from "express-validator"
 import AuthMiddleware from "./../middleware/Auth";
 import { IUserAuthRequest } from "../definitions";
-import { Files } from "../lib/Files";
+import { Files } from "../lib/FilesHelper";
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' })

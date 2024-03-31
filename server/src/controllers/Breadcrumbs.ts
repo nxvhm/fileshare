@@ -1,7 +1,6 @@
 import express from "express"
 import AuthMiddleware from "../middleware/Auth"
 import { IUserAuthRequest } from "../definitions"
-import { Files } from "../lib/Files";
 import { AppDataSource } from "../datasource";
 import { File } from "../models/File";
 const router = express.Router();

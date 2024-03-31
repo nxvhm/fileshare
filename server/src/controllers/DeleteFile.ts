@@ -3,7 +3,7 @@ import AuthMiddleware from "../middleware/Auth";
 import { IUserAuthRequest } from "../definitions";
 import { AppDataSource } from "../datasource";
 import { File } from "../models/File";
-import { Files } from "../lib/Files";
+import { Files } from "../lib/FilesHelper";
 const router = express.Router();
 
 router.post('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {

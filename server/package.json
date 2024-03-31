@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "dev-migrate": "npx typeorm-ts-node-esm migration:run -d ./src/datasource.ts",
+    "dev-migrate": "npx typeorm-ts-node-esm  migration:run -d ./src/datasource.ts",
     "dev-migrate-down": "npx typeorm-ts-node-esm migration:revert -d ./src/datasource.ts",
     "build": "tsc",
     "serve": "node dist/index.js"
