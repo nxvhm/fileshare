@@ -5,7 +5,6 @@ import { File, FileTypes } from "../models/File";
 import { AppDataSource } from "../datasource";
 import { UserTokenPayload } from "../definitions";
 import { IsNull } from "typeorm";
-import { createHash } from "crypto";
 
 export class Files {
 
