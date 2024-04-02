@@ -32,12 +32,18 @@ export class File {
 	@Column("varchar")
 	mime!: string
 
+	@Column("bigint")
+	filesize!: number
+
 	@Column({
 		type: "enum",
 		enum: FileTypes,
 		default: FileTypes.TYPE_FILE
 	})
 	type!: FileTypes
+
+	@Column("int")
+	public!:  number
 
 	@Column("datetime")
 	created_at!: string
