@@ -137,6 +137,7 @@ export class Files {
 			fileRecord.mime = file.mimetype;
 			fileRecord.name = file.originalname;
 			fileRecord.hash = file.filename;
+			fileRecord.filesize = file.size;
 			fileRecord.parent_id = parentId;
 
 			try {

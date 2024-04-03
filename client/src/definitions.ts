@@ -10,8 +10,10 @@ export type FileModel = {
 	parent_id: number|null,
 	hash: string|null,
 	mime: string|null,
+	filesize: number,
+	type: FileType,
+	public: 1|0
 	created_at: string|null,
-	type: FileType
 }
 
 export type UserTokenData = {
@@ -30,5 +32,6 @@ export type FileDetailsDrawerContextType = {
 	drawerOpen: boolean,
 	toggleDrawer: () => void,
 	selectedFile: FileModel|null,
-	setSelectedFile?: (file: FileModel|null) => void
+	setSelectedFile?: (file: FileModel|null) => void,
+	showFileDetails: (file: FileModel) => void
 }
