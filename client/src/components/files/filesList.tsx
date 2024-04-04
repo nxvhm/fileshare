@@ -41,7 +41,7 @@ export default function FilesList() {
 	const { parentId } = useParams();
 	const navigate = useNavigate();
 	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload(Number(parentId));
-	const {toggleDrawer} = useContext(OpenFileDetailsContext);
+	const {showFileDetails} = useContext(OpenFileDetailsContext);
 
 
 	useEffect(() => {
@@ -111,7 +111,7 @@ export default function FilesList() {
 		if(file.type == FileType.TYPE_FOLDER)
 			return navigate('/folder/'+file.id);
 
-		toggleDrawer();
+		showFileDetails(file);
 	}
 
 	const deleteFile = () => {
