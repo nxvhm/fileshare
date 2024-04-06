@@ -4,7 +4,7 @@ export class CreateFileShareTable1712347135963 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
 			await queryRunner.query(
-				`CREATE TABLE file_share (
+				`CREATE TABLE shares (
 					user_id INT(11) UNSIGNED NOT NULL,
 					file_id BIGINT(11) UNSIGNED NOT NULL,
 					created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -13,8 +13,8 @@ export class CreateFileShareTable1712347135963 implements MigrationInterface {
 				`
 			);
 
-			await queryRunner.createForeignKey('file_share', new TableForeignKey({
-				name: 'fk_file_share_user_id_users',
+			await queryRunner.createForeignKey('shares', new TableForeignKey({
+				name: 'fk_shares_share_user_id_users',
 				columnNames: ['user_id'],
 				referencedTableName: 'users',
 				referencedColumnNames: ['id'],
@@ -22,8 +22,8 @@ export class CreateFileShareTable1712347135963 implements MigrationInterface {
 				onUpdate: 'CASCADE'
 			}));
 
-			await queryRunner.createForeignKey('file_share', new TableForeignKey({
-				name: 'fk_file_share_file_id_files',
+			await queryRunner.createForeignKey('shares', new TableForeignKey({
+				name: 'fk_shares_file_id_files',
 				columnNames: ['file_id'],
 				referencedTableName: 'files',
 				referencedColumnNames: ['id'],
@@ -34,10 +34,10 @@ export class CreateFileShareTable1712347135963 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-			const exists = await queryRunner.hasTable('file_share');
+			const exists = await queryRunner.hasTable('shares');
 
 			if (exists)
-				 await queryRunner.query(`DROP TABLE IF EXISTS file_share`);
+				 await queryRunner.query(`DROP TABLE IF EXISTS shares`);
     }
 
 }
