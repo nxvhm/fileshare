@@ -5,10 +5,10 @@ import { FileDetailsDrawerContextType, FileModel } from "../../definitions";
 const defaultState = {
 	drawerOpen: false,
 	selectedFile: null,
-	toggleDrawer: () => {}
+	toggleDrawer: () => {},
 }
 
-const OpenFileDetailsContext = createContext<FileDetailsDrawerContextType>(defaultState);
+const OpenFileDetailsContext = createContext<FileDetailsDrawerContextType>(defaultState as FileDetailsDrawerContextType);
 
 export const OpenFileDetailsContextProvider = ({children}: PropsWithChildren<{}>) => {
 
@@ -16,9 +16,13 @@ export const OpenFileDetailsContextProvider = ({children}: PropsWithChildren<{}>
 	const [selectedFile, setSelectedFile] = useState<FileModel|null>(null);
 
 	const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+	const showFileDetails = (file: FileModel) => {
+		setSelectedFile(file);
+		setDrawerOpen(true);
+	}
 
 	return(
-		<OpenFileDetailsContext.Provider value={{drawerOpen, toggleDrawer, selectedFile, setSelectedFile}}>
+		<OpenFileDetailsContext.Provider value={{drawerOpen, toggleDrawer, selectedFile, setSelectedFile, showFileDetails}}>
 			{children}
 		</OpenFileDetailsContext.Provider>
 	)
