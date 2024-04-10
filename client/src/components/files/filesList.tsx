@@ -15,6 +15,7 @@ import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
 import Breadcrumbs from './breadcrumbs';
+import Share from './share';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 
 export type FileListProps = {
@@ -37,7 +38,10 @@ export default function FilesList() {
 
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
-  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState<boolean>(false);
+  const [openShareWindow, setOpenShareWindow] = useState<boolean>(false);
+  const [fileShare, setFileShare] = useState<FileModel|null>(null);
+
 	const { parentId } = useParams();
 	const navigate = useNavigate();
 	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload(Number(parentId));
@@ -94,10 +98,10 @@ export default function FilesList() {
 	const getFileOptionsButton = (file: FileModel): JSX.Element => {
 		return (
 			<>
-			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)}><DownloadIcon /></IconButton>}
-			<IconButton><ShareIcon /></IconButton>
-			<IconButton onClick={() => showDeleteConfirmation(file)} className='fileActionButton' id='DeleteIcon'>
-				<DeleteIcon />
+			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)}><DownloadIcon className='fileActionIcon'/></IconButton>}
+			<IconButton className='fileActionButton' id='ShareButton' onClick={() => shareFile(file)}><ShareIcon className='fileActionIcon' /></IconButton>
+			<IconButton onClick={() => showDeleteConfirmation(file)} className='fileActionButton' id='DeleteButton'>
+				<DeleteIcon className='fileActionIcon' />
 			</IconButton>
 			</>
 		)
@@ -105,7 +109,7 @@ export default function FilesList() {
 
 	const onFileClick = (e: React.MouseEvent, file: FileModel) => {
 		const target = (e.target as HTMLBodyElement);
-		if(target.classList.contains('fileActionButton') || target.parentElement?.classList.contains('fileActionButton'))
+		if(target.classList.contains('fileActionButton') || target.parentElement?.classList.contains('fileActionButton') || target.classList.contains('fileActionIcon'))
 			return;
 
 		if(file.type == FileType.TYPE_FOLDER)
@@ -130,6 +134,17 @@ export default function FilesList() {
 			toast.error("Error deleting file");
 			console.error("Error deleting file", e);
 		})
+	}
+
+	const shareFile = (file: FileModel) => {
+		setFileShare(file);
+		setOpenShareWindow(true);
+	}
+
+	const closeFileShare = () => {
+		console.log("dasdas");
+		setFileShare(null);
+		setOpenShareWindow(false)
 	}
 
 	const getFileIcon = (file: FileModel) => {
@@ -180,6 +195,7 @@ export default function FilesList() {
 				dialogText='Are you sure you want to delete this file ?'
 				secondaryDialogText='Action cannot be reverted'
 			></ConfirmationDialog>
+			<Share open={openShareWindow} file={fileShare} onClose={closeFileShare} />
 		</>
 	);
 }
