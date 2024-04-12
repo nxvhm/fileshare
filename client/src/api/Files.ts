@@ -27,3 +27,19 @@ export const getBreadcrumbs = (folderId: number|undefined) => {
 
 	return axiosInstance.get('/files/breadcrumbs', {params});
 }
+
+export type UserSearchResult = {
+	id: number,
+	name: string,
+	email: string
+}
+
+export const searchUsers = (term: string):Promise<UserSearchResult[]> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.get('/users/search', {params: {term}}).then(result => {
+				return resolve(result.data);
+		}).catch(error => {
+			reject(error);
+		})
+	})
+}

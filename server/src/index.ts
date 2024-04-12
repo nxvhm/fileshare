@@ -10,6 +10,7 @@ import FileList from "./controllers/FileList"
 import DeleteFile from "./controllers/DeleteFile";
 import DownloadFile from "./controllers/DownloadFile";
 import Breadcrumbs from "./controllers/Breadcrumbs";
+import Users from "./controllers/Users";
 
 const app = express();
 const port = process.env.APP_PORT || 3000;
@@ -38,6 +39,7 @@ app.use('/files/list', FileList);
 app.use('/files/delete', DeleteFile);
 app.use('/files/download', DownloadFile);
 app.use('/files/breadcrumbs', Breadcrumbs);
+app.use('/users', Users);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
