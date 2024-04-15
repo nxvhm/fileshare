@@ -1,0 +1,68 @@
+import express from "express";
+import { validationResult, checkSchema } from "express-validator"
+import AuthMiddleware from "@/middleware/Auth";
+import { IUserAuthRequest } from "@/definitions";
+import { Files } from "@/lib/FilesHelper";
+import { File } from "@/models/File";
+import { User } from "@/models/User";
+import { Share } from "@/models/Share";
+import { AppDataSource } from "@/datasource";
+
+const router = express.Router();
+router.use(AuthMiddleware);
+
+const shareFileRequestValidation = {
+	userId: {
+		notEmpty: true,
+		matches: {
+			options: /^[0-9]+$/,
+			errorMessage: 'Invalid user provided'
+		}
+	},
+	fileId: {
+		notEmpty: true,
+		matches: {
+			options: /^[0-9]+$/,
+			errorMessage: 'Invalid user provided'
+		}
+	}
+}
+
+router.post('/', checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+	if (!req.user)
+		return res.status(403).send("Unauthorized");
+
+	const validation = validationResult(req);
+	if (validation.array().length)
+		return res.status(422).send(validation.array().shift())
+
+	try {
+		const usersRepo = AppDataSource.getRepository(User);
+		const filesRepo = AppDataSource.getRepository(File);
+		const shareRepo = AppDataSource.getRepository(Share);
+
+		if (!await usersRepo.findOneBy({id: req.body.userId}))
+			return res.status(404).send("User cannot be found");
+
+		if (!await filesRepo.findOneBy({id: req.body.fileId}))
+			return res.status(404).send("File cannot be found");
+
+		if (await shareRepo.findOneBy({file_id: req.body.fileId, user_id: req.body.userId}))
+			return res.status(422).send("File is already shared with that user");
+
+		const shareRecord = new Share();
+		shareRecord.file_id = req.body.fileId;
+		shareRecord.user_id = req.body.userId;
+
+		await shareRepo.save(shareRecord);
+
+		return res.status(200).send(shareRecord);
+
+	} catch (error) {
+		console.error(error);
+		return res.status(500).send("Error during share. Please try again later");
+	}
+
+})
+
+export default router;
