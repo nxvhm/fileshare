@@ -35,3 +35,15 @@ export type FileDetailsDrawerContextType = {
 	setSelectedFile?: (file: FileModel|null) => void,
 	showFileDetails: (file: FileModel) => void
 }
+
+export type ShareRecord = {
+	id: number,
+	user_id: number,
+	file_id: number
+}
+
+export type UserSearchResult = {
+	id: number,
+	name: string,
+	email: string
+}
