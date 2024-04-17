@@ -142,7 +142,6 @@ export default function FilesList() {
 	}
 
 	const closeFileShare = () => {
-		console.log("dasdas");
 		setFileShare(null);
 		setOpenShareWindow(false)
 	}
