@@ -15,6 +15,10 @@ export const OpenFileDetailsContextProvider = ({children}: PropsWithChildren<{}>
 	const [selectedFile, setSelectedFile] = useState<FileModel|null>(null);
 
 	const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+	const showFileDetails = (file: FileModel) => {
+		setSelectedFile(file);
+		setDrawerOpen(true);
+	}
 
 	const showFileDetails = (file: FileModel) => {
 		setSelectedFile(file);

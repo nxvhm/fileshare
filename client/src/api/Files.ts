@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from "axios";
+import { ShareRecord, UserSearchResult } from "../definitions";
 import axiosInstance from "../lib/Axios"
 
 export const deleteFile = (id: number) => {
@@ -26,4 +26,21 @@ export const getBreadcrumbs = (folderId: number|undefined) => {
 		params.folderId = folderId;
 
 	return axiosInstance.get('/files/breadcrumbs', {params});
+}
+
+
+export const searchUsers = (term: string):Promise<UserSearchResult[]> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.get('/users/search', {params: {term}})
+			.then(result => resolve(result.data))
+			.catch(error => reject(error))
+	});
+}
+
+export const shareFile = (userId: number, fileId: number): Promise<ShareRecord> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.post('/files/share', {userId, fileId})
+			.then(res => resolve(res.data))
+			.catch(e => reject(e))
+	});
 }

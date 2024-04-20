@@ -61,7 +61,7 @@ const createFolderRequestValidator = {
 }
 
 router.post('/create-folder', checkSchema(createFolderRequestValidator), async(req: IUserAuthRequest, res: express.Response) => {
-	if(!req.user)
+	if (!req.user)
 		return res.status(403).send("Unauthorized");
 
 		const validation = validationResult(req);
