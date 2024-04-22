@@ -28,7 +28,6 @@ export const getBreadcrumbs = (folderId: number|undefined) => {
 	return axiosInstance.get('/files/breadcrumbs', {params});
 }
 
-
 export const searchUsers = (term: string):Promise<UserSearchResult[]> => {
 	return new Promise((resolve, reject) => {
 		axiosInstance.get('/users/search', {params: {term}})
@@ -42,5 +41,13 @@ export const shareFile = (userId: number, fileId: number): Promise<ShareRecord> 
 		axiosInstance.post('/files/share', {userId, fileId})
 			.then(res => resolve(res.data))
 			.catch(e => reject(e))
+	});
+}
+
+export const getFileShares = (fileId: number): Promise<ShareRecord[]> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.get('/files/shares', {params: {fileId}})
+			.then(res => resolve(res.data))
+			.catch(e => reject(e));
 	});
 }

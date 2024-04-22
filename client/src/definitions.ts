@@ -37,9 +37,12 @@ export type FileDetailsDrawerContextType = {
 }
 
 export type ShareRecord = {
-	id: number,
 	user_id: number,
-	file_id: number
+	file_id: number,
+	created_at: string,
+	user: {
+		name: string
+	}
 }
 
 export type UserSearchResult = {
