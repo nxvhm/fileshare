@@ -1,5 +1,16 @@
-import { ShareRecord, UserSearchResult } from "../definitions";
+import { FileModel, ShareRecord, UserSearchResult } from "../definitions";
 import axiosInstance from "../lib/Axios"
+
+export const uploadFile = (form: FormData): Promise<FileModel> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.post('/files/upload', form, {
+			headers: {'Content-Type': 'multipart/form-data'}
+		}).then(res => {
+			if(res.data?.success && res.data?.file)
+				return resolve(res.data?.file);
+		}).catch(err => reject(err));
+	});
+}
 
 export const deleteFile = (id: number) => {
 	return axiosInstance.post('/files/delete', {id});
@@ -16,7 +27,7 @@ export const downloadFile = (hash: string) => {
 }
 
 export const createFolder = (name: string, parentId: number|undefined) => {
-	return axiosInstance.post('/upload/create-folder', {name, parentId});
+	return axiosInstance.post('/files/create-folder', {name, parentId});
 }
 
 export const getBreadcrumbs = (folderId: number|undefined) => {
