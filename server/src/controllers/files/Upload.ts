@@ -1,9 +1,9 @@
 import express from "express";
 import multer from 'multer';
 import { validationResult, checkSchema } from "express-validator"
-import AuthMiddleware from "./../middleware/Auth";
-import { IUserAuthRequest } from "../definitions";
-import { Files } from "../lib/FilesHelper";
+import AuthMiddleware from "@/middleware/Auth";
+import { IUserAuthRequest } from "@/definitions";
+import { Files } from "@/lib/FilesHelper";
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' })
@@ -13,7 +13,7 @@ router.use(AuthMiddleware);
 /**
  * Upload File
  */
-router.post('/file', upload.single('file'), async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/upload', upload.single('file'), async(req: IUserAuthRequest, res: express.Response) => {
 
 	if(!req.user)
 		return res.status(403).send("Unauthorized");

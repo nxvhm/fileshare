@@ -28,7 +28,7 @@ const shareFileRequestValidation = {
 	}
 }
 
-router.post('/', checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/share', checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
 	if (!req.user)
 		return res.status(403).send("Unauthorized");
 
@@ -56,7 +56,22 @@ router.post('/', checkSchema(shareFileRequestValidation), async(req: IUserAuthRe
 
 		await shareRepo.save(shareRecord);
 
-		return res.status(200).send(shareRecord);
+		const shareRecordSaved = await shareRepo.findOne({
+			where: {
+				user_id: shareRecord.user_id,
+				file_id: shareRecord.file_id
+			},
+			select: {
+				user: {
+					name: true
+				}
+			},
+			relations: {
+				user: true
+			}
+		});
+
+		return res.status(200).send(shareRecordSaved);
 
 	} catch (error) {
 		console.error(error);

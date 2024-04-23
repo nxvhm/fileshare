@@ -1,12 +1,12 @@
 import express from "express";
-import AuthMiddleware from "../middleware/Auth";
-import { IUserAuthRequest } from "../definitions";
-import { AppDataSource } from "../datasource";
-import { File } from "../models/File";
-import { Files } from "../lib/FilesHelper";
+import AuthMiddleware from "@/middleware/Auth";
+import { IUserAuthRequest } from "@/definitions";
+import { AppDataSource } from "@/datasource";
+import { File } from '@/models/File';
+import { Files } from '@/lib/FilesHelper';
 const router = express.Router();
 
-router.post('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/delete', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
 
 	if(!req.user)
 		return res.status(403).send("Unauthorized");

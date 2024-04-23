@@ -1,11 +1,12 @@
 import express from "express"
-import AuthMiddleware from "../middleware/Auth"
-import { IUserAuthRequest } from "../definitions"
-import { AppDataSource } from "../datasource";
-import { File } from "../models/File";
+import AuthMiddleware from '@/middleware/Auth'
+import { IUserAuthRequest } from "@/definitions"
+import { AppDataSource } from "@/datasource";
+import { File } from "@/models/File";
+
 const router = express.Router();
 
-router.get('/', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
+router.get('/breadcrumbs', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
 	if(!req.user)
 		return res.status(403).send("Unauthorized");
 

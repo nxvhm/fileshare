@@ -5,13 +5,8 @@ import express, { Request, Response } from 'express';
 import cors from 'cors'
 import AuthController from './controllers/Auth';
 import { AppDataSource } from "./datasource";
-import Upload from "./controllers/Upload";
-import FileList from "./controllers/FileList"
-import DeleteFile from "./controllers/DeleteFile";
-import DownloadFile from "./controllers/DownloadFile";
-import Breadcrumbs from "./controllers/Breadcrumbs";
 import Users from "./controllers/Users";
-import Share from "@/controllers/files/Share";
+import FilesModuleRouter from '@/controllers/files';
 
 const app = express();
 const port = process.env.APP_PORT || 3000;
@@ -35,12 +30,8 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello TS');
 });
 
-app.use('/upload', Upload);
-app.use('/files/list', FileList);
-app.use('/files/delete', DeleteFile);
-app.use('/files/download', DownloadFile);
-app.use('/files/breadcrumbs', Breadcrumbs);
-app.use('/files/share', Share);
+
+app.use('/files', FilesModuleRouter);
 app.use('/users', Users);
 
 app.listen(port, () => {
