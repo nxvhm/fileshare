@@ -44,7 +44,7 @@ router.post('/share', checkSchema(shareFileRequestValidation), async(req: IUserA
 		if (!await usersRepo.findOneBy({id: req.body.userId}))
 			return res.status(404).send("User cannot be found");
 
-		if (!await filesRepo.findOneBy({id: req.body.fileId}))
+		if (!await filesRepo.findOneBy({id: req.body.fileId, user_id: req.user?.data.id}))
 			return res.status(404).send("File cannot be found");
 
 		if (await shareRepo.findOneBy({file_id: req.body.fileId, user_id: req.body.userId}))
@@ -78,6 +78,32 @@ router.post('/share', checkSchema(shareFileRequestValidation), async(req: IUserA
 		return res.status(500).send("Error during share. Please try again later");
 	}
 
+})
+
+const fileSharesRequestValidation = {
+	fileId: {
+		notEmpty: true,
+		matches: {
+			options: /^[0-9]+$/,
+			errorMessage: 'Invalid file id'
+		}
+	}
+}
+router.get('/shares', checkSchema(fileSharesRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+
+	const validation = validationResult(req);
+	if (validation.array().length)
+		return res.status(422).send(validation.array().shift())
+
+	const shares = await AppDataSource.getRepository(Share).createQueryBuilder('shares')
+		.select(['shares.user_id', 'shares.file_id', 'shares.created_at', 'user.name', 'user.id'])
+		.innerJoin('shares.file', 'file')
+		.innerJoin('shares.user', 'user')
+		.where('file.id = :fileId', {fileId: req.query.fileId})
+		.andWhere('file.user_id = :userId', {userId: req.user?.data.id})
+		.getMany();
+
+	return res.send(shares);
 })
 
 export default router;
