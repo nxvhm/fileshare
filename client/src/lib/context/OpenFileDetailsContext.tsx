@@ -20,11 +20,6 @@ export const OpenFileDetailsContextProvider = ({children}: PropsWithChildren<{}>
 		setDrawerOpen(true);
 	}
 
-	const showFileDetails = (file: FileModel) => {
-		setSelectedFile(file);
-		setDrawerOpen(true);
-	}
-
 	return(
 		<OpenFileDetailsContext.Provider value={{drawerOpen, toggleDrawer, selectedFile, setSelectedFile, showFileDetails}}>
 			{children}

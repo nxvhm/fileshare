@@ -1,11 +1,9 @@
-import { useState } from "react";
-import { FileModel, UserSearchResult } from "../../definitions";
-import TextField from '@mui/material/TextField';
-import Autocomplete, { AutocompleteInputChangeReason } from '@mui/material/Autocomplete';
-import {Dialog, DialogTitle, DialogContent, DialogActions, Button} from '@mui/material';
-import { SyntheticEvent } from "react";
-import { searchUsers, shareFile } from "../../api/Files";
-import toast, { ToastOptions, Toaster } from 'react-hot-toast';
+import { useEffect, useState, SyntheticEvent } from "react";
+import { FileModel, ShareRecord, UserSearchResult } from "../../definitions";
+import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Autocomplete, TextField, IconButton} from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
+import { searchUsers, shareFile, getFileShares } from "../../api/Files";
+import toast, { Toaster } from 'react-hot-toast';
 
 export type ShareProps = {
 	open: boolean
@@ -17,6 +15,7 @@ export default function Share(props: ShareProps) {
   const { open, file, onClose } = props;
 	const [userResults, setUserResults] = useState<UserSearchResult[]>([]);
 	const [selectedUser, setSelectedUser] = useState<UserSearchResult|null>(null);
+	const [currentShares, setCurrentShares] = useState<ShareRecord[]>([]);
 
 	const onSearch = (e: SyntheticEvent, value: string, reason: AutocompleteInputChangeReason) => {
 		if (value.length < 3)
@@ -30,12 +29,20 @@ export default function Share(props: ShareProps) {
 		});
 	}
 
+	useEffect(() => {
+		if(!file?.id)
+			return;
+
+		getFileShares(file?.id).then(shares => setCurrentShares(shares));
+	}, [file])
+
 	const shareWithSelectedUser = () => {
 		if (!selectedUser?.id || !file?.id)
 			return;
 
 		shareFile(selectedUser.id, file.id).then(shareRecord => {
-			console.log('shareRecord', shareRecord);
+			toast.success(`File shared with ${selectedUser.name}`);
+			console.log(shareRecord);
 		}).catch(e => {
 			toast.error(
 				e.response?.data ? e.response?.data : (e instanceof Error ? e.message : 'Error Occured, please try again later'),
@@ -44,10 +51,31 @@ export default function Share(props: ShareProps) {
 		})
 	}
 
+	const GetCurrentSharesList = props => {
+		if(!currentShares.length)
+			return;
+
+		return(
+			<List>
+			{currentShares.map(share => {
+				return (
+					<ListItem
+						key={['share-id', share.file_id, share.user_id].join('-')}
+						secondaryAction={<IconButton edge='end'><BlockIcon /></IconButton>}
+					>
+						<ListItemText>{share.user.name}</ListItemText>
+					</ListItem>
+				)
+			})}
+			</List>
+		);
+	}
+
 	return(
 		<Dialog open={open} maxWidth={'sm'} fullWidth={true} onClose={() => onClose()} scroll="body">
 			<DialogTitle id="alert-dialog-title" textAlign={'center'}>Share {file?.name}</DialogTitle>
 			<DialogContent sx={{paddingTop: 3}}>
+				<Box>
 					<Autocomplete id="combo-box-demo"
 						getOptionLabel={el => el.name}
 						options={userResults} sx={{ width: 'auto' }}
@@ -55,6 +83,8 @@ export default function Share(props: ShareProps) {
 						onInputChange={onSearch}
 						onChange={(event, value) => setSelectedUser(value as UserSearchResult)}
 					/>
+				</Box>
+				<Box><GetCurrentSharesList /></Box>
 			</DialogContent>
 			<DialogActions>
 				<Button variant="outlined" color="primary" onClick={shareWithSelectedUser}>Share with user</Button>
