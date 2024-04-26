@@ -80,6 +80,39 @@ router.post('/share', checkSchema(shareFileRequestValidation), async(req: IUserA
 
 })
 
+router.delete('/share/delete', checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+	if (!req.user)
+		return res.status(403).send("Unauthorized");
+
+	const validation = validationResult(req);
+	if (validation.array().length)
+		return res.status(422).send(validation.array().shift())
+
+	try {
+
+		const filesRepo = AppDataSource.getRepository(File);
+		const shareRepo = AppDataSource.getRepository(Share);
+
+		if (!await filesRepo.findOneBy({id: req.body.fileId, user_id: req.user?.data.id}))
+			return res.status(401).send("Unauthorized");
+
+		if (!await shareRepo.findOneBy({file_id: req.body.fileId, user_id: req.body.userId}))
+			return res.status(422).send("Invalid data");
+
+		await AppDataSource.createQueryBuilder().delete().from(Share).where({
+			file_id: req.body.fileId,
+			user_id: req.body.userId
+		}).execute();
+
+		return res.status(200);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).send("Error during share. Please try again later");
+
+	}
+
+});
+
 const fileSharesRequestValidation = {
 	fileId: {
 		notEmpty: true,

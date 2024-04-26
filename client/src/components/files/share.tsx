@@ -1,6 +1,6 @@
 import { useEffect, useState, SyntheticEvent } from "react";
 import { FileModel, ShareRecord, UserSearchResult } from "../../definitions";
-import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Autocomplete, TextField, IconButton} from '@mui/material';
+import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, Autocomplete, TextField, IconButton, Typography} from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import { searchUsers, shareFile, getFileShares } from "../../api/Files";
 import toast, { Toaster } from 'react-hot-toast';
@@ -63,7 +63,12 @@ export default function Share(props: ShareProps) {
 						key={['share-id', share.file_id, share.user_id].join('-')}
 						secondaryAction={<IconButton edge='end'><BlockIcon /></IconButton>}
 					>
-						<ListItemText>{share.user.name}</ListItemText>
+						<ListItemText>
+							{share.user.name}
+							<Typography variant='caption' gutterBottom display='block'>
+								shared on {share.created_at}
+							</Typography>
+						</ListItemText>
 					</ListItem>
 				)
 			})}
