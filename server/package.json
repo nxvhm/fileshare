@@ -5,11 +5,19 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "nodemon",
+    "build": "tsc && tsc-alias",
+    "serve": "node dist/index.js",
     "dev-migrate": "npx typeorm-ts-node-esm  migration:run -d ./src/datasource.ts",
-    "dev-migrate-down": "npx typeorm-ts-node-esm migration:revert -d ./src/datasource.ts",
-    "build": "tsc",
-    "serve": "node dist/index.js"
+    "dev-migrate-down": "npx typeorm-ts-node-esm migration:revert -d ./src/datasource.ts"
+  },
+  "nodemonConfig": {
+    "exec": "tsc && tsc-alias && node dist/index.js",
+    "ext": ".ts, .json",
+    "watch": [
+      "src",
+      ".env"
+    ]
   },
   "author": "",
   "license": "ISC",
@@ -33,9 +41,9 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.10.0",
-    "ts-node": "^10.9.2",
+    "nodemon": "^3.1.0",
+    "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.6.0",
     "typescript": "^5.3.2"
   }
 }
