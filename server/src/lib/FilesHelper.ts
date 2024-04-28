@@ -1,9 +1,9 @@
 import fs, { PathLike } from "fs";
 import { sep } from "path";
 import path from 'path';
-import { File, FileTypes } from "../models/File";
-import { AppDataSource } from "../datasource";
-import { UserTokenPayload } from "../definitions";
+import { File, FileTypes } from "../models/File.js";
+import { AppDataSource } from "../datasource.js";
+import { UserTokenPayload } from "../definitions.js";
 import { IsNull } from "typeorm";
 
 export class Files {

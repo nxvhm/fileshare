@@ -1,9 +1,9 @@
 import express from "express";
 import { validationResult, checkSchema } from "express-validator"
-import { AppDataSource } from "../datasource";
-import { User } from "../models/User";
+import { AppDataSource } from "../datasource.js";
+import { User } from "../models/User.js";
 import bcrypt from "bcrypt";
-import {TokenManager} from "../lib/TokenManager";
+import {TokenManager} from "../lib/TokenManager.js";
 const router = express.Router();
 
 const signupRequestValidator = {

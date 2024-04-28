@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import "reflect-metadata"
-import { Files } from "../lib/FilesHelper";
+import { Files } from "../lib/FilesHelper.js";
 import { PathLike } from "fs";
 import { createHash } from "crypto";
 export enum FileTypes  {

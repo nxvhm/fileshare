@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken"
 import { LessThanOrEqual } from "typeorm";
-import { UserToken } from "../models/UserToken";
-import { AppDataSource } from "../datasource";
-import { UserTokenData, UserTokenPayload } from "../definitions";
+import { UserToken } from "../models/UserToken.js";
+import { AppDataSource } from "../datasource.js";
+import { UserTokenData, UserTokenPayload } from "../definitions.js";
 
 export class TokenManager {
 

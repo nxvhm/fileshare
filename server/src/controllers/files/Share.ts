@@ -1,12 +1,11 @@
 import express from "express";
 import { validationResult, checkSchema } from "express-validator"
-import AuthMiddleware from "@/middleware/Auth";
-import { IUserAuthRequest } from "@/definitions";
-import { Files } from "@/lib/FilesHelper";
-import { File } from "@/models/File";
-import { User } from "@/models/User";
-import { Share } from "@/models/Share";
-import { AppDataSource } from "@/datasource";
+import AuthMiddleware from "@/middleware/Auth.js";
+import { IUserAuthRequest } from "@/definitions.js";
+import { File } from "@/models/File.js";
+import { User } from "@/models/User.js";
+import { Share } from "@/models/Share.js";
+import { AppDataSource } from "@/datasource.js";
 
 const router = express.Router();
 router.use(AuthMiddleware);

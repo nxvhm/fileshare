@@ -1,8 +1,8 @@
 import express from "express"
-import AuthMiddleware from '@/middleware/Auth'
-import { IUserAuthRequest } from "@/definitions"
-import { AppDataSource } from "@/datasource";
-import { File } from "@/models/File";
+import AuthMiddleware from '@/middleware/Auth.js'
+import { IUserAuthRequest } from "@/definitions.js"
+import { AppDataSource } from "@/datasource.js";
+import { File } from "@/models/File.js";
 
 const router = express.Router();
 

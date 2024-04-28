@@ -1,10 +1,10 @@
 import express from "express";
-import UploadController from '@/controllers/files/Upload';
-import FileListController from '@/controllers/files/FileList';
-import DeleteFileController from '@/controllers/files/DeleteFile';
-import DownloadFileController from '@/controllers/files/DownloadFile';
-import ShareFileController from '@/controllers/files/Share';
-import BreadcrumbsController from '@/controllers/files/Breadcrumbs';
+import UploadController from '@/controllers/files/Upload.js';
+import FileListController from '@/controllers/files/FileList.js';
+import DeleteFileController from '@/controllers/files/DeleteFile.js';
+import DownloadFileController from '@/controllers/files/DownloadFile.js';
+import ShareFileController from '@/controllers/files/Share.js';
+import BreadcrumbsController from '@/controllers/files/Breadcrumbs.js';
 
 const router = express.Router();
 

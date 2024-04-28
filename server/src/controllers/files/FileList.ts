@@ -1,7 +1,7 @@
 import express from "express"
-import AuthMiddleware from "@/middleware/Auth"
-import { IUserAuthRequest } from "@/definitions"
-import { Files } from "@/lib/FilesHelper";
+import AuthMiddleware from "@/middleware/Auth.js"
+import { IUserAuthRequest } from "@/definitions.js"
+import { Files } from "@/lib/FilesHelper.js";
 const router = express.Router();
 
 router.get('/list/:parentId?', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {

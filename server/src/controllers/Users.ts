@@ -1,10 +1,9 @@
 import express from "express";
 import { validationResult, checkSchema, Schema } from "express-validator"
-import AuthMiddleware from "../middleware/Auth";
-import { IUserAuthRequest } from "../definitions";
-import { Files } from "../lib/FilesHelper";
-import { User } from "@/models/User";
-import { AppDataSource } from "@/datasource";
+import AuthMiddleware from "../middleware/Auth.js";
+import { IUserAuthRequest } from "../definitions.js";
+import { User } from "@/models/User.js";
+import { AppDataSource } from "@/datasource.js";
 import { Like } from "typeorm";
 
 const router = express.Router();

@@ -1,6 +1,6 @@
 import express from "express";
-import { TokenManager } from "../lib/TokenManager";
-import { IUserAuthRequest } from "../definitions";
+import { TokenManager } from "../lib/TokenManager.js";
+import { IUserAuthRequest } from "../definitions.js";
 
 const AuthMiddleware = async (req: IUserAuthRequest, res: express.Response, next: express.NextFunction) => {
 

@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryColumn , OneToOne, JoinColumn} from "typeorm";
-import { UserTokenData } from "../definitions";
+import { UserTokenData } from "../definitions.js";
 import "reflect-metadata"
-import { File } from "@/models/File";
-import { User } from "@/models/User";
+import { File } from "@/models/File.js";
+import { User } from "@/models/User.js";
 
 
 @Entity("shares")

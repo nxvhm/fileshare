@@ -3,10 +3,10 @@ import "reflect-metadata"
 import bodyParser from "body-parser";
 import express, { Request, Response } from 'express';
 import cors from 'cors'
-import AuthController from './controllers/Auth';
-import { AppDataSource } from "./datasource";
-import Users from "./controllers/Users";
-import FilesModuleRouter from '@/controllers/files';
+import AuthController from './controllers/Auth.js';
+import { AppDataSource } from "./datasource.js";
+import Users from "./controllers/Users.js";
+import FilesModuleRouter from '@/controllers/files/index.js';
 
 const app = express();
 const port = process.env.APP_PORT || 3000;
