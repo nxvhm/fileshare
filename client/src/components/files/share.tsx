@@ -2,7 +2,7 @@ import { useEffect, useState, SyntheticEvent } from "react";
 import { FileModel, ShareRecord, UserSearchResult } from "../../definitions";
 import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, Autocomplete, TextField, IconButton, Typography} from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
-import { searchUsers, shareFile, getFileShares } from "../../api/Files";
+import { searchUsers, shareFile, getFileShares, removeShare } from "../../api/Files";
 import toast, { Toaster } from 'react-hot-toast';
 
 export type ShareProps = {
@@ -12,7 +12,7 @@ export type ShareProps = {
 }
 
 export default function Share(props: ShareProps) {
-  const { open, file, onClose } = props;
+  const {open, file, onClose} = props;
 	const [userResults, setUserResults] = useState<UserSearchResult[]>([]);
 	const [selectedUser, setSelectedUser] = useState<UserSearchResult|null>(null);
 	const [currentShares, setCurrentShares] = useState<ShareRecord[]>([]);
@@ -42,16 +42,14 @@ export default function Share(props: ShareProps) {
 
 		shareFile(selectedUser.id, file.id).then(shareRecord => {
 			toast.success(`File shared with ${selectedUser.name}`);
-			console.log(shareRecord);
-		}).catch(e => {
-			toast.error(
-				e.response?.data ? e.response?.data : (e instanceof Error ? e.message : 'Error Occured, please try again later'),
-				{duration: 3000, position: 'top-center'}
-			);
-		})
+			setCurrentShares([...currentShares, shareRecord]);
+		}).catch(e => toast.error(
+			e.response?.data ? e.response?.data : (e instanceof Error ? e.message : 'Error Occured, please try again later'),
+			{duration: 3000, position: 'top-center'}
+		))
 	}
 
-	const GetCurrentSharesList = props => {
+	const GetCurrentSharesList = () => {
 		if(!currentShares.length)
 			return;
 
@@ -61,7 +59,11 @@ export default function Share(props: ShareProps) {
 				return (
 					<ListItem
 						key={['share-id', share.file_id, share.user_id].join('-')}
-						secondaryAction={<IconButton edge='end'><BlockIcon /></IconButton>}
+						secondaryAction={
+							<IconButton edge='end' onClick={() => removeShareForFile(share.file_id, share.user_id)}>
+								<BlockIcon />
+							</IconButton>
+						}
 					>
 						<ListItemText>
 							{share.user.name}
@@ -74,6 +76,17 @@ export default function Share(props: ShareProps) {
 			})}
 			</List>
 		);
+	}
+
+	const removeShareForFile = (fileId: number, userId: number) => {
+		removeShare(fileId, userId).then(() => setCurrentShares(
+			currentShares.filter(share => share.user_id != userId)
+		)).catch(e => {
+			toast.error(
+				e.response?.data ? e.response?.data : (e instanceof Error ? e.message : 'Error Occured, please try again later'),
+				{duration: 3000, position: 'top-center'}
+			)
+		})
 	}
 
 	return(

@@ -62,3 +62,11 @@ export const getFileShares = (fileId: number): Promise<ShareRecord[]> => {
 			.catch(e => reject(e));
 	});
 }
+
+export const removeShare = (fileId: number, userId: number): Promise<Boolean> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.delete(`/files/share/${fileId}/${userId}`)
+			.then(() => resolve(true))
+			.catch(e => reject(e));
+	})
+}
