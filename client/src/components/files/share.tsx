@@ -1,10 +1,10 @@
-import { useEffect, useState, SyntheticEvent } from "react";
-import { FileModel, ShareRecord, UserSearchResult } from "../../definitions";
+import { useState, SyntheticEvent } from "react";
+import { FileModel, UserSearchResult } from "../../definitions";
 import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, Autocomplete, TextField, IconButton, Typography} from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
-import { searchUsers, shareFile, getFileShares, removeShare } from "../../api/Files";
-import toast, { Toaster } from 'react-hot-toast';
-
+import { searchUsers } from "../../api/Files";
+import { Toaster } from 'react-hot-toast';
+import { useFileShare } from "../../lib/hooks/useFileShares";
 export type ShareProps = {
 	open: boolean
 	file?: FileModel|null,
@@ -15,78 +15,16 @@ export default function Share(props: ShareProps) {
   const {open, file, onClose} = props;
 	const [userResults, setUserResults] = useState<UserSearchResult[]>([]);
 	const [selectedUser, setSelectedUser] = useState<UserSearchResult|null>(null);
-	const [currentShares, setCurrentShares] = useState<ShareRecord[]>([]);
+	const {currentShares, shareWithUser, removeShareForFile, GetCurrentSharesList} = useFileShare({file: file as FileModel});
 
-	const onSearch = (e: SyntheticEvent, value: string, reason: AutocompleteInputChangeReason) => {
-		if (value.length < 3)
-			return;
-
-		searchUsers(value).then(result => {
-			if (!result.length)
-					return;
-
-			setUserResults(result);
-		});
+	const onSearch = (e: SyntheticEvent, value: string) => {
+		if (value.length >= 3)
+			searchUsers(value).then(result => result.length ? setUserResults(result) : null)
 	}
-
-	useEffect(() => {
-		if(!file?.id)
-			return;
-
-		getFileShares(file?.id).then(shares => setCurrentShares(shares));
-	}, [file])
 
 	const shareWithSelectedUser = () => {
-		if (!selectedUser?.id || !file?.id)
-			return;
-
-		shareFile(selectedUser.id, file.id).then(shareRecord => {
-			toast.success(`File shared with ${selectedUser.name}`);
-			setCurrentShares([...currentShares, shareRecord]);
-		}).catch(e => toast.error(
-			e.response?.data ? e.response?.data : (e instanceof Error ? e.message : 'Error Occured, please try again later'),
-			{duration: 3000, position: 'top-center'}
-		))
-	}
-
-	const GetCurrentSharesList = () => {
-		if(!currentShares.length)
-			return;
-
-		return(
-			<List>
-			{currentShares.map(share => {
-				return (
-					<ListItem
-						key={['share-id', share.file_id, share.user_id].join('-')}
-						secondaryAction={
-							<IconButton edge='end' onClick={() => removeShareForFile(share.file_id, share.user_id)}>
-								<BlockIcon />
-							</IconButton>
-						}
-					>
-						<ListItemText>
-							{share.user.name}
-							<Typography variant='caption' gutterBottom display='block'>
-								shared on {share.created_at}
-							</Typography>
-						</ListItemText>
-					</ListItem>
-				)
-			})}
-			</List>
-		);
-	}
-
-	const removeShareForFile = (fileId: number, userId: number) => {
-		removeShare(fileId, userId).then(() => setCurrentShares(
-			currentShares.filter(share => share.user_id != userId)
-		)).catch(e => {
-			toast.error(
-				e.response?.data ? e.response?.data : (e instanceof Error ? e.message : 'Error Occured, please try again later'),
-				{duration: 3000, position: 'top-center'}
-			)
-		})
+		if (selectedUser?.id && file?.id)
+			shareWithUser(selectedUser);
 	}
 
 	return(

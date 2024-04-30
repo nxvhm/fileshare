@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getFileShares, removeShare, shareFile } from "../../api/Files";
 import { FileModel, ShareRecord, UserSearchResult } from "../../definitions";
-import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, Autocomplete, TextField, IconButton, Typography} from '@mui/material';
+import {List, ListItem, ListItemText, IconButton, Typography} from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 
 import toast from 'react-hot-toast';
