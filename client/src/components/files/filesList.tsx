@@ -19,7 +19,8 @@ import Share from './share';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 
 export type FileListProps = {
-	parentId?: number|undefined
+	showUploadButton?: boolean,
+	showCreateFolderButton?: boolean
 }
 
 const VisuallyHiddenInput = styled('input')({
@@ -34,7 +35,11 @@ const VisuallyHiddenInput = styled('input')({
 	width: 1,
 });
 
-export default function FilesList() {
+export default function FilesList(props: FileListProps) {
+
+	let {showUploadButton, showCreateFolderButton} = props;
+	showUploadButton = showUploadButton ?? true;
+	showCreateFolderButton = showCreateFolderButton ?? true;
 
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
@@ -176,13 +181,15 @@ export default function FilesList() {
 
 	return(
 		<>
-			<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
-				<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-					Upload file
-					<VisuallyHiddenInput type="file" onChange={fileUpload} />
-				</Button>
-				<CreateFolder onFolderCreate={onFolderCreate} />
-			</Box>
+				<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
+					{showUploadButton &&
+						<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+							Upload file
+							<VisuallyHiddenInput type="file" onChange={fileUpload} />
+						</Button>
+					}
+					{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
+				</Box>
 			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
 				<Breadcrumbs folderId={Number(parentId)} />
 			</Box>
