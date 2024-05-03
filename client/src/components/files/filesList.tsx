@@ -20,7 +20,8 @@ import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 
 export type FileListProps = {
 	showUploadButton?: boolean,
-	showCreateFolderButton?: boolean
+	showCreateFolderButton?: boolean,
+	sharedFilesList?: boolean
 }
 
 const VisuallyHiddenInput = styled('input')({
@@ -37,7 +38,7 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function FilesList(props: FileListProps) {
 
-	let {showUploadButton, showCreateFolderButton} = props;
+	let {showUploadButton, showCreateFolderButton, sharedFilesList} = props;
 	showUploadButton = showUploadButton ?? true;
 	showCreateFolderButton = showCreateFolderButton ?? true;
 
@@ -54,8 +55,14 @@ export default function FilesList(props: FileListProps) {
 
 
 	useEffect(() => {
-		FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
+		if(!sharedFilesList && parentId)
+			FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
 	}, [parentId])
+
+	useEffect(() => {
+		if(sharedFilesList && !parentId)
+			FilesApi.getUserSharedFiles().then(sharedFiles => setFiles(sharedFiles));
+	}, [sharedFilesList])
 
 	useEffect(() => {
 		if(!uploadedFile)

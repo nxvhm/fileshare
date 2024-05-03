@@ -13,6 +13,7 @@ import Login from './screens/Login.tsx';
 import Signup from './screens/Signup.tsx';
 import Home from './screens/Home.tsx';
 import Folder from './screens/Folder.tsx';
+import Shares from './screens/Shares.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 
 import { useAuth } from './lib/hooks/useAuth.ts';
@@ -34,6 +35,10 @@ const App = function() {
 		{
 			path: "/folder/:parentId",
 			element: <ProtectedRoute><Folder /></ProtectedRoute>
+		},
+		{
+			path: "/shares",
+			element: <ProtectedRoute><Shares /></ProtectedRoute>
 		},
 		{
 			path: "/login",
