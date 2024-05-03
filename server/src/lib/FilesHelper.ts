@@ -1,10 +1,11 @@
 import fs, { PathLike } from "fs";
 import { sep } from "path";
 import path from 'path';
-import { File, FileTypes } from "../models/File.js";
+import { File } from "../models/File.js";
 import { AppDataSource } from "../datasource.js";
-import { UserTokenPayload } from "../definitions.js";
+import { UserTokenPayload, FileTypes } from "../definitions.js";
 import { IsNull } from "typeorm";
+import { Share } from "@/models/Share.js";
 
 export class Files {
 
@@ -169,6 +170,18 @@ export class Files {
 				reject(error)
 			}
 		})
+	}
+
+	public static getUserSharedFiles(userId: number): Promise<File[]> {
+		return new Promise(async(resolve, reject) => {
+			const sharedFiles = await AppDataSource.getRepository(File).createQueryBuilder()
+				.innerJoin(Share, 'shares', 'shares.file_id = File.id')
+				.where('shares.user_id = :userId', {userId: userId})
+				.getMany();
+
+			console.log('sharedFiles', sharedFiles);
+			resolve(sharedFiles);
+		});
 	}
 
 	public static createFolder(name: string, userId: number, parentId: number|null): Promise<File|boolean> {

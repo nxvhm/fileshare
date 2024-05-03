@@ -1,6 +1,5 @@
 import express from "express";
 
-
 export type UserTokenData = {
 	id: number,
 	name: string,
@@ -15,4 +14,9 @@ export type UserTokenPayload = {
 
 export interface IUserAuthRequest extends express.Request {
   user?: UserTokenPayload // or any other type
+}
+
+export enum FileTypes  {
+	TYPE_FILE = "file",
+	TYPE_FOLDER = "folder"
 }
