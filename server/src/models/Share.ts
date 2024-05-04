@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryColumn , OneToOne, JoinColumn} from "typeorm";
-import { UserTokenData } from "../definitions.js";
 import "reflect-metadata"
+import { Column, Entity, PrimaryColumn , OneToOne, JoinColumn} from "typeorm";
 import { File } from "@/models/File.js";
 import { User } from "@/models/User.js";
 
