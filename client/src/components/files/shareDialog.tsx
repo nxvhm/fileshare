@@ -10,7 +10,7 @@ export type ShareProps = {
 	onClose: () => void
 }
 
-export default function Share(props: ShareProps) {
+export default function ShareDialog(props: ShareProps) {
   const {open, file, onClose} = props;
 	const [userResults, setUserResults] = useState<UserSearchResult[]>([]);
 	const [selectedUser, setSelectedUser] = useState<UserSearchResult|null>(null);
