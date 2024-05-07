@@ -15,7 +15,7 @@ import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
 import Breadcrumbs from './breadcrumbs';
-import Share from './share';
+import ShareDialog from './shareDialog';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 
 export type FileListProps = {
@@ -208,7 +208,7 @@ export default function FilesList(props: FileListProps) {
 				dialogText='Are you sure you want to delete this file ?'
 				secondaryDialogText='Action cannot be reverted'
 			></ConfirmationDialog>
-			<Share open={openShareWindow} file={fileShare} onClose={closeFileShare} />
+			<ShareDialog open={openShareWindow} file={fileShare} onClose={closeFileShare} />
 		</>
 	);
 }

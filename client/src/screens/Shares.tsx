@@ -1,13 +1,9 @@
-import FilesList from "../components/files/filesList";
+import SharedFilesList from "../components/files/sharedFilesList";
 
 function Shares() {
 
 	return (
-		<FilesList
-			showCreateFolderButton={false}
-			showUploadButton={false}
-			sharedFilesList={true}
-		/>
+		<SharedFilesList />
 	)
 }
 
