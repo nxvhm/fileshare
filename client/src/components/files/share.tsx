@@ -1,7 +1,6 @@
 import { useState, SyntheticEvent } from "react";
 import { FileModel, UserSearchResult } from "../../definitions";
-import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, Autocomplete, TextField, IconButton, Typography} from '@mui/material';
-import BlockIcon from '@mui/icons-material/Block';
+import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, Autocomplete, TextField} from '@mui/material';
 import { searchUsers } from "../../api/Files";
 import { Toaster } from 'react-hot-toast';
 import { useFileShare } from "../../lib/hooks/useFileShares";
@@ -15,7 +14,7 @@ export default function Share(props: ShareProps) {
   const {open, file, onClose} = props;
 	const [userResults, setUserResults] = useState<UserSearchResult[]>([]);
 	const [selectedUser, setSelectedUser] = useState<UserSearchResult|null>(null);
-	const {currentShares, shareWithUser, removeShareForFile, GetCurrentSharesList} = useFileShare({file: file as FileModel});
+	const {shareWithUser, GetCurrentSharesList} = useFileShare({file: file as FileModel});
 
 	const onSearch = (e: SyntheticEvent, value: string) => {
 		if (value.length >= 3)
@@ -37,7 +36,7 @@ export default function Share(props: ShareProps) {
 						options={userResults} sx={{ width: 'auto' }}
 						renderInput={(params) => <TextField {...params} label="Share with..." />}
 						onInputChange={onSearch}
-						onChange={(event, value) => setSelectedUser(value as UserSearchResult)}
+						onChange={(_event, value) => setSelectedUser(value as UserSearchResult)}
 					/>
 				</Box>
 				<Box><GetCurrentSharesList /></Box>
