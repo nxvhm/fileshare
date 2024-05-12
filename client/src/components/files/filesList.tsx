@@ -55,7 +55,7 @@ export default function FilesList(props: FileListProps) {
 
 
 	useEffect(() => {
-		if(!sharedFilesList && parentId)
+		if(!sharedFilesList)
 			FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
 	}, [parentId])
 
