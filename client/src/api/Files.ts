@@ -70,3 +70,11 @@ export const removeShare = (fileId: number, userId: number): Promise<Boolean> =>
 			.catch(e => reject(e));
 	})
 }
+
+export const getUserSharedFiles = (): Promise<FileModel[]> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.get('/files/shared')
+			.then((res) => resolve(res.data))
+			.catch(e => reject(e));
+	})
+}

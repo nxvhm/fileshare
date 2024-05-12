@@ -1,6 +1,6 @@
 import { useState, SyntheticEvent } from "react";
 import { FileModel, UserSearchResult } from "../../definitions";
-import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, Autocomplete, TextField} from '@mui/material';
+import {Box, Dialog, DialogTitle, DialogContent, DialogActions, Button,  Autocomplete, TextField} from '@mui/material';
 import { searchUsers } from "../../api/Files";
 import { Toaster } from 'react-hot-toast';
 import { useFileShare } from "../../lib/hooks/useFileShares";
@@ -10,7 +10,7 @@ export type ShareProps = {
 	onClose: () => void
 }
 
-export default function Share(props: ShareProps) {
+export default function ShareDialog(props: ShareProps) {
   const {open, file, onClose} = props;
 	const [userResults, setUserResults] = useState<UserSearchResult[]>([]);
 	const [selectedUser, setSelectedUser] = useState<UserSearchResult|null>(null);

@@ -15,11 +15,13 @@ import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
 import Breadcrumbs from './breadcrumbs';
-import Share from './share';
+import ShareDialog from './shareDialog';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 
 export type FileListProps = {
-	parentId?: number|undefined
+	showUploadButton?: boolean,
+	showCreateFolderButton?: boolean,
+	sharedFilesList?: boolean
 }
 
 const VisuallyHiddenInput = styled('input')({
@@ -34,7 +36,11 @@ const VisuallyHiddenInput = styled('input')({
 	width: 1,
 });
 
-export default function FilesList() {
+export default function FilesList(props: FileListProps) {
+
+	let {showUploadButton, showCreateFolderButton, sharedFilesList} = props;
+	showUploadButton = showUploadButton ?? true;
+	showCreateFolderButton = showCreateFolderButton ?? true;
 
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
@@ -49,8 +55,14 @@ export default function FilesList() {
 
 
 	useEffect(() => {
-		FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
+		if(!sharedFilesList && parentId)
+			FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
 	}, [parentId])
+
+	useEffect(() => {
+		if(sharedFilesList && !parentId)
+			FilesApi.getUserSharedFiles().then(sharedFiles => setFiles(sharedFiles));
+	}, [sharedFilesList])
 
 	useEffect(() => {
 		if(!uploadedFile)
@@ -176,13 +188,15 @@ export default function FilesList() {
 
 	return(
 		<>
-			<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
-				<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-					Upload file
-					<VisuallyHiddenInput type="file" onChange={fileUpload} />
-				</Button>
-				<CreateFolder onFolderCreate={onFolderCreate} />
-			</Box>
+				<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
+					{showUploadButton &&
+						<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+							Upload file
+							<VisuallyHiddenInput type="file" onChange={fileUpload} />
+						</Button>
+					}
+					{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
+				</Box>
 			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
 				<Breadcrumbs folderId={Number(parentId)} />
 			</Box>
@@ -194,7 +208,7 @@ export default function FilesList() {
 				dialogText='Are you sure you want to delete this file ?'
 				secondaryDialogText='Action cannot be reverted'
 			></ConfirmationDialog>
-			<Share open={openShareWindow} file={fileShare} onClose={closeFileShare} />
+			<ShareDialog open={openShareWindow} file={fileShare} onClose={closeFileShare} />
 		</>
 	);
 }

@@ -1,12 +1,10 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import "reflect-metadata"
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Files } from "../lib/FilesHelper.js";
 import { PathLike } from "fs";
 import { createHash } from "crypto";
-export enum FileTypes  {
-	TYPE_FILE = "file",
-	TYPE_FOLDER = "folder"
-}
+import { Share } from "./Share.js";
+import { FileTypes } from '@/definitions.js'
 
 @Entity("files")
 export class File {

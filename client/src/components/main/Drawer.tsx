@@ -1,8 +1,10 @@
 import { useContext } from 'react';
 import {IconButton, Toolbar, Divider, List} from '@mui/material';
+import { Link } from "react-router-dom";
 import MuiDrawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
-import HomeIcon from '@mui/icons-material/Home';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import ShareIcon from '@mui/icons-material/Share';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import OpenDrawerContext from '../../lib/context/OpenDraweContext';
 import {ListItemText, ListItemIcon, ListItemButton} from '@mui/material';
@@ -50,11 +52,18 @@ export default function Drawer() {
 			<Divider />
 			<List component="nav">
 
-				<ListItemButton>
+				<ListItemButton component={Link} to={'/'} >
 					<ListItemIcon>
-						<HomeIcon />
+						<AttachFileIcon />
 					</ListItemIcon>
-					<ListItemText primary="Home" />
+					<ListItemText primary="My Files" />
+				</ListItemButton>
+
+				<ListItemButton component={Link} to={'/shares'}>
+					<ListItemIcon>
+						<ShareIcon />
+					</ListItemIcon>
+					<ListItemText primary="Shared with me" />
 				</ListItemButton>
 
 				<ListItemButton>
@@ -70,6 +79,7 @@ export default function Drawer() {
 					</ListItemIcon>
 					<ListItemText primary="Profile" />
 				</ListItemButton>
+
 
 			</List>
 		</DrawerComponent>

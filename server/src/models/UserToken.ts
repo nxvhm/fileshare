@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
 import "reflect-metadata"
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("user_token")
 export class UserToken {

@@ -9,9 +9,17 @@ router.get('/list/:parentId?', [AuthMiddleware], async(req: IUserAuthRequest, re
 		return res.status(403).send("Unauthorized");
 
 	const parentId = req.params.parentId ? Number(req.params.parentId) : undefined;
-	console.log("Params are:", req.params.hash);
 	const files = await Files.getUserFiles(req.user?.data.id, parentId);
 	return res.send(files);
+});
+
+router.get('/shared', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
+	if(!req.user)
+		return res.status(403).send("Unauthorized");
+
+		const sharedFiles = await Files.getUserSharedFiles(req.user.data.id);
+
+		return res.send(sharedFiles);
 });
 
 export default router;
