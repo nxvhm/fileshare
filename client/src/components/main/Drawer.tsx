@@ -1,15 +1,17 @@
 import { useContext } from 'react';
-import {IconButton, Toolbar, Divider, List} from '@mui/material';
 import { Link } from "react-router-dom";
-import MuiDrawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import ShareIcon from '@mui/icons-material/Share';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import MuiDrawer from '@mui/material/Drawer';
 import OpenDrawerContext from '../../lib/context/OpenDraweContext';
-import {ListItemText, ListItemIcon, ListItemButton} from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
-import PersonIcon from '@mui/icons-material/Person';
+import AuthContext from "../../lib/context/AuthContext";
+import {IconButton, Toolbar, Divider, List, ListItemText, ListItemIcon, ListItemButton} from '@mui/material';
+import {
+	Share as ShareIcon,
+	Person as PersonIcon,
+	AttachFile as AttachFileIcon,
+	ChevronLeft as ChevronLeftIcon,
+	PowerSettingsNew as PowerSettingsNewIcon
+} from '@mui/icons-material'
 
 const drawerWidth: number = 240;
 
@@ -41,6 +43,7 @@ const DrawerComponent = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !=
 
 export default function Drawer() {
 	const {drawerOpen, toggleDrawer} = useContext(OpenDrawerContext);
+	const {logoutUser} = useContext(AuthContext);
 
 	return (
 		<DrawerComponent variant="permanent" open={drawerOpen}>
@@ -68,18 +71,17 @@ export default function Drawer() {
 
 				<ListItemButton>
 					<ListItemIcon>
-						<SettingsIcon />
-					</ListItemIcon>
-					<ListItemText primary="Settings" />
-				</ListItemButton>
-
-				<ListItemButton>
-					<ListItemIcon>
 						<PersonIcon />
 					</ListItemIcon>
 					<ListItemText primary="Profile" />
 				</ListItemButton>
 
+				<ListItemButton>
+					<ListItemIcon onClick={() => logoutUser()}>
+						<PowerSettingsNewIcon />
+					</ListItemIcon>
+					<ListItemText primary="Logout" />
+				</ListItemButton>
 
 			</List>
 		</DrawerComponent>
