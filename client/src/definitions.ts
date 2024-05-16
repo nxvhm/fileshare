@@ -32,9 +32,13 @@ export type FileDetailsDrawerContextType = {
 	drawerOpen: boolean,
 	toggleDrawer: () => void,
 	selectedFile: FileModel|null,
-	setSelectedFile?: (file: FileModel|null) => void,
-	showFileDetails: (file: FileModel) => void
+	setSelectedFile: (file: FileModel|null) => void,
+	showFileDetails: (file: FileModel, filePropUpdateHandler: filePropUpdateHandler) => void,
+	onFileChange: filePropUpdateHandler,
+	setOnFileChange: (onChange: filePropUpdateHandler) => void
 }
+
+export type filePropUpdateHandler = ((id: number, updatedProp: Partial<FileModel>) => void) | null
 
 export type ShareRecord = {
 	user_id: number,
