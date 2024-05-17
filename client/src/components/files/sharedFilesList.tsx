@@ -40,7 +40,7 @@ export default function SharedFilesList(props: FileListProps) {
 		if(file.type == FileType.TYPE_FOLDER)
 			return navigate('/folder/'+file.id);
 
-		showFileDetails(file);
+		showFileDetails(file, null);
 	}
 
 	const getFileIcon = (file: FileModel) => {

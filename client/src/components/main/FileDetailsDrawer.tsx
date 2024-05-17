@@ -1,14 +1,15 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
-import {ModalProps, Typography, Box, Toolbar} from '@mui/material';
+import {ModalProps, Typography, Box, Toolbar, Switch, FormControlLabel} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { FileModel } from '../../definitions';
 import { useFileShare } from "../../lib/hooks/useFileShares";
 
 export default function FileDetailsDrawer() {
-	const {drawerOpen, toggleDrawer, selectedFile} = useContext(OpenFileDetailsContext);
+	const {drawerOpen, toggleDrawer, selectedFile, onFileChange} = useContext(OpenFileDetailsContext);
 	const { currentShares, GetCurrentSharesList } = useFileShare({file: selectedFile as FileModel});
+	const [isPublic, setIsPublic] = useState<boolean>(false);
 
 	const backdropProps: Partial<ModalProps> = {
 		slotProps: {
@@ -23,11 +24,21 @@ export default function FileDetailsDrawer() {
 	}
 
 	const getFileSize = (file: FileModel): string => {
-		if(!file.filesize || file.filesize == 0)
-			return 'N/A';
-
-		return file.filesize/1000 + ' KB';
+		return !file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB');
 	}
+
+  const togglePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if(!selectedFile || !onFileChange)
+			return;
+
+		setIsPublic(event.target.checked);
+		onFileChange(selectedFile.id, {public: event.target.checked ? 1 : 0});
+  };
+
+	useEffect(() => {
+		setIsPublic(Boolean(selectedFile?.public));
+	}, [selectedFile]);
+
 
 	return (
 		<Drawer onClose={toggleDrawer} anchor={'right'} open={drawerOpen} PaperProps={{style: {width: 320}}} ModalProps={backdropProps}>
@@ -43,7 +54,10 @@ export default function FileDetailsDrawer() {
 					<Typography fontSize={12} color={grey[500]}>{selectedFile?.filesize && getFileSize(selectedFile)}</Typography>
 
 					<Typography fontSize={15} marginTop={2}>Public</Typography>
-					<Typography fontSize={12} color={grey[500]}>{selectedFile?.public ? 'Yes' : 'No'}</Typography>
+					<FormControlLabel label={isPublic ? "Yes" : "No"} control={
+            <Switch checked={isPublic} onChange={togglePublic} name="isPublic" />
+					}/>
+
 
 					<Typography fontSize={15} marginTop={2}>Uploaded</Typography>
 					<Typography fontSize={12} color={grey[500]}>{selectedFile?.created_at}</Typography>

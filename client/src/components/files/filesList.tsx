@@ -10,7 +10,7 @@ import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete
 import { styled } from '@mui/material/styles';
 
 import ConfirmationDialog from '../main/ConfirmationDialog';
-import { FileModel, FileType } from '../../definitions';
+import { FileModel, FileType, filePropUpdateHandler } from '../../definitions';
 import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
@@ -21,7 +21,6 @@ import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 export type FileListProps = {
 	showUploadButton?: boolean,
 	showCreateFolderButton?: boolean,
-	sharedFilesList?: boolean
 }
 
 const VisuallyHiddenInput = styled('input')({
@@ -38,7 +37,7 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function FilesList(props: FileListProps) {
 
-	let {showUploadButton, showCreateFolderButton, sharedFilesList} = props;
+	let {showUploadButton, showCreateFolderButton} = props;
 	showUploadButton = showUploadButton ?? true;
 	showCreateFolderButton = showCreateFolderButton ?? true;
 
@@ -53,16 +52,9 @@ export default function FilesList(props: FileListProps) {
 	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload(Number(parentId));
 	const {showFileDetails} = useContext(OpenFileDetailsContext);
 
-
 	useEffect(() => {
-		if(!sharedFilesList)
 			FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
 	}, [parentId])
-
-	useEffect(() => {
-		if(sharedFilesList && !parentId)
-			FilesApi.getUserSharedFiles().then(sharedFiles => setFiles(sharedFiles));
-	}, [sharedFilesList])
 
 	useEffect(() => {
 		if(!uploadedFile)
@@ -107,6 +99,12 @@ export default function FilesList(props: FileListProps) {
 		return new Date(dateString).toDateString();
 	}
 
+	const onPublicStatusChange: filePropUpdateHandler = (fileId: number, updatedProp: Partial<FileModel>) => {
+		const fileKey = files.findIndex(file => file.id == fileId);
+		files[fileKey] = {...files[fileKey], ...updatedProp}
+		setFiles([...files]);
+	}
+
 	const getFileOptionsButton = (file: FileModel): JSX.Element => {
 		return (
 			<>
@@ -126,8 +124,7 @@ export default function FilesList(props: FileListProps) {
 
 		if(file.type == FileType.TYPE_FOLDER)
 			return navigate('/folder/'+file.id);
-
-		showFileDetails(file);
+		showFileDetails(file, onPublicStatusChange);
 	}
 
 	const deleteFile = () => {
