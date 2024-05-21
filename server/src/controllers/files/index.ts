@@ -5,6 +5,7 @@ import DeleteFileController from '@/controllers/files/DeleteFile.js';
 import DownloadFileController from '@/controllers/files/DownloadFile.js';
 import ShareFileController from '@/controllers/files/Share.js';
 import BreadcrumbsController from '@/controllers/files/Breadcrumbs.js';
+import TogglePublic from '@/controllers/files/Public.js'
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use(DeleteFileController);
 router.use(DownloadFileController);
 router.use(BreadcrumbsController);
 router.use(ShareFileController);
+router.use(TogglePublic);
 
 export default router;

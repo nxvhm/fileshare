@@ -3,7 +3,6 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Files } from "../lib/FilesHelper.js";
 import { PathLike } from "fs";
 import { createHash } from "crypto";
-import { Share } from "./Share.js";
 import { FileTypes } from '@/definitions.js'
 
 @Entity("files")
