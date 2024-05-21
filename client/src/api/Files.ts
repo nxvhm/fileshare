@@ -78,3 +78,11 @@ export const getUserSharedFiles = (): Promise<FileModel[]> => {
 			.catch(e => reject(e));
 	})
 }
+
+export const toggleFilePublic = (fileId: number, isPublic: 0|1): Promise<boolean> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.post('/files/set-public', {fileId, public: isPublic})
+			.then(_res => resolve(true))
+			.catch(e => reject(e));
+	})
+}

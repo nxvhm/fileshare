@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import Drawer from '@mui/material/Drawer';
-import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
-import {ModalProps, Typography, Box, Toolbar, Switch, FormControlLabel} from '@mui/material';
+import {ModalProps, Typography, Box, Toolbar, Switch, FormControlLabel, Drawer} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { FileModel } from '../../definitions';
 import { useFileShare } from "../../lib/hooks/useFileShares";
+import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
+import { toggleFilePublic as toggleFilePublicRequest } from '../../api/Files';
 
 export default function FileDetailsDrawer() {
 	const {drawerOpen, toggleDrawer, selectedFile, onFileChange} = useContext(OpenFileDetailsContext);
@@ -31,8 +31,13 @@ export default function FileDetailsDrawer() {
 		if(!selectedFile || !onFileChange)
 			return;
 
-		setIsPublic(event.target.checked);
-		onFileChange(selectedFile.id, {public: event.target.checked ? 1 : 0});
+		const isPublic = event.target.checked ? 1 : 0;
+		toggleFilePublicRequest(selectedFile.id, isPublic)
+			.then(_res => {
+				setIsPublic(Boolean(isPublic));
+				onFileChange(selectedFile.id, {public: isPublic});
+			})
+			.catch(e => console.error(e));
   };
 
 	useEffect(() => {
