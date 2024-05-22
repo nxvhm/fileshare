@@ -1,7 +1,7 @@
 import express from "express";
 import { validationResult, checkSchema } from "express-validator"
 import AuthMiddleware from "@/middleware/Auth.js";
-import { IUserAuthRequest } from "@/definitions.js";
+import { IUserAuthRequest, IS_PUBLIC } from "@/definitions.js";
 import { AppDataSource } from "@/datasource.js";
 import { File } from "@/models/File.js";
 
@@ -11,17 +11,17 @@ router.use(AuthMiddleware);
 const togglePublicRequestValidation = {
 	fileId: {
 		notEmpty: true,
-		matches: {
-			options: /^[0-9]+$/,
-			errorMessage: 'Invalid File provided',
-		}
+		isInt: true
 	},
 	public: {
 		notEmpty: true,
-		isBoolean: true
+		isInt: true,
+		isIn: {
+			options: [[IS_PUBLIC.YES, IS_PUBLIC.NO]],
+			errorMessage: "Public should be 1 or 0"
+		}
 	}
 }
-
 
 /**
  * Toggle public property of file
@@ -29,6 +29,10 @@ const togglePublicRequestValidation = {
 router.post('/set-public', checkSchema(togglePublicRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
 	if(!req.user?.data.id)
 		return res.status(403).send();
+
+	const validation = validationResult(req);
+	if (validation.array().length)
+		return res.status(422).send(validation.array().shift())
 
 	try {
 		const repo = AppDataSource.getRepository(File);

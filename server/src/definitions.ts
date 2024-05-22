@@ -20,3 +20,8 @@ export enum FileTypes  {
 	TYPE_FILE = "file",
 	TYPE_FOLDER = "folder"
 }
+
+export enum IS_PUBLIC {
+	YES = 1,
+	NO = 0
+}
