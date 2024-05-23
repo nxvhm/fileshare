@@ -22,9 +22,6 @@ export default function Layout({children}: {children: React.ReactNode}) {
 		<Toolbar />
 		<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
 			{children}
-			<p>
-				<Button variant="contained" onClick={() => logoutUser()}>Logout</Button>
-			</p>
 		</Container>
 		</Box>
 		<Toaster />

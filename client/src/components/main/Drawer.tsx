@@ -69,7 +69,7 @@ export default function Drawer() {
 					<ListItemText primary="Shared with me" />
 				</ListItemButton>
 
-				<ListItemButton>
+				<ListItemButton component={Link} to={'/profile'}>
 					<ListItemIcon>
 						<PersonIcon />
 					</ListItemIcon>

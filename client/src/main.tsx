@@ -14,6 +14,7 @@ import Signup from './screens/Signup.tsx';
 import Home from './screens/Home.tsx';
 import Folder from './screens/Folder.tsx';
 import Shares from './screens/Shares.tsx';
+import Profile from './screens/Profile.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 
 import { useAuth } from './lib/hooks/useAuth.ts';
@@ -47,6 +48,10 @@ const App = function() {
 		{
 			path: "/signup",
 			element: <Signup />
+		},
+		{
+			path: "/profile",
+			element:  <ProtectedRoute><Profile /></ProtectedRoute>
 		},
 	]);
 
