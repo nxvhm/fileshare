@@ -54,3 +54,11 @@ export type UserSearchResult = {
 	name: string,
 	email: string
 }
+
+export type UserProfileData = {
+	name: string,
+	email: string,
+	password: string,
+	newPassword: string | null,
+	rePassword: string | null
+}

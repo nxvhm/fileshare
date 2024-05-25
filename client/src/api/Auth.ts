@@ -1,5 +1,5 @@
 import {default as axios} from "../lib/Axios";
-
+import { UserProfileData } from "../definitions";
 type signupData = {
 	name: string,
 	email: string,
@@ -58,4 +58,11 @@ export const verifyToken = (token:string):Promise<boolean> => {
 	})
 }
 
+export const profileUpdate = (data: Partial<UserProfileData>): Promise<boolean> => {
+	return new Promise((resolve, reject) => {
+		axios.put('/users/profile', data)
+			.then(res => res.status == 200 ? resolve(true) : resolve(false))
+			.catch(e => reject(new Error(e.response?.data?.msg ?? e.message)));
+	});
+}
 

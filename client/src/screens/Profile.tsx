@@ -1,10 +1,12 @@
-import { useContext, useState, useEffect } from 'react';
-import AuthContext from '../lib/context/AuthContext';
+import { useContext } from 'react';
+import * as yup from "yup";
+import { useForm, SubmitHandler  } from "react-hook-form";
+import toast, { Toaster } from 'react-hot-toast';
 import {TextField, Box, Typography, Grid, Button} from '@mui/material';
 import { blue } from '@mui/material/colors'
-import { useForm, SubmitHandler  } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
+import AuthContext from '../lib/context/AuthContext';
+import { profileUpdate } from '../api/Auth';
 
 export default function Profile () {
 	const {user} = useContext(AuthContext)
@@ -34,7 +36,22 @@ export default function Profile () {
 	type ProfileUpdateForm = yup.InferType<typeof validationScheme>
 
 	const onSubmit:SubmitHandler<ProfileUpdateForm> = async (data) => {
-		console.log('onSubmit:', data);
+
+		if(!data.newPassword)
+				delete data.newPassword;
+
+		if(!data.rePassword)
+			delete data.rePassword;
+
+		profileUpdate(data).then(res => {
+			console.log('profile update', res);
+		}).catch(e => {
+			toast.error(
+				e instanceof Error ? e.message 	: 'Error Occured, please try again later',
+				{duration: 3000, position: 'top-center'}
+			);
+			console.log('profile update erro', e);
+		})
 	}
 
 	return(
@@ -94,6 +111,7 @@ export default function Profile () {
 
 			</Grid>
 		</Box>
+		<Toaster />
 		</>
 	);
 }
