@@ -1,6 +1,6 @@
 import { isExpired, decodeToken } from "react-jwt";
 import { verifyToken } from "../api/Auth";
-import { UserTokenData } from "../definitions";
+import { AuthTokenPayload } from "../definitions";
 
 export class Token {
 
@@ -24,7 +24,7 @@ export class Token {
 		return isExpired(Token.get() ?? "");
 	}
 
-	public static getData(): UserTokenData|null {
+	public static getData(): AuthTokenPayload|null {
 		if (Token.isExpired())
 			return null
 

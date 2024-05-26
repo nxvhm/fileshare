@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import {Token} from "../Token";
 import {AuthContextData} from "../context/AuthContext";
-import { UserTokenData } from "../../definitions";
+import { AuthTokenPayload } from "../../definitions";
 
 export function useAuth():AuthContextData {
-	const [user, setUser] = useState(():UserTokenData|null => null);
+	const [user, setUser] = useState<AuthTokenPayload|null>(null);
 
 	useEffect(
 		() => setUser(Token.getData()),

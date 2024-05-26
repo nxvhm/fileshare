@@ -1,8 +1,8 @@
 import { createContext } from "react";
-import { UserTokenData } from "../Token";
+import { AuthTokenPayload } from "../../definitions";
 
 export type AuthContextData = {
-	user: UserTokenData|null,
+	user: AuthTokenPayload|null,
 	loginUser: null|((token:string) => void),
 	logoutUser: () => void
 }

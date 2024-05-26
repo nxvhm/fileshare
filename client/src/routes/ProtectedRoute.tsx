@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import AuthContext from "../lib/context/AuthContext";
 import { Token } from "../lib/Token";
 import { useState, useEffect } from "react";
 import Layout from "../components/main/Layout";

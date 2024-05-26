@@ -16,6 +16,12 @@ export type FileModel = {
 	created_at: string|null,
 }
 
+export type AuthTokenPayload = {
+	data: UserTokenData
+	iat: number,
+	exp: number
+}
+
 export type UserTokenData = {
 	id: number,
 	name: string,
