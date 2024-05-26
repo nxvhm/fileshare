@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import * as yup from "yup";
 import { useForm, SubmitHandler  } from "react-hook-form";
 import toast, { Toaster } from 'react-hot-toast';
@@ -9,8 +9,8 @@ import AuthContext from '../lib/context/AuthContext';
 import { profileUpdate } from '../api/Auth';
 
 export default function Profile () {
-	const {user} = useContext(AuthContext)
 
+	const {user} = useContext(AuthContext)
 	const validationScheme = yup.object().shape({
 		name: yup.string().required(),
 		email: yup.string().email().required(),
@@ -20,25 +20,29 @@ export default function Profile () {
 			is: (newPassword: string) => newPassword ? newPassword.length > 0 : false,
 			then: (schema) => schema.oneOf([yup.ref('newPassword')], 'Repeated password does not match new password')
 		})
-	}, [
-		['newPassword', 'password']
-	]);
+	}, [['newPassword', 'password']]);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
-		resolver: yupResolver(validationScheme),
-		defaultValues: {
-			name: user.data.name,
-			email: user.data.email,
-			newPassword: '',
-			rePassword: ''
-		}
-	});
 	type ProfileUpdateForm = yup.InferType<typeof validationScheme>
 
-	const onSubmit:SubmitHandler<ProfileUpdateForm> = async (data) => {
+	useEffect(() => {
+		if(!user)
+			return;
 
+		setValue('name', user.data.name);
+		setValue('email', user.data.email);
+	}, [user]);
+
+	const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+		resolver: yupResolver(validationScheme),
+		defaultValues: {
+			name: '',
+			email: ''
+		}
+	});
+
+	const onSubmit:SubmitHandler<ProfileUpdateForm> = async (data) => {
 		if(!data.newPassword)
-				delete data.newPassword;
+			delete data.newPassword;
 
 		if(!data.rePassword)
 			delete data.rePassword;
@@ -70,6 +74,7 @@ export default function Profile () {
 						label="Username"
 						variant="outlined"
 						fullWidth
+						InputLabelProps={{ shrink: true }}
 					/>
 				</Grid>
 
@@ -78,6 +83,7 @@ export default function Profile () {
 						error={errors.email ? true : false}
 						helperText={errors.email?.message || null}
 						{...register("email")}
+						InputLabelProps={{ shrink: true }}
 					/>
 				</Grid>
 
