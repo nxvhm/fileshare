@@ -115,11 +115,13 @@ router.put('/profile',  checkSchema(profileUpdateValidator), async(req: IUserAut
 	if (req.body.email && user.email != req.body.email)
 			user.email = req.body.email;
 
+	if (req.body.newPassword && req.body.rePassword && req.body.newPassword == req.body.rePassword)
+			user.password = await bcrypt.hash(req.body.newPassword, Number(process.env.BCRYPT_ROUNDS));
+
 	if (! await userRepo.save(user))
 			res.status(500).send({msg: 'Error Updating User Profile'});
 
 	return res.send();
-
 })
 
 export default router;
