@@ -8,7 +8,6 @@ import { Share } from "@/models/Share.js";
 import { AppDataSource } from "@/datasource.js";
 
 const router = express.Router();
-router.use(AuthMiddleware);
 
 const shareFileRequestValidation = {
 	userId: {
@@ -27,7 +26,7 @@ const shareFileRequestValidation = {
 	}
 }
 
-router.post('/share', checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/share', AuthMiddleware, checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
 	if (!req.user)
 		return res.status(403).send("Unauthorized");
 
@@ -79,7 +78,7 @@ router.post('/share', checkSchema(shareFileRequestValidation), async(req: IUserA
 
 })
 
-router.delete('/share/:fileId/:userId', checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+router.delete('/share/:fileId/:userId', AuthMiddleware, checkSchema(shareFileRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
 	if (!req.user)
 		return res.status(403).send("Unauthorized");
 
@@ -120,7 +119,7 @@ const fileSharesRequestValidation = {
 		}
 	}
 }
-router.get('/shares', checkSchema(fileSharesRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+router.get('/shares', AuthMiddleware, checkSchema(fileSharesRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
 
 	const validation = validationResult(req);
 	if (validation.array().length)

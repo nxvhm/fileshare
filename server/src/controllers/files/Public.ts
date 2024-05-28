@@ -6,8 +6,6 @@ import { AppDataSource } from "@/datasource.js";
 import { File } from "@/models/File.js";
 
 const router = express.Router();
-router.use(AuthMiddleware);
-
 const togglePublicRequestValidation = {
 	fileId: {
 		notEmpty: true,
@@ -26,7 +24,7 @@ const togglePublicRequestValidation = {
 /**
  * Toggle public property of file
  */
-router.post('/set-public', checkSchema(togglePublicRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/set-public', AuthMiddleware, checkSchema(togglePublicRequestValidation), async(req: IUserAuthRequest, res: express.Response) => {
 	if(!req.user?.data.id)
 		return res.status(403).send();
 

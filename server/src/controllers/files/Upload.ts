@@ -7,13 +7,10 @@ import { Files } from "@/lib/FilesHelper.js";
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' })
-
-router.use(AuthMiddleware);
-
 /**
  * Upload File
  */
-router.post('/upload', upload.single('file'), async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/upload', AuthMiddleware, upload.single('file'), async(req: IUserAuthRequest, res: express.Response) => {
 
 	if(!req.user)
 		return res.status(403).send("Unauthorized");
@@ -60,7 +57,7 @@ const createFolderRequestValidator = {
 	}
 }
 
-router.post('/create-folder', checkSchema(createFolderRequestValidator), async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/create-folder', checkSchema(createFolderRequestValidator), AuthMiddleware, async(req: IUserAuthRequest, res: express.Response) => {
 	if (!req.user)
 		return res.status(403).send("Unauthorized");
 

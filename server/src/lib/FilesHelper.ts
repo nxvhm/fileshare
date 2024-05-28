@@ -206,4 +206,17 @@ export class Files {
 		})
 	}
 
+	public static isViewable(file: File): boolean {
+		const imageMimes = [
+			'image/jpeg',
+			'image/png',
+			'image/gif',
+			'image/webp',
+			'application/pdf',
+			'application/json'
+		];
+
+		return imageMimes.includes(file.mime);
+	}
+
 }
