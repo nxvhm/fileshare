@@ -1,19 +1,18 @@
 import {useState, useEffect, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
-
 import {List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton, Box, Button} from '@mui/material';
-import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon, Folder as FolderIcon, CloudUpload as CloudUploadIcon} from '@mui/icons-material';
-
+import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon, Folder as FolderIcon, CloudUpload as CloudUploadIcon, RemoveRedEye as RemoveRedEyeIcon} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import Lightbox from "yet-another-react-lightbox";
 
 import ConfirmationDialog from '../main/ConfirmationDialog';
 import { FileModel, FileType, filePropUpdateHandler } from '../../definitions';
 import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
+import FilesHelper from '../../lib/helpers/FileHelper';
 import Breadcrumbs from './breadcrumbs';
 import ShareDialog from './shareDialog';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
@@ -41,6 +40,8 @@ export default function FilesList(props: FileListProps) {
 	showUploadButton = showUploadButton ?? true;
 	showCreateFolderButton = showCreateFolderButton ?? true;
 
+	const [lightboxOpen, setLightboxOpen] = useState(false);
+	const [viewImage, setViewImage] = useState<string|null>(null);
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState<boolean>(false);
@@ -82,9 +83,9 @@ export default function FilesList(props: FileListProps) {
 		if(!file.hash)
 			toast.error("File hash not available. Cannot request download");
 
-		FilesApi.downloadFile(String(file.hash)).then(res => {
-			fileDownload(res.data, file.name);
-		})
+		FilesHelper.isViewable(file)
+			? window.open(FilesApi.getViewableFileUrl(file), '_blank')?.focus()
+			: FilesApi.downloadFile(String(file.hash)).then(res => fileDownload(res.data, file.name));
 	}
 
 	const onFolderCreate = (folder: FileModel): void => {
@@ -108,6 +109,7 @@ export default function FilesList(props: FileListProps) {
 	const getFileOptionsButton = (file: FileModel): JSX.Element => {
 		return (
 			<>
+			{FilesHelper.isImage(file) && <IconButton onClick={() => openLightbox(file)}><RemoveRedEyeIcon className='fileActionIcon'/></IconButton>}
 			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)}><DownloadIcon className='fileActionIcon'/></IconButton>}
 			<IconButton className='fileActionButton' id='ShareButton' onClick={() => shareFile(file)}><ShareIcon className='fileActionIcon' /></IconButton>
 			<IconButton onClick={() => showDeleteConfirmation(file)} className='fileActionButton' id='DeleteButton'>
@@ -153,6 +155,11 @@ export default function FilesList(props: FileListProps) {
 	const closeFileShare = () => {
 		setFileShare(null);
 		setOpenShareWindow(false)
+	}
+
+	const openLightbox = (file: FileModel) => {
+		setViewImage(FilesApi.getViewableFileUrl(file));
+		setLightboxOpen(true);
 	}
 
 	const getFileIcon = (file: FileModel) => {
@@ -206,6 +213,11 @@ export default function FilesList(props: FileListProps) {
 				secondaryDialogText='Action cannot be reverted'
 			></ConfirmationDialog>
 			<ShareDialog open={openShareWindow} file={fileShare} onClose={closeFileShare} />
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        slides={[{src: String(viewImage)}]}
+      />
 		</>
 	);
 }

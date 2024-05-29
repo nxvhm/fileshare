@@ -1,5 +1,6 @@
 import { FileModel, ShareRecord, UserSearchResult } from "../definitions";
 import axiosInstance from "../lib/Axios"
+import { Token } from "../lib/Token";
 
 export const uploadFile = (form: FormData): Promise<FileModel> => {
 	return new Promise((resolve, reject) => {
@@ -85,4 +86,13 @@ export const toggleFilePublic = (fileId: number, isPublic: 0|1): Promise<boolean
 			.then(_res => resolve(true))
 			.catch(e => reject(e));
 	})
+}
+
+export const getViewableFileUrl = (file: FileModel): string => {
+	const parts = [import.meta.env.VITE_API_URL, 'files', 'view', file.hash];
+
+	if(!file.public)
+		parts.push(Token.get());
+
+	return parts.join('/');
 }
