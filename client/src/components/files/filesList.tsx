@@ -109,8 +109,8 @@ export default function FilesList(props: FileListProps) {
 	const getFileOptionsButton = (file: FileModel): JSX.Element => {
 		return (
 			<>
-			{FilesHelper.isImage(file) && <IconButton onClick={() => openLightbox(file)}><RemoveRedEyeIcon className='fileActionIcon'/></IconButton>}
-			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)}><DownloadIcon className='fileActionIcon'/></IconButton>}
+			{FilesHelper.isImage(file) && <IconButton onClick={() => openLightbox(file)} className='fileActionButton'><RemoveRedEyeIcon className='fileActionIcon'/></IconButton>}
+			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)} className='fileActionButton'><DownloadIcon className='fileActionIcon'/></IconButton>}
 			<IconButton className='fileActionButton' id='ShareButton' onClick={() => shareFile(file)}><ShareIcon className='fileActionIcon' /></IconButton>
 			<IconButton onClick={() => showDeleteConfirmation(file)} className='fileActionButton' id='DeleteButton'>
 				<DeleteIcon className='fileActionIcon' />
@@ -120,13 +120,14 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const onFileClick = (e: React.MouseEvent, file: FileModel) => {
-		const target = (e.target as HTMLBodyElement);
-		if(target.classList.contains('fileActionButton') || target.parentElement?.classList.contains('fileActionButton') || target.classList.contains('fileActionIcon'))
+		const target = (e.target as HTMLBodyElement),
+					targetClassList = target.classList,
+					parentClassList = target.parentElement?.classList;
+
+		if(targetClassList.contains('fileActionButton') || targetClassList.contains('fileActionIcon') || parentClassList?.contains('fileActionButton') || parentClassList?.contains('fileActionIcon'))
 			return;
 
-		if(file.type == FileType.TYPE_FOLDER)
-			return navigate('/folder/'+file.id);
-		showFileDetails(file, onPublicStatusChange);
+		file.type == FileType.TYPE_FOLDER ? navigate('/folder/'+file.id) : showFileDetails(file, onPublicStatusChange);
 	}
 
 	const deleteFile = () => {
