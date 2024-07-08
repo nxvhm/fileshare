@@ -2,7 +2,10 @@ import {useState, useEffect, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
-import {List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton, Box, Button} from '@mui/material';
+import {
+	List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton, Box, Button,
+	Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+} from '@mui/material';
 import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon, Folder as FolderIcon, CloudUpload as CloudUploadIcon, RemoveRedEye as RemoveRedEyeIcon} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import Lightbox from "yet-another-react-lightbox";
@@ -191,6 +194,38 @@ export default function FilesList(props: FileListProps) {
 		)
 	}
 
+	const ShowTableViewList = () => {
+		if(!files.length)
+			return;
+
+		return (
+		<Table>
+			<TableHead>
+				<TableRow>
+					<TableCell>Name</TableCell>
+					<TableCell>Uploaded</TableCell>
+					<TableCell>Size</TableCell>
+					<TableCell>Public</TableCell>
+					<TableCell>Shares</TableCell>
+					<TableCell>Actions</TableCell>
+				</TableRow>
+			</TableHead>
+			<TableBody>
+				{files.map((file: FileModel) => (
+					<TableRow key={file.id}>
+						<TableCell>{getFileIcon(file)} {file.name}</TableCell>
+						<TableCell>{getDate(String(file.created_at))}</TableCell>
+						<TableCell>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
+						<TableCell>{file.public ? 'Yes' : 'No'}</TableCell>
+						<TableCell>N/A</TableCell>
+						<TableCell>{getFileOptionsButton(file)}</TableCell>
+					</TableRow>
+				))}
+			</TableBody>
+		</Table>
+		)
+	}
+
 	return(
 		<>
 				<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
@@ -205,7 +240,7 @@ export default function FilesList(props: FileListProps) {
 			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
 				<Breadcrumbs folderId={Number(parentId)} />
 			</Box>
-			<ShowList />
+			<ShowTableViewList />
 			<ConfirmationDialog
 				isOpen={openDeleteConfirmation}
 				onConfirm={deleteFile}
