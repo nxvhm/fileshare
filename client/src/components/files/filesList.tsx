@@ -2,14 +2,8 @@ import {useState, useEffect, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
-import {
-	List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton, Box, Button,
-	Table, TableBody, TableCell, TableContainer, TableHead, TableRow
-} from '@mui/material';
-import {Download as DownloadIcon, Image as ImageIcon, Share as ShareIcon, Delete as DeleteIcon, Folder as FolderIcon, CloudUpload as CloudUploadIcon, RemoveRedEye as RemoveRedEyeIcon} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import Lightbox from "yet-another-react-lightbox";
-
 import ConfirmationDialog from '../main/ConfirmationDialog';
 import { FileModel, FileType, filePropUpdateHandler } from '../../definitions';
 import  * as FilesApi from '../../api/Files';
@@ -19,6 +13,23 @@ import FilesHelper from '../../lib/helpers/FileHelper';
 import Breadcrumbs from './breadcrumbs';
 import ShareDialog from './shareDialog';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
+
+import {
+	List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton, Box, Button,
+	Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+} from '@mui/material';
+
+import {
+	Download as DownloadIcon,
+	Image as ImageIcon,
+	Share as ShareIcon,
+	Delete as DeleteIcon,
+	Folder as FolderIcon,
+	CloudUpload as CloudUploadIcon,
+	RemoveRedEye as RemoveRedEyeIcon,
+	Article as ArticleIcon,
+	AttachFile as AttachFileIcon
+} from '@mui/icons-material';
 
 export type FileListProps = {
 	showUploadButton?: boolean,
@@ -167,11 +178,18 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const getFileIcon = (file: FileModel) => {
-		return (
-			<>
-				{file.type == FileType.TYPE_FILE ? <ImageIcon /> : <FolderIcon />}
-			</>
-		)
+
+		if(FilesHelper.isImage(file)) {
+			return <ImageIcon sx={{verticalAlign: 'middle'}} />;
+		} else if (FileType.TYPE_FOLDER == file.type) {
+			return  <FolderIcon sx={{verticalAlign: 'middle'}}/>
+		} else {
+			switch(file.mime) {
+				case 'text/plain': return <ArticleIcon sx={{verticalAlign: 'middle'}}></ArticleIcon>
+				case 'application/octet-stream':  return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
+				default: return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
+			}
+		}
 	}
 
 	const ShowList = () => {
