@@ -217,7 +217,7 @@ export default function FilesList(props: FileListProps) {
 			return;
 
 		return (
-		<Table>
+		<Table size='small'>
 			<TableHead>
 				<TableRow>
 					<TableCell>Name</TableCell>
