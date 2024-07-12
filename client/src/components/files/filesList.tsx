@@ -19,6 +19,8 @@ import {
 	Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
 
+import { VisuallyHiddenInput, FileTableRow } from './styled';
+
 import {
 	Download as DownloadIcon,
 	Image as ImageIcon,
@@ -35,18 +37,6 @@ export type FileListProps = {
 	showUploadButton?: boolean,
 	showCreateFolderButton?: boolean,
 }
-
-const VisuallyHiddenInput = styled('input')({
-	clip: 'rect(0 0 0 0)',
-	clipPath: 'inset(50%)',
-	height: 1,
-	overflow: 'hidden',
-	position: 'absolute',
-	bottom: 0,
-	left: 0,
-	whiteSpace: 'nowrap',
-	width: 1,
-});
 
 export default function FilesList(props: FileListProps) {
 
@@ -230,14 +220,14 @@ export default function FilesList(props: FileListProps) {
 			</TableHead>
 			<TableBody>
 				{files.map((file: FileModel) => (
-					<TableRow key={file.id}>
+					<FileTableRow key={file.id} onClick={e => onFileClick(e, file)}>
 						<TableCell>{getFileIcon(file)} {file.name}</TableCell>
 						<TableCell>{getDate(String(file.created_at))}</TableCell>
 						<TableCell>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
 						<TableCell>{file.public ? 'Yes' : 'No'}</TableCell>
 						<TableCell>N/A</TableCell>
 						<TableCell>{getFileOptionsButton(file)}</TableCell>
-					</TableRow>
+					</FileTableRow>
 				))}
 			</TableBody>
 		</Table>
@@ -246,15 +236,15 @@ export default function FilesList(props: FileListProps) {
 
 	return(
 		<>
-				<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
-					{showUploadButton &&
-						<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-							Upload file
-							<VisuallyHiddenInput type="file" onChange={fileUpload} />
-						</Button>
-					}
-					{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
-				</Box>
+			<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
+				{showUploadButton &&
+					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+						Upload file
+						<VisuallyHiddenInput type="file" onChange={fileUpload} />
+					</Button>
+				}
+				{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
+			</Box>
 			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
 				<Breadcrumbs folderId={Number(parentId)} />
 			</Box>
