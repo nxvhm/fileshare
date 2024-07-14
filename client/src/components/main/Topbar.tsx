@@ -7,6 +7,7 @@ import OpenDrawerContext from "../../lib/context/OpenDraweContext";
 import ThemeContext from "../../lib/context/ThemeContextProvider";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import NightlightRoundIcon from '@mui/icons-material/NightlightRound';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 interface AppBarProps extends MuiAppBarProps {
 	open?: boolean;
@@ -34,7 +35,6 @@ const AppBar = styled(MuiAppBar, {
 export default function Topbar() {
 	const {drawerOpen, toggleDrawer} = useContext(OpenDrawerContext);
 	const {mode, switchMode} = useContext(ThemeContext);
-
 	const toggleTheme = () => switchMode(mode == 'dark' ? 'light' : 'dark');
 
 	return(
@@ -56,7 +56,7 @@ export default function Topbar() {
 
 				<IconButton color="inherit" onClick={toggleTheme}>
 					<Badge color="secondary">
-						<NightlightRoundIcon />
+						{mode == 'light' ? <NightlightRoundIcon /> : <WbSunnyIcon />}
 					</Badge>
 				</IconButton>
 			</Toolbar>
