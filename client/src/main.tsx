@@ -18,12 +18,11 @@ import Folder from './screens/Folder.tsx';
 import Shares from './screens/Shares.tsx';
 import Profile from './screens/Profile.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
-
 import { useAuth } from './lib/hooks/useAuth.ts';
 import AuthContext from './lib/context/AuthContext.ts';
-
 import {OpenDrawerContextProvider} from './lib/context/OpenDraweContext.tsx';
 import { OpenFileDetailsContextProvider } from './lib/context/OpenFileDetailsContext.tsx';
+import { ThemeContextProvider } from './lib/context/ThemeContextProvider.tsx';
 
 import './assets/main.css';
 const App = function() {
@@ -59,11 +58,13 @@ const App = function() {
 
 	return(
 		<AuthContext.Provider value={{user, loginUser, logoutUser}}>
+		<ThemeContextProvider>
 		<OpenDrawerContextProvider>
 		<OpenFileDetailsContextProvider>
 			<RouterProvider router={router} />
 		</OpenFileDetailsContextProvider>
 		</OpenDrawerContextProvider>
+		</ThemeContextProvider>
 		</AuthContext.Provider>
 	)
 

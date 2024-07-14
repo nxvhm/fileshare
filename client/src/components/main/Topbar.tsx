@@ -4,7 +4,9 @@ import { Toolbar, IconButton, Typography, Badge } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import OpenDrawerContext from "../../lib/context/OpenDraweContext";
+import ThemeContext from "../../lib/context/ThemeContextProvider";
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import NightlightRoundIcon from '@mui/icons-material/NightlightRound';
 
 interface AppBarProps extends MuiAppBarProps {
 	open?: boolean;
@@ -31,6 +33,9 @@ const AppBar = styled(MuiAppBar, {
 
 export default function Topbar() {
 	const {drawerOpen, toggleDrawer} = useContext(OpenDrawerContext);
+	const {mode, switchMode} = useContext(ThemeContext);
+
+	const toggleTheme = () => switchMode(mode == 'dark' ? 'light' : 'dark');
 
 	return(
 		<AppBar position="absolute" open={drawerOpen}>
@@ -38,7 +43,7 @@ export default function Topbar() {
 				<IconButton edge="start" color="inherit" aria-label="open drawer" onClick={toggleDrawer}
 					sx={{...(drawerOpen && { display: 'none' })}}
 				>
-					<MenuIcon />
+				<MenuIcon />
 				</IconButton>
 				<Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
 					FileShare
@@ -46,6 +51,12 @@ export default function Topbar() {
 				<IconButton color="inherit">
 					<Badge badgeContent={4} color="secondary">
 						<NotificationsIcon />
+					</Badge>
+				</IconButton>
+
+				<IconButton color="inherit" onClick={toggleTheme}>
+					<Badge color="secondary">
+						<NightlightRoundIcon />
 					</Badge>
 				</IconButton>
 			</Toolbar>
