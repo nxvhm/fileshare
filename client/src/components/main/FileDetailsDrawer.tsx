@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
-import {ModalProps, Typography, Box, Toolbar, Switch, FormControlLabel, Drawer} from '@mui/material';
+import {ModalProps, Typography, Box, Toolbar, Switch, FormControlLabel, Drawer, colors} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { FileModel } from '../../definitions';
 import { useFileShare } from "../../lib/hooks/useFileShares";
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 import { toggleFilePublic as toggleFilePublicRequest } from '../../api/Files';
+import FilesHelper from '../../lib/helpers/FileHelper';
+
 
 export default function FileDetailsDrawer() {
 	const {drawerOpen, toggleDrawer, selectedFile, onFileChange} = useContext(OpenFileDetailsContext);
@@ -44,6 +46,19 @@ export default function FileDetailsDrawer() {
 		setIsPublic(Boolean(selectedFile?.public));
 	}, [selectedFile]);
 
+	function ShowDownloadUrl(): undefined | JSX.Element {
+		if(!selectedFile || !isPublic)
+			return;
+
+		return (
+			<Box paddingLeft={3} marginTop={1}>
+				<Typography fontSize={15}>Public Download URL</Typography>
+				<Typography fontSize={12} color={grey[500]}>
+					{FilesHelper.getPublicDownloadUrl(selectedFile)}
+				</Typography>
+			</Box>
+		)
+	}
 
 	return (
 		<Drawer onClose={toggleDrawer} anchor={'right'} open={drawerOpen} PaperProps={{style: {width: 320}}} ModalProps={backdropProps}>
@@ -63,17 +78,19 @@ export default function FileDetailsDrawer() {
             <Switch checked={isPublic} onChange={togglePublic} name="isPublic" />
 					}/>
 
-
 					<Typography fontSize={15} marginTop={2}>Uploaded</Typography>
 					<Typography fontSize={12} color={grey[500]}>{selectedFile?.created_at}</Typography>
-
 				</Box>
+
 				<Box paddingLeft={3}>
 					<Typography fontSize={15}>{currentShares.length ? "Shared with" : "No shares"}</Typography>
 				</Box>
-				<Box paddingLeft={1}>
+
+				<Box paddingLeft={1} >
 					<GetCurrentSharesList />
 				</Box>
+
+				<ShowDownloadUrl />
 		</Drawer>
 	)
 }
