@@ -96,3 +96,11 @@ export const getViewableFileUrl = (file: FileModel): string => {
 
 	return parts.join('/');
 }
+
+export const getFileInfo = (hash: string): Promise<FileModel> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.get(`/files/info/${hash}`)
+		.then(res => resolve(res.data))
+		.catch(e=> reject(e))
+	})
+}
