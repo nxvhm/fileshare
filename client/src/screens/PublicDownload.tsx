@@ -19,14 +19,16 @@ import { FileModel } from '../definitions';
 
 const DownloadIconBox = styled(Box)({
 	background: 'linear-gradient(45deg, rgba(200,27,44,1) 0%, rgba(232,79,44,1) 100%)',
-	flex: '1 1 33.33%',
+	flex: '1 1 25%',
 	padding: '1em'
 })
 
 const DownloadIcon = styled(CloudDownloadIcon)({
 	width: 'auto',
 	height: 'auto',
-	color: 'white'
+	color: 'white',
+	'-webkit-filter': 'drop-shadow(10px 8px 15px rgba(0,0,0,0.3))',
+  'filter': 'drop-shadow(10px 8px 15px rgba(0,0,0,0.3))',
 })
 
 function PublicDownload() {
@@ -59,7 +61,7 @@ function PublicDownload() {
 			<Grid container>
 				<Grid item xs="auto" sx={{mx: 'auto', flexBasis: {xs: 1, sm: '50%', md: '33.33%'}, marginLeft: {xs: 0, sm: '25%', md: '33.333%'}, marginTop: '15%'}} >
 					<Card sx={{borderRadius: 3, display: 'flex'}}>
-						<Box sx={{flex: '2 1 66%'}}>
+						<Box sx={{flex: '3 1 75%'}}>
 							<CardContent>
 									<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
 										File Download
