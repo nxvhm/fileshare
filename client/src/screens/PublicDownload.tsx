@@ -2,9 +2,11 @@ import '../assets/public-download.css'
 import { getFileInfo } from '../api/Files';
 import { useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import {
 	Box,
 	Card,
+	CardMedia,
 	CardActions,
 	CardContent,
 	Button,
@@ -14,18 +16,17 @@ import {
 import { useEffect, useState } from 'react';
 import { FileModel } from '../definitions';
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-  >
-    •
-  </Box>
-);
 
-const DownloadBox = styled(Box)({
-	width: 300,
-	mx: 'auto'
+const DownloadIconBox = styled(Box)({
+	background: 'linear-gradient(45deg, rgba(200,27,44,1) 0%, rgba(232,79,44,1) 100%)',
+	flex: '1 1 33.33%',
+	padding: '1em'
+})
+
+const DownloadIcon = styled(CloudDownloadIcon)({
+	width: 'auto',
+	height: 'auto',
+	color: 'white'
 })
 
 function PublicDownload() {
@@ -41,7 +42,6 @@ function PublicDownload() {
 				setFile(file);
 			}).catch(e => {
 				setLoading(false);
-				console.log(e)
 			});
 	}, [hash])
 
@@ -57,26 +57,31 @@ function PublicDownload() {
 
 		return(
 			<Grid container>
-				<Grid item xs="auto" sx={{mx: 'auto', my: 25, minWidth: {xs: 1, sm: 1/2, md: 1/3}}} >
-					<Card>
-						<CardContent>
-							<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-								File Download
-							</Typography>
-							<Typography variant="h5" component="div">
-								{file ? file.name : 'Example file name'}
-							</Typography>
-							<Typography sx={{ mb: 1.5 }} color="text.secondary">
-								hello world
-							</Typography>
-							<Typography variant="body2">
-								Uploaded by
-								<br />
-							</Typography>
-						</CardContent>
-						<CardActions>
-							<Button size="small">Download</Button>
-						</CardActions>
+				<Grid item xs="auto" sx={{mx: 'auto', flexBasis: {xs: 1, sm: '50%', md: '33.33%'}, marginLeft: {xs: 0, sm: '25%', md: '33.333%'}, marginTop: '15%'}} >
+					<Card sx={{borderRadius: 3, display: 'flex'}}>
+						<Box sx={{flex: '2 1 66%'}}>
+							<CardContent>
+									<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+										File Download
+									</Typography>
+									<Typography variant="h5" component="div">
+										{file ? file.name : 'Example file name'}
+									</Typography>
+									<Typography sx={{ mb: 1.5 }} color="text.secondary">
+										hello world
+									</Typography>
+									<Typography variant="body2">
+										Uploaded by
+										<br />
+									</Typography>
+							</CardContent>
+						</Box>
+						<DownloadIconBox>
+								<DownloadIcon />
+								<Typography variant="body2">
+									DOWNLOAD
+								</Typography>
+							</DownloadIconBox>
 					</Card>
 				</Grid>
 			</Grid>
