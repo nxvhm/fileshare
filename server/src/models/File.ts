@@ -1,9 +1,10 @@
 import "reflect-metadata"
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Relation } from "typeorm";
 import { Files } from "../lib/FilesHelper.js";
 import { PathLike } from "fs";
 import { createHash } from "crypto";
 import { FileTypes } from '@/definitions.js'
+import { User } from "./User.js";
 
 @Entity("files")
 export class File {
@@ -44,6 +45,10 @@ export class File {
 
 	@Column("datetime")
 	created_at!: string
+
+	@ManyToOne(() => User, (user) => user.files)
+	@JoinColumn({name: 'user_id'})
+	user!: Relation<User>
 
 	public getPath(): PathLike|string {
 		return Files.getUserFilesDirPath(this.hash, this.user_id);
