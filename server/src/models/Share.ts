@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import { Column, Entity, PrimaryColumn , OneToOne, JoinColumn} from "typeorm";
+import { Column, Entity, PrimaryColumn , OneToOne, JoinColumn, ManyToOne, Relation} from "typeorm";
 import { File } from "@/models/File.js";
 import { User } from "@/models/User.js";
 
@@ -13,14 +13,14 @@ export class Share {
 	@PrimaryColumn("int")
 	file_id!: number;
 
-	@OneToOne(() => User)
+	@ManyToOne(() => User)
 	@JoinColumn({name: 'user_id'})
-	user!: User
+	user!: Relation<User>
 
 	@Column("timestamp")
 	created_at!: string
 
 	@OneToOne(() => File)
 	@JoinColumn({name: 'file_id'})
-	file!: File
+	file!: Relation<File>
 }
