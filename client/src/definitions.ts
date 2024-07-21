@@ -14,6 +14,7 @@ export type FileModel = {
 	type: FileType,
 	public: 1|0
 	created_at: string|null,
+	user?: UserTokenData
 }
 
 export type AuthTokenPayload = {

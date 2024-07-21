@@ -70,10 +70,10 @@ function PublicDownload() {
 										{file ? file.name : 'Example file name'}
 									</Typography>
 									<Typography sx={{ mb: 1.5 }} color="text.secondary">
-										hello world
+										File Size: {file && file.filesize ? (file.filesize/1000 + ' KB') : 'N/A'}
 									</Typography>
 									<Typography variant="body2">
-										Uploaded by
+										Uploaded by: {file ? file.user?.name : 'N/A'}
 										<br />
 									</Typography>
 							</CardContent>
