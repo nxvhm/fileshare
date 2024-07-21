@@ -20,7 +20,6 @@ import { FileModel } from '../definitions';
 const DownloadIconBox = styled(Box)({
 	background: 'linear-gradient(45deg, rgba(200,27,44,1) 0%, rgba(232,79,44,1) 100%)',
 	flex: '1 1 25%',
-	padding: '1em'
 })
 
 const DownloadIcon = styled(CloudDownloadIcon)({
@@ -29,6 +28,15 @@ const DownloadIcon = styled(CloudDownloadIcon)({
 	color: 'white',
 	'-webkit-filter': 'drop-shadow(10px 8px 15px rgba(0,0,0,0.3))',
   'filter': 'drop-shadow(10px 8px 15px rgba(0,0,0,0.3))',
+	padding: '0.6em'
+})
+
+const DownloadActionBox = styled(Box)({
+	width: 'auto',
+	color: '#fff',
+	padding: '0.6em',
+	backgroundColor: '#9F1321',
+	textAlign: 'center'
 })
 
 function PublicDownload() {
@@ -80,9 +88,9 @@ function PublicDownload() {
 						</Box>
 						<DownloadIconBox>
 								<DownloadIcon />
-								<Typography variant="body2">
-									DOWNLOAD
-								</Typography>
+								<DownloadActionBox>
+									<Button variant='text' sx={{color: '#fff'}} size='large'>DOWNLOAD</Button>
+								</DownloadActionBox>
 							</DownloadIconBox>
 					</Card>
 				</Grid>
