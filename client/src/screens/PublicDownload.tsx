@@ -1,13 +1,12 @@
-import '../assets/public-download.css'
-import { getFileInfo } from '../api/Files';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import {Box, Card, CardContent, Button, Typography, Grid, Backdrop, CircularProgress} from '@mui/material'
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import {Box, Card, CardContent, Button, Typography,Grid} from '@mui/material'
-import { useEffect, useState } from 'react';
-import { FileModel } from '../definitions';
-import  {downloadFile as downloadFileRequest} from '../api/Files';
 import fileDownload from 'js-file-download';
+import { getFileInfo, downloadFile as downloadFileRequest } from '../api/Files';
+import { FileModel } from '../definitions';
+import '../assets/public-download.css'
 
 const DownloadIconBox = styled(Box)({
 	background: 'linear-gradient(45deg, rgba(200,27,44,1) 0%, rgba(232,79,44,1) 100%)',
@@ -49,7 +48,10 @@ function PublicDownload() {
 
 	const renderLoadingScreen = () => {
 		return(
-			<p>Loading</p>
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, flexDirection: 'column' }} open={loading}>
+				<Box sx={{width: '100%', textAlign: 'center', marginBottom: 2}}>Loading Download...</Box>
+				<CircularProgress color="inherit" />
+      </Backdrop>
 		)
 	}
 
