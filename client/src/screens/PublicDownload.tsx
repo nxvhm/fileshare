@@ -3,19 +3,11 @@ import { getFileInfo } from '../api/Files';
 import { useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import {
-	Box,
-	Card,
-	CardMedia,
-	CardActions,
-	CardContent,
-	Button,
-	Typography,
-	Grid
-} from '@mui/material'
+import {Box, Card, CardContent, Button, Typography,Grid} from '@mui/material'
 import { useEffect, useState } from 'react';
 import { FileModel } from '../definitions';
-
+import  {downloadFile as downloadFileRequest} from '../api/Files';
+import fileDownload from 'js-file-download';
 
 const DownloadIconBox = styled(Box)({
 	background: 'linear-gradient(45deg, rgba(200,27,44,1) 0%, rgba(232,79,44,1) 100%)',
@@ -61,6 +53,13 @@ function PublicDownload() {
 		)
 	}
 
+	const initFileDownload = () => {
+		if(!file)
+			return false;
+
+		downloadFileRequest(String(file.hash)).then(res => fileDownload(res.data, file.name))
+	}
+
 	const DownloadBox = () => {
 		if(loading)
 			return renderLoadingScreen();
@@ -89,7 +88,7 @@ function PublicDownload() {
 						<DownloadIconBox>
 								<DownloadIcon />
 								<DownloadActionBox>
-									<Button variant='text' sx={{color: '#fff'}} size='large'>DOWNLOAD</Button>
+									<Button variant='text' sx={{color: '#fff'}} size='large' onClick={initFileDownload}>DOWNLOAD</Button>
 								</DownloadActionBox>
 							</DownloadIconBox>
 					</Card>
