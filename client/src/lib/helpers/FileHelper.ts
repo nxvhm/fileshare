@@ -19,4 +19,8 @@ export default class FilesHelper {
 		return ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(String(file.mime));
 	}
 
+	public static getPublicDownloadUrl(file: FileModel): string {
+		return window.location.href + 'download/' + file.hash;
+	}
+
 }

@@ -2,7 +2,6 @@ import {useState, useEffect, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
-import { styled } from '@mui/material/styles';
 import Lightbox from "yet-another-react-lightbox";
 import ConfirmationDialog from '../main/ConfirmationDialog';
 import { FileModel, FileType, filePropUpdateHandler } from '../../definitions';
@@ -13,13 +12,23 @@ import FilesHelper from '../../lib/helpers/FileHelper';
 import Breadcrumbs from './breadcrumbs';
 import ShareDialog from './shareDialog';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
-
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {
-	List, ListItem, ListItemIcon, ListItemText, ListItemButton, IconButton, Box, Button,
-	Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	ListItemButton,
+	IconButton,
+	Box,
+	Button,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
+	Tooltip
 } from '@mui/material';
-
-import { VisuallyHiddenInput, FileTableRow } from './styled';
 
 import {
 	Download as DownloadIcon,
@@ -30,8 +39,11 @@ import {
 	CloudUpload as CloudUploadIcon,
 	RemoveRedEye as RemoveRedEyeIcon,
 	Article as ArticleIcon,
-	AttachFile as AttachFileIcon
+	AttachFile as AttachFileIcon,
+	FileCopy as FileCopyIcon
 } from '@mui/icons-material';
+
+import { VisuallyHiddenInput, FileTableRow } from './styled';
 
 export type FileListProps = {
 	showUploadButton?: boolean,
@@ -168,8 +180,7 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const getFileIcon = (file: FileModel) => {
-
-		if(FilesHelper.isImage(file)) {
+		if (FilesHelper.isImage(file)) {
 			return <ImageIcon sx={{verticalAlign: 'middle'}} />;
 		} else if (FileType.TYPE_FOLDER == file.type) {
 			return  <FolderIcon sx={{verticalAlign: 'middle'}}/>
@@ -180,6 +191,17 @@ export default function FilesList(props: FileListProps) {
 				default: return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
 			}
 		}
+	}
+
+	const CopyPublicUrl = ({file}: {file: FileModel}): JSX.Element | undefined => {
+		if (!file.public)
+			return;
+
+		return(
+			<CopyToClipboard text={FilesHelper.getPublicDownloadUrl(file)} onCopy={() => {toast.success("Download URL Copied to clipboard")}}>
+					<FileCopyIcon sx={{fontSize: 'medium', pl: 1, verticalAlign: 'middle'}} onClick={_e => false}/>
+			</CopyToClipboard>
+		)
 	}
 
 	const ShowList = () => {
@@ -220,12 +242,15 @@ export default function FilesList(props: FileListProps) {
 			</TableHead>
 			<TableBody>
 				{files.map((file: FileModel) => (
-					<FileTableRow key={file.id} onClick={e => onFileClick(e, file)}>
-						<TableCell>{getFileIcon(file)} {file.name}</TableCell>
-						<TableCell>{getDate(String(file.created_at))}</TableCell>
-						<TableCell>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
-						<TableCell>{file.public ? 'Yes' : 'No'}</TableCell>
-						<TableCell>N/A</TableCell>
+					<FileTableRow key={file.id}>
+						<TableCell onClick={e => onFileClick(e, file)}>{getFileIcon(file)} {file.name}</TableCell>
+						<TableCell onClick={e => onFileClick(e, file)}>{getDate(String(file.created_at))}</TableCell>
+						<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
+						<TableCell>
+							{file.public ? 'Yes' : 'No'}
+							<CopyPublicUrl file={file}/>
+						</TableCell>
+						<TableCell onClick={e => onFileClick(e, file)}>N/A</TableCell>
 						<TableCell>{getFileOptionsButton(file)}</TableCell>
 					</FileTableRow>
 				))}

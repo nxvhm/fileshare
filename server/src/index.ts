@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 
 app.use('/auth', AuthController);
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello TS');
+    res.send('FileShare');
 });
 
 
