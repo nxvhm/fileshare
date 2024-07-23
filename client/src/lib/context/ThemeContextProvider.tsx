@@ -14,7 +14,7 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const ThemeContextProvider = ({children}: PropsWithChildren<{}>) => {
 	const defaultMode: ThemesList = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-		? 'light'
+		? 'dark'
 		: 'light'
 
 	const [mode, setMode] = useState<ThemesList>(defaultMode);
