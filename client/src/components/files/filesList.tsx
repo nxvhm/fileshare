@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect, useContext, DragEventHandler} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
@@ -27,7 +27,8 @@ import {
 	TableCell,
 	TableHead,
 	TableRow,
-	Tooltip
+	Typography,
+	Backdrop
 } from '@mui/material';
 
 import {
@@ -63,7 +64,7 @@ export default function FilesList(props: FileListProps) {
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState<boolean>(false);
   const [openShareWindow, setOpenShareWindow] = useState<boolean>(false);
   const [fileShare, setFileShare] = useState<FileModel|null>(null);
-
+	const [dragOver, setDragOver] = useState<boolean>(false);
 	const { parentId } = useParams();
 	const navigate = useNavigate();
 	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload(Number(parentId));
@@ -259,8 +260,43 @@ export default function FilesList(props: FileListProps) {
 		)
 	}
 
+	const onDrop = (e: React.DragEvent) => {
+		e.stopPropagation();
+		e.preventDefault();
+		console.log(e.dataTransfer?.files);
+		if (dragOver)
+			setDragOver(false);
+	}
+
+	const onDragEnd = (e: React.DragEvent) => {
+		e.stopPropagation();
+		e.preventDefault();
+		console.log('onDragEnd', e);
+	}
+
+	const onDragOver = (e: React.DragEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		if (!dragOver)
+			setDragOver(true);
+	}
+
+	const handleDragOut = () => setDragOver(false)
+
 	return(
-		<>
+		<Box className='fileListContainer' component='div' sx={{position: 'relative'}}
+			onDrop={onDrop}
+			onDragOver={onDragOver}
+			onDragEnd={onDragEnd}
+			onDragLeave={handleDragOut}>
+
+			<Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute' }}
+        open={dragOver}
+        onClick={handleDragOut}
+      >
+        <Typography>Drop Here to upload</Typography>
+      </Backdrop>
 			<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
 				{showUploadButton &&
 					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
@@ -287,6 +323,6 @@ export default function FilesList(props: FileListProps) {
         close={() => setLightboxOpen(false)}
         slides={[{src: String(viewImage)}]}
       />
-		</>
+		</Box>
 	);
 }
