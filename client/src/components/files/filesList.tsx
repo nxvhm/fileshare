@@ -27,7 +27,6 @@ import {
 	TableCell,
 	TableHead,
 	TableRow,
-	Typography,
 	Backdrop
 } from '@mui/material';
 
@@ -283,20 +282,26 @@ export default function FilesList(props: FileListProps) {
 
 	const handleDragOut = () => setDragOver(false)
 
+	const DragOverlay = (): undefined|JSX.Element => {
+		return (
+			<Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute', flexDirection: 'column' }}
+        open={dragOver}
+        onClick={handleDragOut}
+      >
+        <Box sx={{width: '100%', textAlign: 'center', marginBottom: 1, fontSize: 21, textShadow: '1px 2px 6px #000'}}>DROP HERE TO UPLOAD FILE...</Box>
+				<CloudUploadIcon sx={{fontSize: 64}}/>
+      </Backdrop>
+		)
+	}
+
 	return(
 		<Box className='fileListContainer' component='div' sx={{position: 'relative'}}
 			onDrop={onDrop}
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
 			onDragLeave={handleDragOut}>
-
-			<Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute' }}
-        open={dragOver}
-        onClick={handleDragOut}
-      >
-        <Typography>Drop Here to upload</Typography>
-      </Backdrop>
+			<DragOverlay></DragOverlay>
 			<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
 				{showUploadButton &&
 					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
