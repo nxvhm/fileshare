@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext, DragEventHandler} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
@@ -66,7 +66,7 @@ export default function FilesList(props: FileListProps) {
 	const [dragOver, setDragOver] = useState<boolean>(false);
 	const { parentId } = useParams();
 	const navigate = useNavigate();
-	const {fileUpload, uploadedFile, setUploadedFile} = useFileUpload(Number(parentId));
+	const {uploadedFile, setUploadedFile, onFileSelected} = useFileUpload(Number(parentId));
 	const {showFileDetails} = useContext(OpenFileDetailsContext);
 
 	useEffect(() => {
@@ -281,7 +281,6 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const handleDragOut = () => setDragOver(false)
-
 	const DragOverlay = (): undefined|JSX.Element => {
 		return (
 			<Backdrop
@@ -306,7 +305,7 @@ export default function FilesList(props: FileListProps) {
 				{showUploadButton &&
 					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
 						Upload file
-						<VisuallyHiddenInput type="file" onChange={fileUpload} />
+						<VisuallyHiddenInput type="file" onChange={onFileSelected} />
 					</Button>
 				}
 				{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
