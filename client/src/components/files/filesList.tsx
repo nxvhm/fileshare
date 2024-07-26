@@ -66,7 +66,7 @@ export default function FilesList(props: FileListProps) {
 	const [dragOver, setDragOver] = useState<boolean>(false);
 	const { parentId } = useParams();
 	const navigate = useNavigate();
-	const {uploadedFile, setUploadedFile, onFileSelected} = useFileUpload(Number(parentId));
+	const {uploadedFile, setUploadedFile, onFileSelected, fileUpload} = useFileUpload(Number(parentId));
 	const {showFileDetails} = useContext(OpenFileDetailsContext);
 
 	useEffect(() => {
@@ -263,8 +263,10 @@ export default function FilesList(props: FileListProps) {
 		e.stopPropagation();
 		e.preventDefault();
 		console.log(e.dataTransfer?.files);
-		if (dragOver)
+		if (dragOver) {
+			fileUpload(e.dataTransfer?.files);
 			setDragOver(false);
+		}
 	}
 
 	const onDragEnd = (e: React.DragEvent) => {
