@@ -27,7 +27,8 @@ import {
 	TableCell,
 	TableHead,
 	TableRow,
-	Backdrop
+	Backdrop,
+	Typography
 } from '@mui/material';
 
 import {
@@ -214,8 +215,12 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const ShowTableViewList = () => {
-		if(!files.length)
-			return;
+		console.log(files);
+		if(!files.length){
+			return(
+				<Typography textAlign={'center'} color={'white'}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
+			);
+		}
 
 		return (
 		<Table size='small'>
@@ -286,7 +291,7 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	return(
-		<Box className='fileListContainer' component='div' sx={{position: 'relative'}}
+		<Box className='fileListContainer' component='div' sx={{position: 'relative', minHeight: '250px'}}
 			onDrop={onDrop}
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
