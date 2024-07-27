@@ -225,10 +225,10 @@ export default function FilesList(props: FileListProps) {
 		}
 
 		return (
-		<Table size='small'>
+		<Table size='small' sx={{marginTop: 2}}>
 			<TableHead>
-				<TableRow>
-					<TableCell>Name</TableCell>
+				<TableRow sx={{paddingLeft: 0}}>
+					<TableCell sx={{ paddingLeft: 0}}>Name</TableCell>
 					<TableCell>Uploaded</TableCell>
 					<TableCell>Size</TableCell>
 					<TableCell>Public</TableCell>
@@ -239,7 +239,7 @@ export default function FilesList(props: FileListProps) {
 			<TableBody>
 				{files.map((file: FileModel) => (
 					<FileTableRow key={file.id}>
-						<TableCell onClick={e => onFileClick(e, file)}>{getFileIcon(file)} {file.name}</TableCell>
+						<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>{getFileIcon(file)} {file.name}</TableCell>
 						<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
 						<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
 						<TableCell>
@@ -282,11 +282,13 @@ export default function FilesList(props: FileListProps) {
 	const DragOverlay = (): undefined|JSX.Element => {
 		return (
 			<Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute', flexDirection: 'column' }}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute', flexDirection: 'column', borderRadius: 1}}
         open={dragOver}
         onClick={handleDragOut}
       >
-        <Box sx={{width: '100%', textAlign: 'center', marginBottom: 1, fontSize: 21, textShadow: '1px 2px 6px #000'}}>DROP HERE TO UPLOAD FILE...</Box>
+        <Box sx={{width: '100%', textAlign: 'center', marginBottom: 1, fontSize: 21, textShadow: '1px 2px 6px #000'}}>
+					DROP HERE TO UPLOAD FILE...
+				</Box>
 				<CloudUploadIcon sx={{fontSize: 64}}/>
       </Backdrop>
 		)
@@ -299,7 +301,7 @@ export default function FilesList(props: FileListProps) {
 			onDragEnd={onDragEnd}
 			onDragLeave={handleDragOut}>
 			<DragOverlay></DragOverlay>
-			<Box sx={{display: 'flex', gap: 1, paddingLeft: 1}}>
+			<Box sx={{display: 'flex', gap: 1}}>
 				{showUploadButton &&
 					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
 						Upload file
@@ -308,7 +310,7 @@ export default function FilesList(props: FileListProps) {
 				}
 				{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
 			</Box>
-			<Box sx={{display: 'flex', marginTop: 2, paddingLeft: 1}}>
+			<Box sx={{display: 'flex', marginTop: 2}}>
 				<Breadcrumbs folderId={Number(parentId)} />
 			</Box>
 			<ShowTableViewList />
