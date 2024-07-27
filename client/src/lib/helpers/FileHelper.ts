@@ -23,4 +23,12 @@ export default class FilesHelper {
 		return window.location.href + 'download/' + file.hash;
 	}
 
+	public static getDate(dateString: string): string {
+		if(!dateString)
+			return "N/A";
+
+		dateString = dateString.slice(0, 19).replace('T', ' ');
+		return new Date(dateString).toDateString();
+	}
+
 }

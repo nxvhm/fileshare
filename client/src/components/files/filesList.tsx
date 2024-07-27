@@ -104,18 +104,7 @@ export default function FilesList(props: FileListProps) {
 			: FilesApi.downloadFile(String(file.hash)).then(res => fileDownload(res.data, file.name));
 	}
 
-	const onFolderCreate = (folder: FileModel): void => {
-		setUploadedFile(folder);
-	}
-
-	const getDate = (dateString: string): string => {
-		if(!dateString)
-			return "N/A";
-
-		dateString = dateString.slice(0, 19).replace('T', ' ');
-		return new Date(dateString).toDateString();
-	}
-
+	const onFolderCreate = (folder: FileModel): void => setUploadedFile(folder)
 	const onPublicStatusChange: filePropUpdateHandler = (fileId: number, updatedProp: Partial<FileModel>) => {
 		const fileKey = files.findIndex(file => file.id == fileId);
 		files[fileKey] = {...files[fileKey], ...updatedProp}
@@ -215,7 +204,7 @@ export default function FilesList(props: FileListProps) {
 						<ListItemButton key={file.hash} onClick={e => onFileClick(e, file)} style={{paddingTop: 0, paddingBottom: 0, paddingLeft: 0}}>
 							<ListItem secondaryAction={getFileOptionsButton(file)}>
 								<ListItemIcon>{getFileIcon(file)}</ListItemIcon>
-								<ListItemText primary={file.name} secondary={getDate(String(file.created_at))} />
+								<ListItemText primary={file.name} secondary={FilesHelper.getDate(String(file.created_at))} />
 							</ListItem>
 						</ListItemButton>
 					)
@@ -244,7 +233,7 @@ export default function FilesList(props: FileListProps) {
 				{files.map((file: FileModel) => (
 					<FileTableRow key={file.id}>
 						<TableCell onClick={e => onFileClick(e, file)}>{getFileIcon(file)} {file.name}</TableCell>
-						<TableCell onClick={e => onFileClick(e, file)}>{getDate(String(file.created_at))}</TableCell>
+						<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
 						<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
 						<TableCell>
 							{file.public ? 'Yes' : 'No'}
