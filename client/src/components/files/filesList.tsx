@@ -12,6 +12,7 @@ import FilesHelper from '../../lib/helpers/FileHelper';
 import Breadcrumbs from './breadcrumbs';
 import ShareDialog from './shareDialog';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
+import { useTheme } from '@mui/material/styles';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {
 	List,
@@ -69,6 +70,7 @@ export default function FilesList(props: FileListProps) {
 	const navigate = useNavigate();
 	const {uploadedFile, setUploadedFile, onFileSelected, fileUpload} = useFileUpload(Number(parentId));
 	const {showFileDetails} = useContext(OpenFileDetailsContext);
+	const theme = useTheme();
 
 	useEffect(() => {
 			FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
@@ -218,7 +220,7 @@ export default function FilesList(props: FileListProps) {
 		console.log(files);
 		if(!files.length){
 			return(
-				<Typography textAlign={'center'} color={'white'}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
+				<Typography textAlign={'center'} color={theme.palette.text.primary}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
 			);
 		}
 
