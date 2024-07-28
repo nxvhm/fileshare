@@ -256,8 +256,10 @@ export default function FilesList(props: FileListProps) {
 
 	const onDrop = (e: React.DragEvent) => {
 		e.preventDefault();
-		if (e.dataTransfer?.files)
-			uploader.setFilesToUpload(e.dataTransfer.files);
+		if (e.dataTransfer?.files) {
+			const filesToUploadArray = Array.from(e.dataTransfer.files).filter(item => item.size && item.type);
+			uploader.setFilesToUpload(filesToUploadArray.length ? filesToUploadArray : []);
+		}
 
 		if (dragOver)
 			setDragOver(false);
@@ -291,6 +293,7 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	return(
+		<>
 		<Box className='fileListContainer' component='div' sx={{position: 'relative', minHeight: '250px'}}
 			onDrop={onDrop}
 			onDragOver={onDragOver}
@@ -324,5 +327,7 @@ export default function FilesList(props: FileListProps) {
         slides={[{src: String(viewImage)}]}
       />
 		</Box>
+		{<uploader.UploaderWidget></uploader.UploaderWidget>}
+		</>
 	);
 }
