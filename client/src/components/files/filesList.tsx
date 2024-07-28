@@ -66,10 +66,10 @@ export default function FilesList(props: FileListProps) {
   const [openShareWindow, setOpenShareWindow] = useState<boolean>(false);
   const [fileShare, setFileShare] = useState<FileModel|null>(null);
 	const [dragOver, setDragOver] = useState<boolean>(false);
+	const {showFileDetails} = useContext(OpenFileDetailsContext);
 	const { parentId } = useParams();
 	const navigate = useNavigate();
-	const {uploadedFile, setUploadedFile, onFileSelected, fileUpload} = useFileUpload(Number(parentId));
-	const {showFileDetails} = useContext(OpenFileDetailsContext);
+	const uploader = useFileUpload(Number(parentId));
 	const theme = useTheme();
 
 	useEffect(() => {
@@ -77,11 +77,11 @@ export default function FilesList(props: FileListProps) {
 	}, [parentId])
 
 	useEffect(() => {
-		if(!uploadedFile)
+		if(!uploader.uploadedFile)
 			return;
 
-		appendFile(uploadedFile);
-	}, [uploadedFile]);
+		appendFile(uploader.uploadedFile);
+	}, [uploader.uploadedFile]);
 
 	const appendFile = (file: FileModel): void => {
 		if(!file)
@@ -107,7 +107,7 @@ export default function FilesList(props: FileListProps) {
 			: FilesApi.downloadFile(String(file.hash)).then(res => fileDownload(res.data, file.name));
 	}
 
-	const onFolderCreate = (folder: FileModel): void => setUploadedFile(folder)
+	const onFolderCreate = (folder: FileModel): void => uploader.setUploadedFile(folder)
 	const onPublicStatusChange: filePropUpdateHandler = (fileId: number, updatedProp: Partial<FileModel>) => {
 		const fileKey = files.findIndex(file => file.id == fileId);
 		files[fileKey] = {...files[fileKey], ...updatedProp}
@@ -217,7 +217,6 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const ShowTableViewList = () => {
-		console.log(files);
 		if(!files.length){
 			return(
 				<Typography textAlign={'center'} color={theme.palette.text.primary}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
@@ -256,24 +255,21 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const onDrop = (e: React.DragEvent) => {
-		e.stopPropagation();
 		e.preventDefault();
-		console.log(e.dataTransfer?.files);
-		if (dragOver) {
-			fileUpload(e.dataTransfer?.files);
+		if (e.dataTransfer?.files)
+			uploader.setFilesToUpload(e.dataTransfer.files);
+
+		if (dragOver)
 			setDragOver(false);
-		}
 	}
 
 	const onDragEnd = (e: React.DragEvent) => {
-		e.stopPropagation();
 		e.preventDefault();
 		console.log('onDragEnd', e);
 	}
 
 	const onDragOver = (e: React.DragEvent) => {
 		e.preventDefault();
-		e.stopPropagation();
 		if (!dragOver)
 			setDragOver(true);
 	}
@@ -305,7 +301,7 @@ export default function FilesList(props: FileListProps) {
 				{showUploadButton &&
 					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
 						Upload file
-						<VisuallyHiddenInput type="file" onChange={onFileSelected} />
+						<VisuallyHiddenInput type="file" onChange={uploader.handleSelectedFile} />
 					</Button>
 				}
 				{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
