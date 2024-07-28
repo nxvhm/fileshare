@@ -5,8 +5,9 @@ import { uploadFile as uploadFileRequest } from "../../api/Files";
 
 export default function useFileUpload(parentId: undefined|number) {
 	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
+	const [filesToUpload, setFilesToUpload] = useState<FileList|null>(null);
 
-	const fileUpload = (files: FileList) => {
+	const uploadFile = (files: FileList) => {
 		if(!files)
 			return;
 
@@ -28,12 +29,21 @@ export default function useFileUpload(parentId: undefined|number) {
 			})
 	}
 
-	const onFileSelected =  (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSelectedFile =  (e: React.ChangeEvent<HTMLInputElement>) => {
 		if(!e.target.files)
 			return;
 
-		fileUpload(e.target.files);
+		uploadFile(e.target.files);
 	}
 
-	return {fileUpload, uploadedFile, setUploadedFile, onFileSelected}
+
+
+	return {
+		uploadFile,
+		uploadedFile,
+		setUploadedFile,
+		handleSelectedFile,
+		filesToUpload,
+		setFilesToUpload
+	}
 }
