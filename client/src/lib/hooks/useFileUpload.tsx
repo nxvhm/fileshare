@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { FileModel } from "../../definitions";
 import toast from "react-hot-toast";
 import { uploadFile as uploadFileRequest } from "../../api/Files";
-import { Box } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { ListSubheader, List,ListItemButton, ListItemText, ListItem} from '@mui/material';
+import { UploadDialogBox } from "../../components/files/styled";
 
 export default function useFileUpload(parentId: undefined|number) {
 	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
@@ -62,17 +62,7 @@ export default function useFileUpload(parentId: undefined|number) {
 			return;
 
 		return(
-			<Box sx={{
-				backgroundColor: theme.palette.background.default,
-				borderRadius: 2,
-				color: theme.palette.text.primary,
-				width: {sm: '100%', md: '300px', 'lg': '500px'},
-				position: 'absolute',
-				right: 15,
-				bottom: 15,
-				zIndex: 1300,
-				boxShadow: '0px 5px 25px #d6d6d6'
-			}}>
+			<UploadDialogBox>
 				<List>
 					<ListSubheader component="div">
           	Files to upload
@@ -85,7 +75,7 @@ export default function useFileUpload(parentId: undefined|number) {
 					</ListItem>
 				)
 				})}
-			</Box>
+			</UploadDialogBox>
 		)
 	}
 

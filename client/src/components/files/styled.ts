@@ -1,7 +1,6 @@
 import { styled, emphasize } from '@mui/material/styles';
-import {Icon, TableRow} from '@mui/material';
+import {TableRow, Box} from '@mui/material';
 import {Chip} from '@mui/material';
-import {Home as HomeIcon, Folder as FolderIcon} from '@mui/icons-material';
 
 export const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -41,4 +40,28 @@ export const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   };
 }) as typeof Chip;
 
+export const UploadDialogBox = styled(Box)(({ theme }) => {
+	return {
+		backgroundColor: theme.palette.background.default,
+		boxShadow: theme.shadows[10],
+		borderRadius: 2,
+		color: theme.palette.text.primary,
+		position: 'absolute',
+		right: 15,
+		bottom: 15,
+		zIndex: 1300,
+		[theme.breakpoints.up("sm")]: {
+			width: '100%'
+		},
+		[theme.breakpoints.up("md")]: {
+			width: '300px'
+		},
+		[theme.breakpoints.up("lg")]: {
+			width: '500px'
+		},
+		'.MuiListItemText-primary, .MuiListItemText-secondary': {
+			fontSize: '0.8rem'
+		}
+	}
+});
 
