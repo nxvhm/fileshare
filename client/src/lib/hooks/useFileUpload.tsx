@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { FileModel } from "../../definitions";
 import toast from "react-hot-toast";
 import { uploadFile as uploadFileRequest } from "../../api/Files";
-import { useTheme } from '@mui/material/styles';
 import { ListSubheader, List, ListItemText, ListItem, Slide} from '@mui/material';
 import { UploadDialogBox } from "../../components/files/styled";
 export default function useFileUpload(parentId: undefined|number) {
@@ -46,6 +45,12 @@ export default function useFileUpload(parentId: undefined|number) {
 		console.log(filesToUpload);
 	}, [filesToUpload])
 
+	const addFilesToUpload = (files: File[]) => {
+		const currentFiles = filesToUpload ? [...filesToUpload] : [];
+		const merged = [...currentFiles.concat(files)];
+		setFilesToUpload(merged);
+	}
+
 	const handleSelectedFile = (e: React.ChangeEvent<HTMLInputElement>) => e.target.files && uploadFile(e.target.files)
 	const getFileToUploadDescription = (file: File): string => file.type + ' '+ file.size/1000 + ' KB';
 
@@ -79,7 +84,7 @@ export default function useFileUpload(parentId: undefined|number) {
 		setUploadedFile,
 		handleSelectedFile,
 		filesToUpload,
-		setFilesToUpload,
+		addFilesToUpload,
 		UploaderWidget
 	}
 }
