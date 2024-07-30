@@ -44,7 +44,7 @@ export const UploadDialogBox = styled(Box)(({ theme }) => {
 	return {
 		backgroundColor: theme.palette.background.default,
 		boxShadow: theme.shadows[10],
-		borderRadius: 2,
+		borderRadius: theme.shape.borderRadius * 2,
 		color: theme.palette.text.primary,
 		position: 'absolute',
 		right: 15,
