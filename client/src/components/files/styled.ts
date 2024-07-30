@@ -50,6 +50,8 @@ export const UploadDialogBox = styled(Box)(({ theme }) => {
 		right: 15,
 		bottom: 15,
 		zIndex: 1300,
+		maxHeight: '500px',
+		overflow: 'scroll',
 		[theme.breakpoints.up("sm")]: {
 			width: '100%'
 		},
