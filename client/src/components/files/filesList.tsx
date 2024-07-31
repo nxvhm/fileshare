@@ -258,7 +258,7 @@ export default function FilesList(props: FileListProps) {
 		e.preventDefault();
 		if (e.dataTransfer?.files) {
 			const filesToUploadArray = Array.from(e.dataTransfer.files).filter(item => item.size && item.type);
-			uploader.addFilesToUpload(filesToUploadArray.length ? filesToUploadArray : []);
+			filesToUploadArray.length && uploader.addFilesToUpload(filesToUploadArray);
 		}
 
 		if (dragOver)

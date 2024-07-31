@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import { FileModel } from "../../definitions";
 import toast from "react-hot-toast";
 import { uploadFile as uploadFileRequest } from "../../api/Files";
-import { ListSubheader, List, ListItemText, ListItem, Slide} from '@mui/material';
+import { ListSubheader, List, ListItemText, ListItem, Slide, Chip} from '@mui/material';
 import { UploadDialogBox } from "../../components/files/styled";
+
+
+type fileToUpload = {
+	file: File,
+	status: 'pending' | 'uploaded'
+};
+
 export default function useFileUpload(parentId: undefined|number) {
 	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
-	const [filesToUpload, setFilesToUpload] = useState<File[]|null>(null);
+	const [filesToUpload, setFilesToUpload] = useState<fileToUpload[]|null>(null);
 
 	/**
 	 * Upload file to the server
@@ -47,7 +54,14 @@ export default function useFileUpload(parentId: undefined|number) {
 
 	const addFilesToUpload = (files: File[]) => {
 		const currentFiles = filesToUpload ? [...filesToUpload] : [];
-		const merged = [...currentFiles.concat(files)];
+		const incomingFiles = files.map((file: File): fileToUpload => {
+				return {
+					file: file,
+					status: 'pending'
+				}
+		});
+
+		const merged = [...currentFiles.concat(incomingFiles)];
 		setFilesToUpload(merged);
 	}
 
@@ -65,10 +79,12 @@ export default function useFileUpload(parentId: undefined|number) {
 					<ListSubheader component="div">
           	Files to upload
         	</ListSubheader>
-				{filesToUpload.map((file) => {
+				{filesToUpload.map((item) => {
 				return (
-					<ListItem key={file.lastModified}>
-						 <ListItemText secondary={getFileToUploadDescription(file)}>{file.name}</ListItemText>
+					<ListItem key={item.file.lastModified}>
+						 <ListItemText secondary={getFileToUploadDescription(item.file)}>
+								<Chip label={item.status.toUpperCase()} size='small' color='warning' /> {item.file.name}
+							</ListItemText>
 					</ListItem>
 				)
 				})}
