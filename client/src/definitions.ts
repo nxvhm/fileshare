@@ -69,3 +69,9 @@ export type UserProfileData = {
 	newPassword: string | null,
 	rePassword: string | null
 }
+
+export type FileToUpload = {
+	file: File,
+	status: 'pending' | 'uploaded',
+	hash: string
+};
