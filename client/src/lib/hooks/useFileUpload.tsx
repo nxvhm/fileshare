@@ -83,7 +83,7 @@ export default function useFileUpload(parentId: undefined|number) {
 	const getFileToUploadDescription = (file: File): string => file.type + ' '+ file.size/1000 + ' KB';
 
 	const UploaderWidget = (): JSX.Element | undefined => {
-		if(!filesToUpload)
+		if(!filesToUpload || !filesToUpload.length)
 			return;
 
 		return(
