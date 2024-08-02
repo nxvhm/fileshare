@@ -7,7 +7,7 @@ class UploadQueue {
 	/**
 	 * The ID of the internval that is looping through the pendingUploads
 	 */
-	public static uploadProcessHandler: number;
+	public static uploadIntervalId: number;
 
 	/**
 	 * Holds the hash of the currently uploading file.
@@ -34,13 +34,13 @@ class UploadQueue {
 	}
 
 	public static startUploadLoop = () => {
-		if(!this.uploadProcessHandler)
-			this.uploadProcessHandler = setInterval(this.processUploads, 1000)
+		if(!this.uploadIntervalId)
+			this.uploadIntervalId = setInterval(this.processUploads, 1000)
 	}
 
 	public static stopUploadLoop = () => {
-		if(this.uploadProcessHandler)
-			clearInterval(this.uploadProcessHandler);
+		if(this.uploadIntervalId)
+			clearInterval(this.uploadIntervalId);
 
 		this.currentlyUploading = null;
 	}
@@ -61,7 +61,7 @@ class UploadQueue {
 	}
 
 	public static isLooping = (): boolean => {
-		return Boolean(this.uploadProcessHandler);
+		return Boolean(this.uploadIntervalId);
 	}
 
 
