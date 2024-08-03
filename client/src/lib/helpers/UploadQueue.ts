@@ -8,7 +8,7 @@ class UploadQueue {
 	/**
 	 * The ID of the internval that is looping through the pendingUploads
 	 */
-	public static uploadIntervalId: number;
+	public static uploadIntervalId: number | null;
 
 	/**
 	 * Holds the hash of the currently uploading file.
@@ -44,6 +44,7 @@ class UploadQueue {
 			clearInterval(this.uploadIntervalId);
 
 		this.currentlyUploading = null;
+		this.uploadIntervalId = null;
 	}
 
 	public static processUploads = () => {
