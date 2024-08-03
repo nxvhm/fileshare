@@ -72,6 +72,5 @@ export type UserProfileData = {
 
 export type FileToUpload = {
 	file: File,
-	status: 'pending' | 'uploading' | 'uploaded',
 	hash: string
 };

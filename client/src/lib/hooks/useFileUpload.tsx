@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { FileModel, FileToUpload } from "../../definitions";
 import toast from "react-hot-toast";
 import { uploadFile as uploadFileRequest } from "../../api/Files";
@@ -69,29 +69,33 @@ export default function useFileUpload(parentId: undefined|number) {
 	}, [filesToUpload])
 
 	useEffect(() => {
-		console.log
 		UploadQueue.uploadFunction = queueUploadHandler;
 	}, [])
 
 
 	const addFilesToUpload = (files: File[]) => {
 		const currentFiles = filesToUpload ? [...filesToUpload] : [];
+		const currentStatuses = {...filesStatus};
 		const incomingFiles = files.map((file: File): FileToUpload => {
-				return {
-					file: file,
-					status: 'pending',
-					hash: (Math.random()).toString(16).substring(3, 10)
-				}
+			const fileToUpload = {
+				file: file,
+				hash: (Math.random()).toString(16).substring(3, 10)
+			} as FileToUpload;
+
+			if(!currentStatuses.hasOwnProperty(fileToUpload.hash))
+					currentStatuses[fileToUpload.hash] = 'pending';
+
+			return fileToUpload;
 		});
-		const merged = [...currentFiles.concat(incomingFiles)];
-		setFilesToUpload(merged);
+		setFilesStatus({...currentStatuses});
+		setFilesToUpload([...currentFiles.concat(incomingFiles)]);
 	}
 
 
 	const handleSelectedFile = (e: React.ChangeEvent<HTMLInputElement>) => e.target.files && uploadFile(e.target.files[0])
 	const getFileToUploadDescription = (file: File): string => file.type + ' '+ file.size/1000 + ' KB';
 	const getUploadingStatus = (file: FileToUpload): JSX.Element | undefined => {
-		const status = filesStatus.hasOwnProperty(file.hash) ? filesStatus[file.hash] : file.status;
+		const status = filesStatus.hasOwnProperty(file.hash) ? filesStatus[file.hash] : 'N/A';
 		return (
 			<Chip label={status.toUpperCase()} size='small' color={status == 'pending' ? 'warning' : 'info'} />
 		)
@@ -103,7 +107,7 @@ export default function useFileUpload(parentId: undefined|number) {
 
 		return(
 			<Slide direction="up" in={Boolean(filesToUpload)} timeout={250} appear={false}>
-			<UploadDialogBox >
+			<UploadDialogBox>
 				<List>
 					<ListSubheader component="div">
           	Files to upload
