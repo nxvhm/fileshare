@@ -114,7 +114,7 @@ export default function useFileUpload(parentId: undefined|number) {
         	</ListSubheader>
 				{filesToUpload.map((item) => {
 				return (
-					<ListItem key={(Math.random()).toString(16)}>
+					<ListItem key={item.hash}>
 						 <ListItemText secondary={getFileToUploadDescription(item.file)}>
 								{getUploadingStatus(item)}&nbsp;{item.file.name}
 							</ListItemText>
