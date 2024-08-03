@@ -9,6 +9,7 @@ import UploadQueue from "../helpers/UploadQueue";
 export default function useFileUpload(parentId: undefined|number) {
 	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
 	const [filesToUpload, setFilesToUpload] = useState<FileToUpload[]|null>(null);
+	const [filesStatus, setFilesStatus] = useState<{[key: string]: string}>({});
 
 	const getUploadRequestFormData = (file: File): FormData => {
 		const formData = new FormData();
@@ -35,8 +36,14 @@ export default function useFileUpload(parentId: undefined|number) {
 	}
 
 	const queueUploadHandler = (file: FileToUpload): Promise<FileModel> => {
-		const formData = getUploadRequestFormData(file.file);
+		setFilesStatus(filesStatus => {
+			const currentStatus = {...filesStatus};
+			currentStatus[file.hash] = 'uploading';
+			return {...currentStatus};
+		});
+
 		return new Promise((resolve, reject) => {
+			const formData = getUploadRequestFormData(file.file);
 			uploadFileRequest(formData).then(uploadedFile => {
 				setUploadedFile(uploadedFile);
 				setFilesToUpload(filesToUpload => {
@@ -62,8 +69,10 @@ export default function useFileUpload(parentId: undefined|number) {
 	}, [filesToUpload])
 
 	useEffect(() => {
+		console.log
 		UploadQueue.uploadFunction = queueUploadHandler;
 	}, [])
+
 
 	const addFilesToUpload = (files: File[]) => {
 		const currentFiles = filesToUpload ? [...filesToUpload] : [];
@@ -81,14 +90,20 @@ export default function useFileUpload(parentId: undefined|number) {
 
 	const handleSelectedFile = (e: React.ChangeEvent<HTMLInputElement>) => e.target.files && uploadFile(e.target.files[0])
 	const getFileToUploadDescription = (file: File): string => file.type + ' '+ file.size/1000 + ' KB';
+	const getUploadingStatus = (file: FileToUpload): JSX.Element | undefined => {
+		const status = filesStatus.hasOwnProperty(file.hash) ? filesStatus[file.hash] : file.status;
+		return (
+			<Chip label={status.toUpperCase()} size='small' color={status == 'pending' ? 'warning' : 'info'} />
+		)
+	}
 
 	const UploaderWidget = (): JSX.Element | undefined => {
 		if(!filesToUpload || !filesToUpload.length)
 			return;
 
 		return(
-			<Slide direction="up" in={Boolean(filesToUpload)} timeout={250}>
-			<UploadDialogBox>
+			<Slide direction="up" in={Boolean(filesToUpload)} timeout={250} appear={false}>
+			<UploadDialogBox >
 				<List>
 					<ListSubheader component="div">
           	Files to upload
@@ -97,7 +112,7 @@ export default function useFileUpload(parentId: undefined|number) {
 				return (
 					<ListItem key={(Math.random()).toString(16)}>
 						 <ListItemText secondary={getFileToUploadDescription(item.file)}>
-								<Chip label={item.status.toUpperCase()} size='small' color='warning' /> {item.file.name}
+								{getUploadingStatus(item)}&nbsp;{item.file.name}
 							</ListItemText>
 					</ListItem>
 				)

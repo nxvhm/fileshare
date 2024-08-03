@@ -1,4 +1,5 @@
 import { FileModel, FileToUpload } from "../../definitions";
+import toast from "react-hot-toast";
 
 class UploadQueue {
 
@@ -55,6 +56,12 @@ class UploadQueue {
 			return;
 
 		this.currentlyUploading = next.hash;
+
+		if(typeof this.uploadFunction != 'function') {
+			UploadQueue.pendingUploads.delete(next.hash);
+			return toast.error("Upload Handler not provided. Please try again later");
+		}
+
 		this.uploadFunction(next).then(_uploadedFile => {
 			UploadQueue.pendingUploads.delete(next.hash);
 		})
