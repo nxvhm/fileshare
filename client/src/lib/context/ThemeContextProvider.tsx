@@ -37,7 +37,6 @@ export const ThemeContextProvider = ({children}: PropsWithChildren<{}>) => {
 
 	const getCurrenlySelectedMode = (): ThemesList | null => {
 		const currentlySelectedMode = localStorage.getItem('mode') as ThemesList;
-		console.log('current', currentlySelectedMode);
 		return currentlySelectedMode && ALL_MODES.includes(currentlySelectedMode) ? currentlySelectedMode : null;
 	}
 
