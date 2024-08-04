@@ -29,7 +29,8 @@ import {
 	TableHead,
 	TableRow,
 	Backdrop,
-	Typography
+	Typography,
+	Checkbox
 } from '@mui/material';
 
 import {
@@ -66,6 +67,7 @@ export default function FilesList(props: FileListProps) {
   const [openShareWindow, setOpenShareWindow] = useState<boolean>(false);
   const [fileShare, setFileShare] = useState<FileModel|null>(null);
 	const [dragOver, setDragOver] = useState<boolean>(false);
+	const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
 	const {showFileDetails} = useContext(OpenFileDetailsContext);
 	const { parentId } = useParams();
 	const navigate = useNavigate();
@@ -196,25 +198,19 @@ export default function FilesList(props: FileListProps) {
 		)
 	}
 
-	const ShowList = () => {
-		if(!files.length)
-			return;
-
-		return (
-			<List>
-				{files.map(file => {
-					return(
-						<ListItemButton key={file.hash} onClick={e => onFileClick(e, file)} style={{paddingTop: 0, paddingBottom: 0, paddingLeft: 0}}>
-							<ListItem secondaryAction={getFileOptionsButton(file)}>
-								<ListItemIcon>{getFileIcon(file)}</ListItemIcon>
-								<ListItemText primary={file.name} secondary={FilesHelper.getDate(String(file.created_at))} />
-							</ListItem>
-						</ListItemButton>
-					)
-				})}
-			</List>
-		)
+	const selectAllFiles = () => {
+		setSelectedFiles(current => current.length == files.length ? [] : files.map(file => file.id));
 	}
+
+	const toggleFileSelected = (e: React.MouseEvent,  id: number) => {
+		e.stopPropagation();
+
+		setSelectedFiles(current => {
+			current.includes(id) ? current.splice(current.indexOf(id), 1) : current.push(id);
+			return [...current];
+		})
+	}
+
 
 	const ShowTableViewList = () => {
 		if(!files.length){
@@ -227,7 +223,10 @@ export default function FilesList(props: FileListProps) {
 		<Table size='small' sx={{marginTop: 2}}>
 			<TableHead>
 				<TableRow sx={{paddingLeft: 0}}>
-					<TableCell sx={{ paddingLeft: 0}}>Name</TableCell>
+					<TableCell sx={{ paddingLeft: 0}}>
+						<Checkbox aria-label='Selected All' onClick={selectAllFiles} checked={files.length == selectedFiles.length} />
+						Name
+					</TableCell>
 					<TableCell>Uploaded</TableCell>
 					<TableCell>Size</TableCell>
 					<TableCell>Public</TableCell>
@@ -238,7 +237,10 @@ export default function FilesList(props: FileListProps) {
 			<TableBody>
 				{files.map((file: FileModel) => (
 					<FileTableRow key={file.id}>
-						<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>{getFileIcon(file)} {file.name}</TableCell>
+						<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>
+							<Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>
+							{getFileIcon(file)} {file.name}
+						</TableCell>
 						<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
 						<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
 						<TableCell>
