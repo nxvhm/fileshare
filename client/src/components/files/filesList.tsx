@@ -47,6 +47,8 @@ import { VisuallyHiddenInput, FileTableRow } from './styled';
 export type FileListProps = {
 	showUploadButton?: boolean,
 	showCreateFolderButton?: boolean,
+	showDeleteFilesButton?: boolean
+	enableSelecFiles?: boolean
 }
 
 export default function FilesList(props: FileListProps) {
@@ -169,7 +171,7 @@ export default function FilesList(props: FileListProps) {
 		setLightboxOpen(true);
 	}
 
-	const getFileIcon = (file: FileModel) => {
+	const getFileIcon = (file: FileModel): JSX.Element => {
 		if (FilesHelper.isImage(file)) {
 			return <ImageIcon sx={{verticalAlign: 'middle'}} />;
 		} else if (FileType.TYPE_FOLDER == file.type) {
@@ -208,7 +210,7 @@ export default function FilesList(props: FileListProps) {
 	}
 
 
-	const ShowTableViewList = () => {
+	const ShowTableViewList = (props: FileListProps) => {
 		if(!files.length){
 			return(
 				<Typography textAlign={'center'} color={theme.palette.text.primary}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
@@ -220,7 +222,7 @@ export default function FilesList(props: FileListProps) {
 			<TableHead>
 				<TableRow sx={{paddingLeft: 0}}>
 					<TableCell sx={{ paddingLeft: 0}}>
-						<Checkbox aria-label='Selected All' onClick={selectAllFiles} checked={files.length == selectedFiles.length} />
+						{props.enableSelecFiles && <Checkbox aria-label='Selected All' onClick={selectAllFiles} checked={files.length == selectedFiles.length} />}
 						Name
 					</TableCell>
 					<TableCell>Uploaded</TableCell>
@@ -234,7 +236,7 @@ export default function FilesList(props: FileListProps) {
 				{files.map((file: FileModel) => (
 					<FileTableRow key={file.id}>
 						<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>
-							<Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>
+							{props.enableSelecFiles && <Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>}
 							{getFileIcon(file)} {file.name}
 						</TableCell>
 						<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
@@ -282,6 +284,7 @@ export default function FilesList(props: FileListProps) {
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
 			onDragLeave={handleDragOut}>
+
 			<DragAndDropOverlay open={dragOver} handleDragOut={handleDragOut}></DragAndDropOverlay>
 			<Box sx={{display: 'flex', gap: 1}}>
 				{showUploadButton &&
@@ -295,15 +298,16 @@ export default function FilesList(props: FileListProps) {
 			<Box sx={{display: 'flex', marginTop: 2}}>
 				<Breadcrumbs folderId={Number(parentId)} />
 			</Box>
-			<ShowTableViewList />
+
+			<ShowTableViewList {...props} />
+			<ShareDialog open={openShareWindow} file={fileShare} onClose={closeFileShare} />
 			<ConfirmationDialog
 				isOpen={openDeleteConfirmation}
 				onConfirm={deleteFile}
 				onCancel={() => {setOpenDeleteConfirmation(false)}}
 				dialogText='Are you sure you want to delete this file ?'
 				secondaryDialogText='Action cannot be reverted'
-			></ConfirmationDialog>
-			<ShareDialog open={openShareWindow} file={fileShare} onClose={closeFileShare} />
+			/>
       <Lightbox
         open={lightboxOpen}
         close={() => setLightboxOpen(false)}
