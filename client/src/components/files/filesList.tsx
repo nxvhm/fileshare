@@ -11,15 +11,11 @@ import useFileUpload from '../../lib/hooks/useFileUpload';
 import FilesHelper from '../../lib/helpers/FileHelper';
 import Breadcrumbs from './breadcrumbs';
 import ShareDialog from './shareDialog';
+import DragAndDropOverlay from './DragAndDropOverlay';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 import { useTheme } from '@mui/material/styles';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {
-	List,
-	ListItem,
-	ListItemIcon,
-	ListItemText,
-	ListItemButton,
 	IconButton,
 	Box,
 	Button,
@@ -279,21 +275,6 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const handleDragOut = () => setDragOver(false)
-	const DragOverlay = (): undefined|JSX.Element => {
-		return (
-			<Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute', flexDirection: 'column', borderRadius: 1}}
-        open={dragOver}
-        onClick={handleDragOut}
-      >
-        <Box sx={{width: '100%', textAlign: 'center', marginBottom: 1, fontSize: 21, textShadow: '1px 2px 6px #000'}}>
-					DROP HERE TO UPLOAD FILE...
-				</Box>
-				<CloudUploadIcon sx={{fontSize: 64}}/>
-      </Backdrop>
-		)
-	}
-
 	return(
 		<>
 		<Box className='fileListContainer' component='div' sx={{position: 'relative', minHeight: '250px'}}
@@ -301,7 +282,7 @@ export default function FilesList(props: FileListProps) {
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
 			onDragLeave={handleDragOut}>
-			<DragOverlay></DragOverlay>
+			<DragAndDropOverlay open={dragOver} handleDragOut={handleDragOut}></DragAndDropOverlay>
 			<Box sx={{display: 'flex', gap: 1}}>
 				{showUploadButton &&
 					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
