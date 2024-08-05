@@ -83,6 +83,56 @@ export default function FilesList(props: FileListProps) {
 		appendFile(uploader.uploadedFile);
 	}, [uploader.uploadedFile]);
 
+
+	const getFileOptionsButton = (file: FileModel): JSX.Element => {
+		return (
+			<>
+			{FilesHelper.isImage(file) && <IconButton onClick={() => openLightbox(file)} className='fileActionButton'><RemoveRedEyeIcon className='fileActionIcon'/></IconButton>}
+			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)} className='fileActionButton'><DownloadIcon className='fileActionIcon'/></IconButton>}
+			<IconButton className='fileActionButton' id='ShareButton' onClick={() => shareFile(file)}><ShareIcon className='fileActionIcon' /></IconButton>
+			<IconButton onClick={() => showDeleteConfirmation(file)} className='fileActionButton' id='DeleteButton'>
+				<DeleteIcon className='fileActionIcon' />
+			</IconButton>
+			</>
+		)
+	}
+
+	const DeleteSelectedFileButton = (props: FileListProps): JSX.Element | undefined => {
+		if(!props.enableDeleteFiles || !selectedFiles.length)
+			return;
+
+		return (
+			<Button component="label" variant="contained" color='error' onClick={() => console.log('Delete selected')} startIcon={<DeleteIcon />}>
+				Delete Selected ({selectedFiles.length})
+			</Button>
+		)
+	}
+
+	const getFileIcon = (file: FileModel): JSX.Element => {
+		if (FilesHelper.isImage(file)) {
+			return <ImageIcon sx={{verticalAlign: 'middle'}} />;
+		} else if (FileType.TYPE_FOLDER == file.type) {
+			return  <FolderIcon sx={{verticalAlign: 'middle'}}/>
+		} else {
+			switch(file.mime) {
+				case 'text/plain': return <ArticleIcon sx={{verticalAlign: 'middle'}}></ArticleIcon>
+				case 'application/octet-stream':  return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
+				default: return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
+			}
+		}
+	}
+
+	const CopyPublicUrl = ({file}: {file: FileModel}): JSX.Element | undefined => {
+		if (!file.public)
+			return;
+
+		return(
+			<CopyToClipboard text={FilesHelper.getPublicDownloadUrl(file)} onCopy={() => {toast.success("Download URL Copied to clipboard")}}>
+					<FileCopyIcon sx={{fontSize: 'medium', pl: 1, verticalAlign: 'middle'}} onClick={_e => false}/>
+			</CopyToClipboard>
+		)
+	}
+
 	const appendFile = (file: FileModel): void => {
 		if(!file)
 			return;
@@ -112,30 +162,6 @@ export default function FilesList(props: FileListProps) {
 		const fileKey = files.findIndex(file => file.id == fileId);
 		files[fileKey] = {...files[fileKey], ...updatedProp}
 		setFiles([...files]);
-	}
-
-	const getFileOptionsButton = (file: FileModel): JSX.Element => {
-		return (
-			<>
-			{FilesHelper.isImage(file) && <IconButton onClick={() => openLightbox(file)} className='fileActionButton'><RemoveRedEyeIcon className='fileActionIcon'/></IconButton>}
-			{file.type != FileType.TYPE_FOLDER && <IconButton onClick={() => downloadFile(file)} className='fileActionButton'><DownloadIcon className='fileActionIcon'/></IconButton>}
-			<IconButton className='fileActionButton' id='ShareButton' onClick={() => shareFile(file)}><ShareIcon className='fileActionIcon' /></IconButton>
-			<IconButton onClick={() => showDeleteConfirmation(file)} className='fileActionButton' id='DeleteButton'>
-				<DeleteIcon className='fileActionIcon' />
-			</IconButton>
-			</>
-		)
-	}
-
-	const DeleteSelectedFileButton = (props: FileListProps): JSX.Element | undefined => {
-		if(!props.enableDeleteFiles || !selectedFiles.length)
-			return;
-
-		return (
-			<Button component="label" variant="contained" color='error' onClick={() => console.log('Delete selected')} startIcon={<DeleteIcon />}>
-				Delete Selected ({selectedFiles.length})
-			</Button>
-		)
 	}
 
 	const onFileClick = (e: React.MouseEvent, file: FileModel) => {
@@ -182,31 +208,6 @@ export default function FilesList(props: FileListProps) {
 		setLightboxOpen(true);
 	}
 
-	const getFileIcon = (file: FileModel): JSX.Element => {
-		if (FilesHelper.isImage(file)) {
-			return <ImageIcon sx={{verticalAlign: 'middle'}} />;
-		} else if (FileType.TYPE_FOLDER == file.type) {
-			return  <FolderIcon sx={{verticalAlign: 'middle'}}/>
-		} else {
-			switch(file.mime) {
-				case 'text/plain': return <ArticleIcon sx={{verticalAlign: 'middle'}}></ArticleIcon>
-				case 'application/octet-stream':  return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
-				default: return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
-			}
-		}
-	}
-
-	const CopyPublicUrl = ({file}: {file: FileModel}): JSX.Element | undefined => {
-		if (!file.public)
-			return;
-
-		return(
-			<CopyToClipboard text={FilesHelper.getPublicDownloadUrl(file)} onCopy={() => {toast.success("Download URL Copied to clipboard")}}>
-					<FileCopyIcon sx={{fontSize: 'medium', pl: 1, verticalAlign: 'middle'}} onClick={_e => false}/>
-			</CopyToClipboard>
-		)
-	}
-
 	const selectAllFiles = () => {
 		setSelectedFiles(current => current.length == files.length ? [] : files.map(file => file.id));
 	}
@@ -220,7 +221,7 @@ export default function FilesList(props: FileListProps) {
 		})
 	}
 
-	const ShowTableViewList = (props: FileListProps) => {
+	const ShowTableViewList = (props: FileListProps): JSX.Element => {
 		if(!files.length){
 			return(
 				<Typography textAlign={'center'} color={theme.palette.text.primary}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
@@ -287,6 +288,7 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const handleDragOut = () => setDragOver(false)
+
 	return(
 		<>
 		<Box className='fileListContainer' component='div' sx={{position: 'relative', minHeight: '250px'}}
