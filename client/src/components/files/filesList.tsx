@@ -84,7 +84,8 @@ export default function FilesList(props: FileListProps) {
 	}, [uploader.uploadedFile]);
 
 
-	const getFileOptionsButton = (file: FileModel): JSX.Element => {
+	const FileActionsButtons = (props: {file: FileModel}): JSX.Element => {
+		const {file} = props;
 		return (
 			<>
 			{FilesHelper.isImage(file) && <IconButton onClick={() => openLightbox(file)} className='fileActionButton'><RemoveRedEyeIcon className='fileActionIcon'/></IconButton>}
@@ -108,7 +109,8 @@ export default function FilesList(props: FileListProps) {
 		)
 	}
 
-	const getFileIcon = (file: FileModel): JSX.Element => {
+	const FileIcon = (props: {file: FileModel}): JSX.Element => {
+		const {file} = props;
 		if (FilesHelper.isImage(file)) {
 			return <ImageIcon sx={{verticalAlign: 'middle'}} />;
 		} else if (FileType.TYPE_FOLDER == file.type) {
@@ -160,7 +162,7 @@ export default function FilesList(props: FileListProps) {
 						<FileTableRow key={file.id}>
 							<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>
 								{props.enableSelecFiles && <Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>}
-								{getFileIcon(file)} {file.name}
+								<FileIcon file={file} /> {file.name}
 							</TableCell>
 							<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
 							<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
@@ -169,7 +171,7 @@ export default function FilesList(props: FileListProps) {
 								<CopyPublicUrl file={file}/>
 							</TableCell>
 							<TableCell onClick={e => onFileClick(e, file)}>N/A</TableCell>
-							<TableCell>{getFileOptionsButton(file)}</TableCell>
+							<TableCell><FileActionsButtons file={file} /></TableCell>
 						</FileTableRow>
 					))}
 				</TableBody>
