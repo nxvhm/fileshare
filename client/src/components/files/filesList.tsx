@@ -250,14 +250,7 @@ export default function FilesList(props: FileListProps) {
 		setSelectedFiles(current => current.length == files.length ? [] : files.map(file => file.id));
 	}
 
-	const onFileClick = (e: React.MouseEvent, file: FileModel) => {
-		const target = (e.target as HTMLBodyElement),
-					targetClassList = target.classList,
-					parentClassList = target.parentElement?.classList;
-
-		if(targetClassList.contains('fileActionButton') || targetClassList.contains('fileActionIcon') || parentClassList?.contains('fileActionButton') || parentClassList?.contains('fileActionIcon'))
-			return;
-
+	const onFileClick = (_e: React.MouseEvent, file: FileModel) => {
 		file.type == FileType.TYPE_FOLDER ? navigate('/folder/'+file.id) : showFileDetails(file, onPublicStatusChange);
 	}
 
