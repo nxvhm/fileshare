@@ -133,6 +133,50 @@ export default function FilesList(props: FileListProps) {
 		)
 	}
 
+	const ShowTableViewList = (props: FileListProps): JSX.Element => {
+		if(!files.length){
+			return(
+				<Typography textAlign={'center'} color={theme.palette.text.primary}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
+			);
+		}
+
+		return (
+			<Table size='small' sx={{marginTop: 2}}>
+				<TableHead>
+					<TableRow sx={{paddingLeft: 0}}>
+						<TableCell sx={{ paddingLeft: 0}}>
+							{props.enableSelecFiles && <Checkbox aria-label='Selected All' onClick={selectAllFiles} checked={files.length == selectedFiles.length} />}
+							Name
+						</TableCell>
+						<TableCell>Uploaded</TableCell>
+						<TableCell>Size</TableCell>
+						<TableCell>Public</TableCell>
+						<TableCell>Shares</TableCell>
+						<TableCell>Actions</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{files.map((file: FileModel) => (
+						<FileTableRow key={file.id}>
+							<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>
+								{props.enableSelecFiles && <Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>}
+								{getFileIcon(file)} {file.name}
+							</TableCell>
+							<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
+							<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
+							<TableCell>
+								{file.public ? 'Yes' : 'No'}
+								<CopyPublicUrl file={file}/>
+							</TableCell>
+							<TableCell onClick={e => onFileClick(e, file)}>N/A</TableCell>
+							<TableCell>{getFileOptionsButton(file)}</TableCell>
+						</FileTableRow>
+					))}
+				</TableBody>
+			</Table>
+		)
+	}
+
 	const appendFile = (file: FileModel): void => {
 		if(!file)
 			return;
@@ -157,22 +201,8 @@ export default function FilesList(props: FileListProps) {
 			: FilesApi.downloadFile(String(file.hash)).then(res => fileDownload(res.data, file.name));
 	}
 
-	const onFolderCreate = (folder: FileModel): void => uploader.setUploadedFile(folder)
-	const onPublicStatusChange: filePropUpdateHandler = (fileId: number, updatedProp: Partial<FileModel>) => {
-		const fileKey = files.findIndex(file => file.id == fileId);
-		files[fileKey] = {...files[fileKey], ...updatedProp}
-		setFiles([...files]);
-	}
-
-	const onFileClick = (e: React.MouseEvent, file: FileModel) => {
-		const target = (e.target as HTMLBodyElement),
-					targetClassList = target.classList,
-					parentClassList = target.parentElement?.classList;
-
-		if(targetClassList.contains('fileActionButton') || targetClassList.contains('fileActionIcon') || parentClassList?.contains('fileActionButton') || parentClassList?.contains('fileActionIcon'))
-			return;
-
-		file.type == FileType.TYPE_FOLDER ? navigate('/folder/'+file.id) : showFileDetails(file, onPublicStatusChange);
+	const onFolderCreate = (folder: FileModel): void => {
+		uploader.setUploadedFile(folder)
 	}
 
 	const deleteFile = () => {
@@ -191,6 +221,12 @@ export default function FilesList(props: FileListProps) {
 			toast.error("Error deleting file");
 			console.error("Error deleting file", e);
 		})
+	}
+
+	const onPublicStatusChange: filePropUpdateHandler = (fileId: number, updatedProp: Partial<FileModel>) => {
+		const fileKey = files.findIndex(file => file.id == fileId);
+		files[fileKey] = {...files[fileKey], ...updatedProp}
+		setFiles([...files]);
 	}
 
 	const shareFile = (file: FileModel) => {
@@ -212,6 +248,17 @@ export default function FilesList(props: FileListProps) {
 		setSelectedFiles(current => current.length == files.length ? [] : files.map(file => file.id));
 	}
 
+	const onFileClick = (e: React.MouseEvent, file: FileModel) => {
+		const target = (e.target as HTMLBodyElement),
+					targetClassList = target.classList,
+					parentClassList = target.parentElement?.classList;
+
+		if(targetClassList.contains('fileActionButton') || targetClassList.contains('fileActionIcon') || parentClassList?.contains('fileActionButton') || parentClassList?.contains('fileActionIcon'))
+			return;
+
+		file.type == FileType.TYPE_FOLDER ? navigate('/folder/'+file.id) : showFileDetails(file, onPublicStatusChange);
+	}
+
 	const toggleFileSelected = (e: React.MouseEvent,  id: number) => {
 		e.stopPropagation();
 
@@ -219,50 +266,6 @@ export default function FilesList(props: FileListProps) {
 			current.includes(id) ? current.splice(current.indexOf(id), 1) : current.push(id);
 			return [...current];
 		})
-	}
-
-	const ShowTableViewList = (props: FileListProps): JSX.Element => {
-		if(!files.length){
-			return(
-				<Typography textAlign={'center'} color={theme.palette.text.primary}>No Uploaded files. Drag and Drop files to upload or use the button</Typography>
-			);
-		}
-
-		return (
-		<Table size='small' sx={{marginTop: 2}}>
-			<TableHead>
-				<TableRow sx={{paddingLeft: 0}}>
-					<TableCell sx={{ paddingLeft: 0}}>
-						{props.enableSelecFiles && <Checkbox aria-label='Selected All' onClick={selectAllFiles} checked={files.length == selectedFiles.length} />}
-						Name
-					</TableCell>
-					<TableCell>Uploaded</TableCell>
-					<TableCell>Size</TableCell>
-					<TableCell>Public</TableCell>
-					<TableCell>Shares</TableCell>
-					<TableCell>Actions</TableCell>
-				</TableRow>
-			</TableHead>
-			<TableBody>
-				{files.map((file: FileModel) => (
-					<FileTableRow key={file.id}>
-						<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>
-							{props.enableSelecFiles && <Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>}
-							{getFileIcon(file)} {file.name}
-						</TableCell>
-						<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
-						<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
-						<TableCell>
-							{file.public ? 'Yes' : 'No'}
-							<CopyPublicUrl file={file}/>
-						</TableCell>
-						<TableCell onClick={e => onFileClick(e, file)}>N/A</TableCell>
-						<TableCell>{getFileOptionsButton(file)}</TableCell>
-					</FileTableRow>
-				))}
-			</TableBody>
-		</Table>
-		)
 	}
 
 	const onDrop = (e: React.DragEvent) => {
@@ -287,7 +290,9 @@ export default function FilesList(props: FileListProps) {
 			setDragOver(true);
 	}
 
-	const handleDragOut = () => setDragOver(false)
+	const onDragOut = () => {
+		setDragOver(false)
+	}
 
 	return(
 		<>
@@ -295,9 +300,9 @@ export default function FilesList(props: FileListProps) {
 			onDrop={onDrop}
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
-			onDragLeave={handleDragOut}>
+			onDragLeave={onDragOut}>
 
-			<DragAndDropOverlay open={dragOver} handleDragOut={handleDragOut}></DragAndDropOverlay>
+			<DragAndDropOverlay open={dragOver} handleDragOut={onDragOut}></DragAndDropOverlay>
 			<Box sx={{display: 'flex', gap: 1}}>
 				{showUploadButton &&
 					<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
