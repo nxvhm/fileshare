@@ -47,7 +47,7 @@ import { VisuallyHiddenInput, FileTableRow } from './styled';
 export type FileListProps = {
 	showUploadButton?: boolean,
 	showCreateFolderButton?: boolean,
-	showDeleteFilesButton?: boolean
+	enableDeleteFiles?: boolean
 	enableSelecFiles?: boolean
 }
 
@@ -124,6 +124,17 @@ export default function FilesList(props: FileListProps) {
 				<DeleteIcon className='fileActionIcon' />
 			</IconButton>
 			</>
+		)
+	}
+
+	const DeleteSelectedFileButton = (props: FileListProps): JSX.Element | undefined => {
+		if(!props.enableDeleteFiles || !selectedFiles.length)
+			return;
+
+		return (
+			<Button component="label" variant="contained" color='error' onClick={() => console.log('Delete selected')} startIcon={<DeleteIcon />}>
+				Delete Selected ({selectedFiles.length})
+			</Button>
 		)
 	}
 
@@ -209,7 +220,6 @@ export default function FilesList(props: FileListProps) {
 		})
 	}
 
-
 	const ShowTableViewList = (props: FileListProps) => {
 		if(!files.length){
 			return(
@@ -294,6 +304,7 @@ export default function FilesList(props: FileListProps) {
 					</Button>
 				}
 				{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
+				<DeleteSelectedFileButton {...props} />
 			</Box>
 			<Box sx={{display: 'flex', marginTop: 2}}>
 				<Breadcrumbs folderId={Number(parentId)} />

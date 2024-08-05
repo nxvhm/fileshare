@@ -3,7 +3,10 @@ import FilesList from "../components/files/filesList";
 function Home() {
 
 	return (
-		<FilesList enableSelecFiles={true}/>
+		<FilesList
+			enableSelecFiles={true}
+			enableDeleteFiles={true}
+		/>
 	)
 }
 

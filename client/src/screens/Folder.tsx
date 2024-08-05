@@ -3,7 +3,10 @@ import FilesList from "../components/files/filesList";
 function Folder() {
 
 	return (
-		<FilesList/>
+		<FilesList
+			enableSelecFiles={true}
+			enableDeleteFiles={true}
+		/>
 	)
 }
 
