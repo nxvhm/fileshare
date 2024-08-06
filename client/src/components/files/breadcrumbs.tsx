@@ -1,8 +1,7 @@
 import {useState, useEffect} from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { emphasize, styled } from '@mui/material/styles';
-import {Breadcrumbs as MuiBreadcrumbs, Chip} from '@mui/material';
+import {Breadcrumbs as MuiBreadcrumbs} from '@mui/material';
 import {Home as HomeIcon, Folder as FolderIcon} from '@mui/icons-material';
 
 import { getBreadcrumbs } from '../../api/Files';
@@ -28,13 +27,14 @@ export default function Breadcrumbs(props: BreadcrumbsProps) {
 		})
 	}, [props.folderId])
 
-	const breadcrumbsElements = () => {
+	const BreadcrumbItems = (props: {folders: FileModel[], folderId: number | undefined}) => {
+		const {folders, folderId} = props;
 		if(!folders.length)
 			return;
 
 		return folders.map(folder => {
 			return(
-				<NavLink to={props.folderId != folder.id ? `/folder/${folder.id}` : '#'} key={folder.id}>
+				<NavLink to={folderId != folder.id ? `/folder/${folder.id}` : '#'} key={folder.id}>
 					<StyledBreadcrumb label={folder.name} icon={<FolderIcon fontSize="small"/>} />
 				</NavLink>
 			)
@@ -47,7 +47,7 @@ export default function Breadcrumbs(props: BreadcrumbsProps) {
 				<NavLink to={"/"}>
 					<StyledBreadcrumb label="Home" icon={<HomeIcon fontSize="small" />}/>
 				</NavLink>
-				{breadcrumbsElements()}
+				<BreadcrumbItems folders={folders} folderId={props.folderId} />
       </MuiBreadcrumbs>
     </div>
   );
