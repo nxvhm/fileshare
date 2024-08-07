@@ -17,6 +17,10 @@ export const deleteFile = (id: number) => {
 	return axiosInstance.post('/files/delete', {id});
 }
 
+export const deleteMultiple = (ids: number[]) => {
+	return axiosInstance.post('/files/delete/multiple', {files: ids});
+}
+
 export const getFilesList = (parentId: Number|undefined) => {
 	return axiosInstance.get('/files/list'+(parentId ? `/${parentId}` : ''));
 }
