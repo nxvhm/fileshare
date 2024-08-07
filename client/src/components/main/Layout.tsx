@@ -5,9 +5,8 @@ import Drawer from "./Drawer";
 import FileDetailsDrawer from "./FileDetailsDrawer";
 
 export default function Layout({children}: {children: React.ReactNode}) {
-
 	return(
-		<Box sx={{ display: 'flex' }}>
+	<Box sx={{ display: 'flex' }}>
 		<Topbar />
 		<Drawer />
 		<FileDetailsDrawer></FileDetailsDrawer>
@@ -25,5 +24,4 @@ export default function Layout({children}: {children: React.ReactNode}) {
 		<Toaster />
 	</Box>
 	)
-
 }

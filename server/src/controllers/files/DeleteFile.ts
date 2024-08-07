@@ -46,4 +46,41 @@ router.post('/delete', [AuthMiddleware], async(req: IUserAuthRequest, res: expre
 
 });
 
+router.post('/delete/multiple', [AuthMiddleware], async(req: IUserAuthRequest, res: express.Response) => {
+	try {
+
+		if(!req.user)
+			return res.status(403).send("Unauthorized");
+
+		if(!req.body.files)
+			return res.status(422).send("No files provided");
+
+		const filesToRemove = await AppDataSource
+			.getRepository(File)
+			.createQueryBuilder('f')
+			.select(['f.id', 'f.name', 'f.user_id', 'f.hash'])
+			.where('f.id IN (:...ids)', {ids: req.body.files})
+			.andWhere('f.user_id = :userId', {userId: req.user?.data.id})
+			.getMany();
+
+		for(let file of filesToRemove) {
+			const path = file.getPath();
+			if(await Files.exists(path))
+				await Files.removeFIle(path);
+		}
+
+		await AppDataSource.createQueryBuilder()
+			.delete()
+			.from(File)
+			.where("id IN (:...ids)", {ids: req.body.files})
+			.andWhere('user_id = :userId', {userId: req.user?.data.id})
+			.execute();
+
+		return res.send();
+	} catch (e) {
+		console.error(e);
+		return res.status(500).send({message: 'Error during file deletion, please try again later'});
+	}
+})
+
 export default router;
