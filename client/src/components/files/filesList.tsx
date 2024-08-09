@@ -24,7 +24,6 @@ import {
 	TableCell,
 	TableHead,
 	TableRow,
-	Backdrop,
 	Typography,
 	Checkbox
 } from '@mui/material';
@@ -62,6 +61,7 @@ export default function FilesList(props: FileListProps) {
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState<boolean>(false);
+  const [openDeleteMultipleConfirmation, setOpenDeleteMultipleConfirmation] = useState<boolean>(false);
   const [openShareWindow, setOpenShareWindow] = useState<boolean>(false);
   const [fileShare, setFileShare] = useState<FileModel|null>(null);
 	const [dragOver, setDragOver] = useState<boolean>(false);
@@ -104,7 +104,7 @@ export default function FilesList(props: FileListProps) {
 
 		return (
 			<Button component="label" variant="contained" color='error'
-				onClick={() => deleteMultipleFiles(selectedFiles)}
+				onClick={() => setOpenDeleteMultipleConfirmation(true)}
 				startIcon={<DeleteIcon />}>
 				Delete Selected ({selectedFiles.length})
 			</Button>
@@ -227,10 +227,11 @@ export default function FilesList(props: FileListProps) {
 		})
 	}
 
-	const deleteMultipleFiles = (ids: number[]) => {
-		FilesApi.deleteMultiple(ids).then(res => {
-			setFiles(files =>  [...files.filter(file => !ids.includes(file.id))]);
+	const deleteMultipleFiles = () => {
+		FilesApi.deleteMultiple(selectedFiles).then(_res => {
+			setFiles(files =>  [...files.filter(file => !selectedFiles.includes(file.id))]);
 			setSelectedFiles([]);
+			setOpenDeleteMultipleConfirmation(false);
 		}).catch(e => toast.error(e.response?.data ? e.response.data : 'Error occurred while deleting files'))
 	}
 
@@ -328,6 +329,13 @@ export default function FilesList(props: FileListProps) {
 				onConfirm={deleteFile}
 				onCancel={() => {setOpenDeleteConfirmation(false)}}
 				dialogText='Are you sure you want to delete this file ?'
+				secondaryDialogText='Action cannot be reverted'
+			/>
+			<ConfirmationDialog
+				isOpen={openDeleteMultipleConfirmation}
+				onConfirm={deleteMultipleFiles}
+				onCancel={() => {setOpenDeleteMultipleConfirmation(false)}}
+				dialogText='Are you sure you want to delete these files ?'
 				secondaryDialogText='Action cannot be reverted'
 			/>
       <Lightbox
