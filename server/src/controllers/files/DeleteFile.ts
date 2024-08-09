@@ -50,7 +50,7 @@ router.post('/delete/multiple', [AuthMiddleware], async(req: IUserAuthRequest, r
 	try {
 
 		if(!req.user)
-			return res.status(403).send("Unauthorized");
+			return res.status(403).send("You are not authorized to perform this action");
 
 		if(!req.body.files)
 			return res.status(422).send("No files provided");
@@ -79,7 +79,7 @@ router.post('/delete/multiple', [AuthMiddleware], async(req: IUserAuthRequest, r
 		return res.send();
 	} catch (e) {
 		console.error(e);
-		return res.status(500).send({message: 'Error during file deletion, please try again later'});
+		return res.status(500).send('Error during file deletion, please try again later');
 	}
 })
 
