@@ -103,7 +103,9 @@ export default function FilesList(props: FileListProps) {
 			return;
 
 		return (
-			<Button component="label" variant="contained" color='error' onClick={() => console.log('Delete selected')} startIcon={<DeleteIcon />}>
+			<Button component="label" variant="contained" color='error'
+				onClick={() => deleteMultipleFiles(selectedFiles)}
+				startIcon={<DeleteIcon />}>
 				Delete Selected ({selectedFiles.length})
 			</Button>
 		)
@@ -223,6 +225,13 @@ export default function FilesList(props: FileListProps) {
 			toast.error("Error deleting file");
 			console.error("Error deleting file", e);
 		})
+	}
+
+	const deleteMultipleFiles = (ids: number[]) => {
+		FilesApi.deleteMultiple(ids).then(res => {
+			setFiles(files =>  [...files.filter(file => !ids.includes(file.id))]);
+			setSelectedFiles([]);
+		}).catch(e => toast.error(e.response?.data ? e.response.data : 'Error occurred while deleting files'))
 	}
 
 	const onPublicStatusChange: filePropUpdateHandler = (fileId: number, updatedProp: Partial<FileModel>) => {
