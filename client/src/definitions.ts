@@ -74,3 +74,10 @@ export type FileToUpload = {
 	file: File,
 	hash: string
 };
+
+export type LightboxSlide = {
+	src: string,
+	alt?: string,
+	width?: number,
+	height?: number
+}
