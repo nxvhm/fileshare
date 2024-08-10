@@ -4,7 +4,7 @@ import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
 import Lightbox from "yet-another-react-lightbox";
 import ConfirmationDialog from '../main/ConfirmationDialog';
-import { FileModel, FileType, filePropUpdateHandler } from '../../definitions';
+import { FileModel, FileType, filePropUpdateHandler, LightboxSlide } from '../../definitions';
 import  * as FilesApi from '../../api/Files';
 import CreateFolder from './createFolder';
 import useFileUpload from '../../lib/hooks/useFileUpload';
@@ -57,7 +57,8 @@ export default function FilesList(props: FileListProps) {
 	showCreateFolderButton = showCreateFolderButton ?? true;
 
 	const [lightboxOpen, setLightboxOpen] = useState(false);
-	const [viewImage, setViewImage] = useState<string|null>(null);
+	const [slides, setSlides] = useState<LightboxSlide[]>([]);
+	const [slideIndex, setSlideIndex] = useState<number>(0);
 	const [files, setFiles] = useState<FileModel[]>([]);
 	const [fileToDelete, setFileToDelete] = useState<FileModel|null>(null)
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState<boolean>(false);
@@ -83,6 +84,11 @@ export default function FilesList(props: FileListProps) {
 		appendFile(uploader.uploadedFile);
 	}, [uploader.uploadedFile]);
 
+	useEffect(() => {
+		setSlides(files.filter(file => FilesHelper.isImage(file)).map(file => {
+			return {src: FilesApi.getViewableFileUrl(file)};
+		}));
+	}, [files])
 
 	const FileActionsButtons = (props: {file: FileModel}): JSX.Element => {
 		const {file} = props;
@@ -252,7 +258,9 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const openLightbox = (file: FileModel) => {
-		setViewImage(FilesApi.getViewableFileUrl(file));
+		const imageUrl = FilesApi.getViewableFileUrl(file);
+		const selectedImageIndex = slides.findIndex(slide => slide.src == imageUrl);
+		setSlideIndex(selectedImageIndex);
 		setLightboxOpen(true);
 	}
 
@@ -341,7 +349,8 @@ export default function FilesList(props: FileListProps) {
       <Lightbox
         open={lightboxOpen}
         close={() => setLightboxOpen(false)}
-        slides={[{src: String(viewImage)}]}
+        slides={slides}
+				index={slideIndex}
       />
 		</Box>
 		{<uploader.UploaderWidget></uploader.UploaderWidget>}
