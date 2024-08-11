@@ -1,5 +1,5 @@
 import {useState, useEffect, useContext} from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
 import Lightbox from "yet-another-react-lightbox";
@@ -38,7 +38,8 @@ import {
 	RemoveRedEye as RemoveRedEyeIcon,
 	Article as ArticleIcon,
 	AttachFile as AttachFileIcon,
-	FileCopy as FileCopyIcon
+	FileCopy as FileCopyIcon,
+	TextFormat as TextFormIcon,
 } from '@mui/icons-material';
 
 import { VisuallyHiddenInput, FileTableRow } from './styled';
@@ -268,6 +269,11 @@ export default function FilesList(props: FileListProps) {
 		setSelectedFiles(current => current.length == files.length ? [] : files.map(file => file.id));
 	}
 
+	const openTextEdit = () => {
+		Number(parentId)
+		navigate(parentId ? `/text/new/${parentId}` : '/text/new');
+	}
+
 	const onFileClick = (_e: React.MouseEvent, file: FileModel) => {
 		file.type == FileType.TYPE_FOLDER ? navigate('/folder/'+file.id) : showFileDetails(file, onPublicStatusChange);
 	}
@@ -325,6 +331,9 @@ export default function FilesList(props: FileListProps) {
 				}
 				{showCreateFolderButton && <CreateFolder onFolderCreate={onFolderCreate} />}
 				<DeleteSelectedFileButton {...props} />
+				<Button variant="contained" onClick={() => openTextEdit()}startIcon={<TextFormIcon />}>
+					New Text File
+				</Button>
 			</Box>
 			<Box sx={{display: 'flex', marginTop: 2}}>
 				<Breadcrumbs folderId={Number(parentId)} />

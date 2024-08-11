@@ -19,6 +19,7 @@ import Shares from './screens/Shares.tsx';
 import Profile from './screens/Profile.tsx';
 import PublicDownload from './screens/PublicDownload.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
+import TextFile from './screens/TextFile.tsx';
 import { useAuth } from './lib/hooks/useAuth.ts';
 import AuthContext from './lib/context/AuthContext.ts';
 import {OpenDrawerContextProvider} from './lib/context/OpenDraweContext.tsx';
@@ -38,6 +39,10 @@ const App = function() {
 		{
 			path: "/folder/:parentId",
 			element: <ProtectedRoute><Folder /></ProtectedRoute>
+		},
+		{
+			path: "/text/new/:parentId?",
+			element: <ProtectedRoute><TextFile /></ProtectedRoute>
 		},
 		{
 			path: "/shares",
