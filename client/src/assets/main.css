@@ -2,3 +2,7 @@ body, html {
 	margin: 0px;
 	padding: 0px;
 }
+
+.rsw-ce {
+	min-height: 400px !important;
+}
