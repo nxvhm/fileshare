@@ -35,6 +35,10 @@ export const createFolder = (name: string, parentId: number|undefined) => {
 	return axiosInstance.post('/files/create-folder', {name, parentId});
 }
 
+export const createText = (name: string, parentId: number|undefined, text: string) => {
+	return axiosInstance.post('/files/text', {name, text, parentId});
+}
+
 export const getBreadcrumbs = (folderId: number|undefined) => {
 	const params: Record<string, string|number> = {};
 
