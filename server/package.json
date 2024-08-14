@@ -32,6 +32,7 @@
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.5",
     "reflect-metadata": "^0.1.13",
+    "sanitize-html": "^2.13.0",
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.10.0",
+    "@types/sanitize-html": "^2.11.0",
     "nodemon": "^3.1.0",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
