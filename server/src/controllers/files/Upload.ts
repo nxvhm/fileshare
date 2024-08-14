@@ -4,6 +4,7 @@ import { validationResult, checkSchema } from "express-validator"
 import AuthMiddleware from "@/middleware/Auth.js";
 import { IUserAuthRequest } from "@/definitions.js";
 import { Files } from "@/lib/FilesHelper.js";
+import sanitizeHtml from 'sanitize-html';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' })
@@ -62,7 +63,6 @@ router.post('/create-folder', checkSchema(createFolderRequestValidator), AuthMid
 		return res.status(403).send("Unauthorized");
 
 		const validation = validationResult(req);
-
 		if (validation.array().length)
 			return res.status(422).send(validation.array().shift())
 
@@ -71,6 +71,44 @@ router.post('/create-folder', checkSchema(createFolderRequestValidator), AuthMid
 		}).catch(err => {
 			res.status(500).send({message: "Error occured, please try again later"});
 		})
+})
+
+
+/**
+ * Add text fiel
+ */
+const createTextFileRequestValidator = {
+	name: {
+		isString: true,
+		notEmpty: true,
+		matches: {
+			options: /^[a-zA-Z0-9_-]+$/,
+			errorMessage: 'Only Alphanumeric charasters, underscore & dash are allowed'
+		}
+	},
+	parentId: {
+		optional: true,
+		matches: {
+			options: /^[0-9]+$/,
+			errorMessage: 'Parent ID should be either number or empty value'
+		}
+	},
+	text: {
+		isString: true,
+		customSanitizer: {
+			options: (async (value: string) => sanitizeHtml(value))
+		}
+	}
+}
+router.post('/text',  checkSchema(createTextFileRequestValidator), AuthMiddleware, async(req: IUserAuthRequest, res: express.Response) => {
+	if(!req.user)
+		return res.status(403).send("Unauthorized");
+
+	const validation = validationResult(req);
+	if(validation.array().length)
+		return res.status(422).send(validation.array().shift())
+
+	res.send(req.body);
 })
 
 
