@@ -206,12 +206,13 @@ export class Files {
 		})
 	}
 
-	public static createTextFile(userId: number, name: string, content: string): Promise<PathLike|boolean> {
+	public static createTextFile(userId: number, name: string, content: string): Promise<PathLike> {
 		return new Promise((resolve, reject) => {
-			const userFilesPath = Files.getUserFilesDirPath(undefined, userId);
+			const filePath = Files.getUserFilesDirPath(undefined, userId) + sep + name;
 			fs.writeFile(
-				userFilesPath + sep + name, content,
-				err => err ? reject(err) : resolve(true)
+				filePath,
+				content,
+				err => err ? reject(err) : resolve(filePath)
 			);
 		});
 	}
@@ -227,6 +228,12 @@ export class Files {
 		];
 
 		return imageMimes.includes(file.mime);
+	}
+
+	public static getFileStats(path: PathLike): Promise<fs.Stats> {
+		return new Promise((resolve, reject) => {
+			fs.stat(path, (err, stats) => err ? reject(err) : resolve(stats));
+		});
 	}
 
 }
