@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import {TextField, Box, Button} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import Editor from 'react-simple-wysiwyg';
+import toast, { ToastOptions, Toaster } from 'react-hot-toast';
 import { createText } from '../api/Files';
 
 const TextFile = () => {
@@ -24,7 +25,9 @@ const TextFile = () => {
 			return setValidationError({filename: 'Filename should be at least 3 characters'})
 
 		setValidationError({filename: undefined});
-		createText(fileName, parentId ? Number(parentId) : undefined, html).then(res => console.log(res)).catch(e => console.log(e));
+		createText(fileName, parentId ? Number(parentId) : undefined, html)
+			.then(_res => toast.success('File create successfully'))
+			.catch(e => toast.error(e.response?.data.message ? e.response?.data.message : e.message));
 	}
 
   return (
@@ -45,6 +48,8 @@ const TextFile = () => {
 			onChange={handleTextUpdate}
 		/>
 		<Button variant="outlined" sx={{marginTop: 1, paddingLeft: 3, paddingRight: 3}} startIcon={<SaveIcon />} onClick={saveFile}>Save</Button>
+		<Toaster />
+
 		</Box>
   );
 }
