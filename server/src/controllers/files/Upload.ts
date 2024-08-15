@@ -5,6 +5,8 @@ import AuthMiddleware from "@/middleware/Auth.js";
 import { IUserAuthRequest } from "@/definitions.js";
 import { Files } from "@/lib/FilesHelper.js";
 import sanitizeHtml from 'sanitize-html';
+import { randomBytes } from "crypto";
+import { PathLike } from "fs";
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' })
@@ -108,7 +110,27 @@ router.post('/text',  checkSchema(createTextFileRequestValidator), AuthMiddlewar
 	if(validation.array().length)
 		return res.status(422).send(validation.array().shift())
 
-	res.send(req.body);
+	const filename = randomBytes(16).toString('hex');
+	let filePath = '' as PathLike;
+	try {
+		filePath = await Files.createTextFile(req.user.data.id, filename, req.body.text);
+		const stats = await Files.getFileStats(filePath);
+		const parentId =  req.body.parentId ? req.body.parentId : null;
+		const file = {
+			mimetype: 'text/html',
+			originalname: req.body.name,
+			filename,
+			size: stats.size
+		} as unknown as Express.Multer.File;
+
+		const uploadedFile = await Files.saveInDatabase(file, req.user.data.id, parentId);
+		return res.send(uploadedFile);
+	} catch (error) {
+		if(filePath.toString().length && await Files.exists(filePath))
+			Files.removeFIle(filePath);
+
+		return res.status(500).send({message: 'An error occurred. Please try again later.'});
+	}
 })
 
 
