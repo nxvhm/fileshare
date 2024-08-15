@@ -206,6 +206,16 @@ export class Files {
 		})
 	}
 
+	public static createTextFile(userId: number, name: string, content: string): Promise<PathLike|boolean> {
+		return new Promise((resolve, reject) => {
+			const userFilesPath = Files.getUserFilesDirPath(undefined, userId);
+			fs.writeFile(
+				userFilesPath + sep + name, content,
+				err => err ? reject(err) : resolve(true)
+			);
+		});
+	}
+
 	public static isViewable(file: File): boolean {
 		const imageMimes = [
 			'image/jpeg',
