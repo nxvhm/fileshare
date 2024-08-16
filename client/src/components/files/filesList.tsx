@@ -1,5 +1,5 @@
 import {useState, useEffect, useContext} from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
 import Lightbox from "yet-another-react-lightbox";
@@ -15,6 +15,7 @@ import DragAndDropOverlay from './DragAndDropOverlay';
 import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 import { useTheme } from '@mui/material/styles';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import FileIcon from './FileIcon';
 import {
 	IconButton,
 	Box,
@@ -30,14 +31,10 @@ import {
 
 import {
 	Download as DownloadIcon,
-	Image as ImageIcon,
 	Share as ShareIcon,
 	Delete as DeleteIcon,
-	Folder as FolderIcon,
 	CloudUpload as CloudUploadIcon,
 	RemoveRedEye as RemoveRedEyeIcon,
-	Article as ArticleIcon,
-	AttachFile as AttachFileIcon,
 	FileCopy as FileCopyIcon,
 	TextFormat as TextFormIcon,
 } from '@mui/icons-material';
@@ -116,21 +113,6 @@ export default function FilesList(props: FileListProps) {
 				Delete Selected ({selectedFiles.length})
 			</Button>
 		)
-	}
-
-	const FileIcon = (props: {file: FileModel}): JSX.Element => {
-		const {file} = props;
-		if (FilesHelper.isImage(file)) {
-			return <ImageIcon sx={{verticalAlign: 'middle'}} />;
-		} else if (FileType.TYPE_FOLDER == file.type) {
-			return  <FolderIcon sx={{verticalAlign: 'middle'}}/>
-		} else {
-			switch(file.mime) {
-				case 'text/plain': return <ArticleIcon sx={{verticalAlign: 'middle'}}></ArticleIcon>
-				case 'application/octet-stream':  return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
-				default: return <AttachFileIcon sx={{verticalAlign: 'middle'}}></AttachFileIcon>
-			}
-		}
 	}
 
 	const CopyPublicUrl = ({file}: {file: FileModel}): JSX.Element | undefined => {
