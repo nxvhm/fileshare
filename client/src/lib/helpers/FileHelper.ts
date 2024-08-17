@@ -12,11 +12,19 @@ export default class FilesHelper {
 			'application/json'
 		];
 
-		return imageMimes.includes(String(file.mime));
+		return file.mime ? imageMimes.includes(file.mime) : false;
+	}
+
+	public static isText(file: FileModel): boolean {
+		return file.mime
+			? ['text/html', 'text/plain', 'text/csv', 'application/json'].includes(file.mime)
+			: false;
 	}
 
 	public static isImage(file: FileModel): boolean {
-		return ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(String(file.mime));
+		return file.mime
+			? ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.mime)
+			: false;
 	}
 
 	public static getPublicDownloadUrl(file: FileModel): string {
