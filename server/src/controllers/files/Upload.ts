@@ -77,7 +77,7 @@ router.post('/create-folder', checkSchema(createFolderRequestValidator), AuthMid
 
 
 /**
- * Add text fiel
+ * Add text file
  */
 const createTextFileRequestValidator = {
 	name: {

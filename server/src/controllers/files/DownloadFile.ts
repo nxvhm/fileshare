@@ -44,7 +44,7 @@ router.get('/view/:hash/:token?', async(req: express.Request, res: express.Respo
 	if (!file || (!file.public && !req.params.token))
 		return res.status(404).send("File not found");
 
-	if (file.public && Files.isViewable(file))
+	if (file.public && file.isViewable())
 		return res.contentType(file.mime).sendFile(String(file.getPath()));
 
 	if(!await TokenManager.isValid(String(req.params.token)))
