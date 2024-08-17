@@ -112,3 +112,9 @@ export const getFileInfo = (hash: string): Promise<FileModel> => {
 		.catch(e=> reject(e))
 	})
 }
+
+export const getTextFile = (id: string): Promise<FileModel> => {
+	return new Promise((resolve, reject) => {
+		axiosInstance.get(`/files/text/${id}`).then(res => resolve(res.data)).catch(e => reject(e));
+	})
+}
