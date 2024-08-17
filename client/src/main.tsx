@@ -45,6 +45,10 @@ const App = function() {
 			element: <ProtectedRoute><TextFile /></ProtectedRoute>
 		},
 		{
+			path: "/text/edit/:id",
+			element: <ProtectedRoute><TextFile edit={true} /></ProtectedRoute>
+		},
+		{
 			path: "/shares",
 			element: <ProtectedRoute><Shares /></ProtectedRoute>
 		},
