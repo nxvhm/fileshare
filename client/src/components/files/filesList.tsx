@@ -1,5 +1,5 @@
 import {useState, useEffect, useContext} from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import fileDownload from 'js-file-download';
 import toast from 'react-hot-toast';
 import Lightbox from "yet-another-react-lightbox";
@@ -37,6 +37,7 @@ import {
 	RemoveRedEye as RemoveRedEyeIcon,
 	FileCopy as FileCopyIcon,
 	TextFormat as TextFormIcon,
+	Edit as EditIcon
 } from '@mui/icons-material';
 
 import { VisuallyHiddenInput, FileTableRow } from './styled';
@@ -154,6 +155,7 @@ export default function FilesList(props: FileListProps) {
 							<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>
 								{props.enableSelecFiles && <Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>}
 								<FileIcon file={file} /> {file.name}
+								{FilesHelper.isText(file) && <IconButton component={Link} to={`/text/edit/${file.id}`}><EditIcon /></IconButton>}
 							</TableCell>
 							<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
 							<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
@@ -257,6 +259,9 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const onFileClick = (_e: React.MouseEvent, file: FileModel) => {
+		if(FilesHelper.isText(file))
+			return navigate('/text/edit/'+file.id);
+
 		file.type == FileType.TYPE_FOLDER ? navigate('/folder/'+file.id) : showFileDetails(file, onPublicStatusChange);
 	}
 
