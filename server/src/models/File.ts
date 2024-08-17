@@ -50,8 +50,29 @@ export class File {
 	@JoinColumn({name: 'user_id'})
 	user!: Relation<User>
 
+	public static viewableMimeTypes = [
+		'image/jpeg',
+		'image/png',
+		'image/gif',
+		'image/webp',
+		'application/pdf',
+		'application/json'
+	];
+
+	public static textMimeTypes = [
+		'text/html', 'text/plain', 'text/csv', 'application/json'
+	];
+
 	public getPath(): PathLike|string {
 		return Files.getUserFilesDirPath(this.hash, this.user_id);
+	}
+
+	public isViewable(): boolean {
+		return this.mime ? File.viewableMimeTypes.includes(this.mime) : false;
+	}
+
+	public isText(): boolean {
+		return this.mime ? File.textMimeTypes.includes(this.mime) : false;
 	}
 
 	public static generateHash(userId: number, filename: string): Promise<string> {

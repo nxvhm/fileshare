@@ -218,16 +218,11 @@ export class Files {
 	}
 
 	public static isViewable(file: File): boolean {
-		const imageMimes = [
-			'image/jpeg',
-			'image/png',
-			'image/gif',
-			'image/webp',
-			'application/pdf',
-			'application/json'
-		];
+		return File.viewableMimeTypes.includes(file.mime);
+	}
 
-		return imageMimes.includes(file.mime);
+	public static isText(file: File): boolean {
+		return file.mime ? File.textMimeTypes.includes(file.mime) : false;
 	}
 
 	public static getFileStats(path: PathLike): Promise<fs.Stats> {
