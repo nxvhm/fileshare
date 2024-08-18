@@ -1,4 +1,4 @@
-import { FileModel, ShareRecord, UserSearchResult } from "../definitions";
+import { FileModel, ShareRecord, TextFileModel, UserSearchResult } from "../definitions";
 import axiosInstance from "../lib/Axios"
 import { Token } from "../lib/Token";
 
@@ -113,7 +113,7 @@ export const getFileInfo = (hash: string): Promise<FileModel> => {
 	})
 }
 
-export const getTextFile = (id: string): Promise<FileModel> => {
+export const getTextFile = (id: string): Promise<TextFileModel> => {
 	return new Promise((resolve, reject) => {
 		axiosInstance.get(`/files/text/${id}`).then(res => resolve(res.data)).catch(e => reject(e));
 	})

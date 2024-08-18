@@ -17,6 +17,8 @@ export type FileModel = {
 	user?: UserTokenData
 }
 
+export type TextFileModel = FileModel & {contents: string}
+
 export type AuthTokenPayload = {
 	data: UserTokenData
 	iat: number,
@@ -28,7 +30,6 @@ export type UserTokenData = {
 	name: string,
 	email: string
  }
-
 
 export type OpenDrawerContextType = {
 	drawerOpen: boolean,
