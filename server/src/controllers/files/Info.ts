@@ -1,9 +1,9 @@
 import express from "express"
 import { AppDataSource } from '@/datasource.js';
-import { File } from '@/models/File.js';
-import { IS_PUBLIC } from "@/definitions.js";
 import AuthMiddleware from "@/middleware/Auth.js";
-import { IUserAuthRequest } from "@/definitions.js";
+import { File } from '@/models/File.js';
+import { Files } from "@/lib/FilesHelper.js";
+import { IS_PUBLIC, IUserAuthRequest } from "@/definitions.js";
 
 const router = express.Router();
 router.get('/info/:hash', async(req: express.Request, res: express.Response) => {
@@ -48,7 +48,19 @@ router.get('/text/:id', AuthMiddleware, async(req: IUserAuthRequest, res: expres
 	if(!textFile || !textFile.isText())
 		return res.status(404).send({message: 'Text file not found'});
 
-	return res.send(textFile);
+	const textFilePath = textFile.getPath();
+	if(!await Files.exists(textFilePath))
+		return res.status(404).send({message: 'File not found on the file system'});
+
+	let fileContents = '';
+	try {
+	 fileContents = await Files.getContents(textFilePath);
+	} catch (e) {
+		console.error(e);
+		return res.status(500).send({message: 'Unable to retrieve file contents'});
+	}
+
+	return res.send({...textFile, contents: fileContents});
 })
 
 export default router;
