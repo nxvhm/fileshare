@@ -217,6 +217,15 @@ export class Files {
 		});
 	}
 
+	public static writeContents(filePath: PathLike, content: string): Promise<boolean> {
+		return new Promise((resolve, reject) => {
+			fs.writeFile(filePath, content, e => {
+				e && console.error(e);
+				return resolve(Boolean(e));
+			})
+		})
+	}
+
 	public static getContents(filePath: PathLike): Promise<string> {
 		return new Promise((resolve, reject) => {
 			fs.readFile(filePath, 'utf8', (e, data) => e ? reject(e) : resolve(data));
