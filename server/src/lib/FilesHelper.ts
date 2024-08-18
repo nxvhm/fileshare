@@ -217,6 +217,12 @@ export class Files {
 		});
 	}
 
+	public static getContents(filePath: PathLike): Promise<string> {
+		return new Promise((resolve, reject) => {
+			fs.readFile(filePath, 'utf8', (e, data) => e ? reject(e) : resolve(data));
+		})
+	}
+
 	public static isViewable(file: File): boolean {
 		return File.viewableMimeTypes.includes(file.mime);
 	}
