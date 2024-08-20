@@ -39,6 +39,10 @@ export const createText = (name: string, parentId: number|undefined, text: strin
 	return axiosInstance.post('/files/text', {name, text, parentId});
 }
 
+export const updateText = (id: number, name: string, text: string) => {
+	return axiosInstance.post(`/files/text/${id}`, {name, text});
+}
+
 export const getBreadcrumbs = (folderId: number|undefined) => {
 	const params: Record<string, string|number> = {};
 
