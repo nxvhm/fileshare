@@ -6,7 +6,7 @@ const ProtectedRoute: React.FC<React.PropsWithChildren> = ({children}) => {
 	const [isValid, setIsValid] = useState<undefined | boolean>(undefined);
 
 	useEffect(() => {
-		Token.verifiToken().then(res => setIsValid(res));
+		Token.verifiToken().then(res => setIsValid(res)).catch(_e => setIsValid(false));
 	})
 
 	useEffect(() => {
@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<React.PropsWithChildren> = ({children}) => {
 		window.location.href = '/login';
 	}, [isValid]);
 
-	return <Layout>{children}</Layout>;
+	return isValid && <Layout>{children}</Layout>;
 
 };
 
