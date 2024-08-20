@@ -1,12 +1,14 @@
 import express from "express";
 import multer from 'multer';
+import { PathLike } from "fs";
+import { randomBytes } from "crypto";
+import sanitizeHtml from 'sanitize-html';
 import { validationResult, checkSchema } from "express-validator"
+import { File } from "@/models/File.js";
+import { Files } from "@/lib/FilesHelper.js";
+import { AppDataSource } from "@/datasource.js";
 import AuthMiddleware from "@/middleware/Auth.js";
 import { IUserAuthRequest } from "@/definitions.js";
-import { Files } from "@/lib/FilesHelper.js";
-import sanitizeHtml from 'sanitize-html';
-import { randomBytes } from "crypto";
-import { PathLike } from "fs";
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' })
@@ -102,7 +104,7 @@ const createTextFileRequestValidator = {
 		}
 	}
 }
-router.post('/text',  checkSchema(createTextFileRequestValidator), AuthMiddleware, async(req: IUserAuthRequest, res: express.Response) => {
+router.post('/text', checkSchema(createTextFileRequestValidator), AuthMiddleware, async(req: IUserAuthRequest, res: express.Response) => {
 	if(!req.user)
 		return res.status(403).send("Unauthorized");
 
@@ -132,6 +134,63 @@ router.post('/text',  checkSchema(createTextFileRequestValidator), AuthMiddlewar
 		return res.status(500).send({message: 'An error occurred. Please try again later.'});
 	}
 })
+
+/**
+ * Update Text File
+ */
+const updateTextFileRequestValidator = {
+	id: {
+		optional: false,
+		matches: {
+			options: /^[0-9]+$/,
+			errorMessage: 'Parent ID should be either number or empty value'
+		},
+	},
+	name: {
+		isString: true,
+		notEmpty: true
+	},
+	text: {
+		isString: true,
+		customSanitizer: {
+			options: (async (value: string) => sanitizeHtml(value))
+		}
+	}
+}
+router.post('/text/:id', checkSchema(updateTextFileRequestValidator), AuthMiddleware, async(req: IUserAuthRequest, res: express.Response) => {
+	if(!req.user)
+		return res.status(403).send("Unauthorized");
+
+	const validation = validationResult(req);
+	if(!validation.isEmpty())
+		return res.status(422).send(validation.array().shift());
+
+	const textFile = await AppDataSource.getRepository(File).createQueryBuilder("file")
+		.where('file.id = :id', {id: req.params.id})
+		.andWhere('file.user_id = :userId', {userId: req.user.data.id})
+		.getOne();
+
+	if(!textFile || !textFile.isText())
+		return res.status(404).send({message: 'Text file not found'});
+
+	try {
+		await Files.writeContents(textFile.getPath(), req.body.text);
+	} catch (e) {
+		console.error(e);
+		return res.status(500).send({message: 'Error occurred while trying to update file contents'});
+	}
+
+	try {
+		textFile.filesize = (await Files.getFileStats(textFile.getPath())).size;
+		textFile.name = req.body.name;
+		await AppDataSource.getRepository(File).save(textFile);
+	} catch (e) {
+		console.error(e);
+		return res.status(500).send({message: 'Error occurred, please try again later'});
+	}
+
+	return res.send();
+});
 
 
 export default router;
