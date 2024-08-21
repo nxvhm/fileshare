@@ -16,6 +16,8 @@ import OpenFileDetailsContext from '../../lib/context/OpenFileDetailsContext';
 import { useTheme } from '@mui/material/styles';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import FileIcon from './FileIcon';
+import ViewTextFileDialog from './viewTextFileDialog';
+
 import {
 	IconButton,
 	Box,
@@ -63,6 +65,9 @@ export default function FilesList(props: FileListProps) {
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState<boolean>(false);
   const [openDeleteMultipleConfirmation, setOpenDeleteMultipleConfirmation] = useState<boolean>(false);
   const [openShareWindow, setOpenShareWindow] = useState<boolean>(false);
+  const [openViewText, setOpenViewText] = useState<boolean>(false);
+  const [viewTextId, setViewTextId] = useState<number>();
+
   const [fileShare, setFileShare] = useState<FileModel|null>(null);
 	const [dragOver, setDragOver] = useState<boolean>(false);
 	const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
@@ -154,8 +159,9 @@ export default function FilesList(props: FileListProps) {
 						<FileTableRow key={file.id}>
 							<TableCell sx={{paddingLeft: 0}} onClick={e => onFileClick(e, file)}>
 								{props.enableSelecFiles && <Checkbox checked={Boolean(selectedFiles.includes(file.id))} onClick={e => toggleFileSelected(e, file.id)}/>}
-								<FileIcon file={file} /> {file.name}
-								{FilesHelper.isText(file) && <IconButton component={Link} to={`/text/edit/${file.id}`}><EditIcon /></IconButton>}
+								<FileIcon file={file} />
+								{FilesHelper.isText(file) ? <Button variant="text" onClick={e => openTextViewModal(e, file)}>{file.name}</Button> : file.name}
+								{FilesHelper.isText(file) && <IconButton component={Link} to={`/text/edit/${file.id}`} onClick={e => e.stopPropagation()}><EditIcon /></IconButton>}
 							</TableCell>
 							<TableCell onClick={e => onFileClick(e, file)}>{FilesHelper.getDate(String(file.created_at))}</TableCell>
 							<TableCell onClick={e => onFileClick(e, file)}>{!file.filesize || file.filesize == 0 ? 'N/A' : (file.filesize/1000 + ' KB')}</TableCell>
@@ -258,9 +264,15 @@ export default function FilesList(props: FileListProps) {
 		navigate(parentId ? `/text/new/${parentId}` : '/text/new');
 	}
 
+	const openTextViewModal = (e: React.MouseEvent, file: FileModel) => {
+		e.stopPropagation();
+		setViewTextId(file.id);
+		setOpenViewText(true);
+	}
+
 	const onFileClick = (_e: React.MouseEvent, file: FileModel) => {
-		if(FilesHelper.isText(file))
-			return navigate('/text/edit/'+file.id);
+		// if(FilesHelper.isText(file))
+		// 	return navigate('/text/edit/'+file.id);
 
 		file.type == FileType.TYPE_FOLDER ? navigate('/folder/'+file.id) : showFileDetails(file, onPublicStatusChange);
 	}
@@ -350,6 +362,7 @@ export default function FilesList(props: FileListProps) {
       />
 		</Box>
 		{<uploader.UploaderWidget></uploader.UploaderWidget>}
+		<ViewTextFileDialog open={openViewText} fileId={Number(viewTextId)} handleClose={() => setOpenViewText(false)} editable={true} />
 		</>
 	);
 }
