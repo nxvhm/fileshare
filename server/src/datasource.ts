@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
 	password: String(process.env.MYSQL_PASSWORD),
 	database:  String(process.env.MYSQL_DATABASE),
 	synchronize: false,
-	logging: true,
+	logging: Boolean(Number(process.env.TYPEORM_QUERY_LOG)),
 	entities: ["./dist/models/*{.ts,.js}", "./dist/models/**/*{.ts,.js}"],
 	subscribers: [],
 	migrations: ["./dist/migrations/*{.ts,.js}"],
