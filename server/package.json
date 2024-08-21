@@ -33,6 +33,7 @@
     "mysql2": "^3.6.5",
     "reflect-metadata": "^0.1.13",
     "sanitize-html": "^2.13.0",
+    "ts-node": "^10.9.2",
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
