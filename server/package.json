@@ -9,7 +9,9 @@
     "build": "tsc && tsc-alias",
     "serve": "node dist/index.js",
     "dev-migrate": "npx typeorm-ts-node-esm  migration:run -d ./src/datasource.ts",
-    "dev-migrate-down": "npx typeorm-ts-node-esm migration:revert -d ./src/datasource.ts"
+    "dev-migrate:down": "npx typeorm-ts-node-esm migration:revert -d ./src/datasource.ts",
+		"migrate": "npx typeorm migration:run -d ./dist/datasource.js",
+		"migrate:down": "npx typeorm migration:revert -d ./dist/datasource.js"
   },
   "nodemonConfig": {
     "exec": "tsc && tsc-alias && node dist/index.js",
