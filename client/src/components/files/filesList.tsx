@@ -260,7 +260,6 @@ export default function FilesList(props: FileListProps) {
 	}
 
 	const openTextEdit = () => {
-		Number(parentId)
 		navigate(parentId ? `/text/new/${parentId}` : '/text/new');
 	}
 

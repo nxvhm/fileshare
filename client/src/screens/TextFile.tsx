@@ -17,7 +17,10 @@ const TextFile = (props: {edit?: boolean}) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if(!id && props.edit)
+		if(!props.edit)
+			return;
+
+		if(props.edit && !id)
 			return navigate('/');
 
 		getTextFile(String(id))

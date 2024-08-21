@@ -42,7 +42,7 @@ const App = function() {
 		},
 		{
 			path: "/text/new/:parentId?",
-			element: <ProtectedRoute><TextFile /></ProtectedRoute>
+			element: <ProtectedRoute><TextFile edit={false}/></ProtectedRoute>
 		},
 		{
 			path: "/text/edit/:id",
