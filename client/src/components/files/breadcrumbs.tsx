@@ -35,7 +35,7 @@ export default function Breadcrumbs(props: BreadcrumbsProps) {
 		return folders.map(folder => {
 			return(
 				<NavLink to={folderId != folder.id ? `/folder/${folder.id}` : '#'} key={folder.id}>
-					<StyledBreadcrumb label={folder.name} icon={<FolderIcon fontSize="small"/>} />
+					<StyledBreadcrumb label={folder.name} icon={<FolderIcon fontSize="small"/>}/>
 				</NavLink>
 			)
 		})
@@ -43,11 +43,17 @@ export default function Breadcrumbs(props: BreadcrumbsProps) {
 
   return (
     <div role="presentation" onClick={handleClick}>
-      <MuiBreadcrumbs aria-label="breadcrumb" >
+      <MuiBreadcrumbs aria-label="breadcrumb">
 				<NavLink to={"/"}>
 					<StyledBreadcrumb label="Home" icon={<HomeIcon fontSize="small" />}/>
 				</NavLink>
-				<BreadcrumbItems folders={folders} folderId={props.folderId} />
+				{...folders.map(folder => {
+					return (
+						<NavLink to={props.folderId != folder.id ? `/folder/${folder.id}` : '#'} key={folder.id}>
+							<StyledBreadcrumb label={folder.name} icon={<FolderIcon fontSize="small"/>}/>
+						</NavLink>
+					)
+				})}
       </MuiBreadcrumbs>
     </div>
   );
