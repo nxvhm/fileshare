@@ -24,18 +24,22 @@ router.get('/breadcrumbs', [AuthMiddleware], async(req: IUserAuthRequest, res: e
 
 	const folderHierarchy = await AppDataSource.manager.query(`
 		WITH RECURSIVE cte (id, name, parent_id) AS (
-			SELECT id, name, parent_id
-			FROM files
-			WHERE parent_id = ? AND type = 'folder' AND user_id = ?
+			SELECT 	id,
+							name,
+							parent_id
+			FROM 		files
+			WHERE 	id = ?
+			AND type = 'folder'
+			AND user_id = ?
 			UNION ALL
-				SELECT f.id, f.name, f.parent_id
-				FROM files f
-				INNER JOIN cte ON f.id = cte.parent_id
-		) select * from cte;
-	`, [folder.parent_id, req.user?.data.id]);
-
-	const result = folderHierarchy.sort((a: File, b: File) => a.id < b.id ? -1 : 1);
-	return res.send(result);
+				SELECT 	f.id,
+								f.name,
+								f.parent_id
+				FROM 		files f
+				INNER JOIN cte
+					ON f.id = cte.parent_id AND f.type = 'folder'
+		) select * from cte;`, [folderId, req.user?.data.id]);
+	return res.send(folderHierarchy.reverse());
 });
 
 
