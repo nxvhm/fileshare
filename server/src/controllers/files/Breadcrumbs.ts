@@ -22,7 +22,7 @@ router.get('/breadcrumbs', [AuthMiddleware], async(req: IUserAuthRequest, res: e
 	if(!folder?.parent_id)
 		return res.send([folder]);
 
-	const folderHierarchy = await AppDataSource.createQueryRunner().manager.query(`
+	const folderHierarchy = await AppDataSource.manager.query(`
 		WITH RECURSIVE cte (id, name, parent_id) AS (
 			SELECT id, name, parent_id
 			FROM files
