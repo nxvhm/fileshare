@@ -6,17 +6,32 @@ import { ListSubheader, List, ListItemText, ListItem, Slide, Chip} from '@mui/ma
 import { UploadDialogBox } from "../../components/files/styled";
 import UploadQueue from "../helpers/UploadQueue";
 
-export default function useFileUpload(parentId: undefined|number) {
+export default function useFileUpload() {
 	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
 	const [filesToUpload, setFilesToUpload] = useState<FileToUpload[]|null>(null);
 	const [filesStatus, setFilesStatus] = useState<{[key: string]: string}>({});
+	const [parentFolderId, setParentFolderId] = useState<undefined|number>();
+
+	useEffect(() => {
+		if(!filesToUpload?.length)
+			return;
+		UploadQueue.addPendingUploads(filesToUpload);
+	}, [filesToUpload])
+
+	useEffect(() => {
+		UploadQueue.uploadFunction = queueUploadHandler;
+	}, [])
+
+	useEffect(() => {
+		UploadQueue.uploadFunction = queueUploadHandler;
+	}, [parentFolderId])
 
 	const getUploadRequestFormData = (file: File): FormData => {
 		const formData = new FormData();
 		formData.append("file", file);
 
-		if(parentId)
-			formData.set('parentId', String(parentId));
+		if(parentFolderId)
+			formData.set('parentId', String(parentFolderId));
 
 		return formData;
 	}
@@ -35,6 +50,10 @@ export default function useFileUpload(parentId: undefined|number) {
 			})
 	}
 
+	/**
+	 * @description Try to upload file, set it's status to uploading.
+	 * Function passed to UploadQueue class and executed from there
+	 */
 	const queueUploadHandler = (file: FileToUpload): Promise<FileModel> => {
 		setFilesStatus(filesStatus => {
 			const currentStatus = {...filesStatus};
@@ -62,17 +81,10 @@ export default function useFileUpload(parentId: undefined|number) {
 		})
 	}
 
-	useEffect(() => {
-		if(!filesToUpload?.length)
-			return;
-		UploadQueue.addPendingUploads(filesToUpload);
-	}, [filesToUpload])
-
-	useEffect(() => {
-		UploadQueue.uploadFunction = queueUploadHandler;
-	}, [])
-
-
+	/**
+	 * Add files to the upload list,
+	 * register them as status pending
+	 */
 	const addFilesToUpload = (files: File[]) => {
 		const currentFiles = filesToUpload ? [...filesToUpload] : [];
 		const currentStatuses = {...filesStatus};
@@ -131,6 +143,7 @@ export default function useFileUpload(parentId: undefined|number) {
 		uploadFile,
 		uploadedFile,
 		setUploadedFile,
+		setParentFolderId,
 		handleSelectedFile,
 		filesToUpload,
 		addFilesToUpload,

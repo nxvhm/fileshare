@@ -74,11 +74,12 @@ export default function FilesList(props: FileListProps) {
 	const {showFileDetails} = useContext(OpenFileDetailsContext);
 	const { parentId } = useParams();
 	const navigate = useNavigate();
-	const uploader = useFileUpload(Number(parentId));
+	const uploader = useFileUpload();
 	const theme = useTheme();
 
 	useEffect(() => {
-			FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data))
+		FilesApi.getFilesList(Number(parentId)).then(res => setFiles(res.data));
+		uploader.setParentFolderId(parentId ? Number(parentId) : undefined);
 	}, [parentId])
 
 	useEffect(() => {
@@ -298,7 +299,6 @@ export default function FilesList(props: FileListProps) {
 
 	const onDragEnd = (e: React.DragEvent) => {
 		e.preventDefault();
-		console.log('onDragEnd', e);
 	}
 
 	const onDragOver = (e: React.DragEvent) => {
