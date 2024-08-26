@@ -23,8 +23,8 @@ router.post('/upload', AuthMiddleware, upload.single('file'), async(req: IUserAu
 	if(!req.file)
 		return res.status(422).send("File not uploaded");
 
+	// throw new Error('An error occurred');
 	try {
-
 		if(!(await Files.moveUploadedFile(req.file, req.user)))
 			return res.status(500).send("File was not copied correctly");
 
@@ -34,9 +34,9 @@ router.post('/upload', AuthMiddleware, upload.single('file'), async(req: IUserAu
 
 		return res.send({success: true, file});
 
-	} catch (error) {
-		console.log('UploadFIleError', error);
-		return res.status(500).send({success: false});
+	} catch (e) {
+		console.log('UploadFIleError', e);
+		return res.status(500).send(typeof e === 'string' ? e : (e instanceof Error ? e.message : 'Error occurred, please try again later'));
 	}
 
 })
