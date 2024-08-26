@@ -48,10 +48,11 @@ class UploadQueue {
 	}
 
 	public static processUploads = () => {
+		console.log('processUploads', UploadQueue.pendingUploads);
 		const iterator = this.pendingUploads.values();
 		const next = iterator.next().value;
 		if(!next)
-			return this.stopUploadLoop();
+			return UploadQueue.stopUploadLoop();
 
 		if(this.currentlyUploading == next.hash)
 			return;
@@ -65,6 +66,10 @@ class UploadQueue {
 
 		this.uploadFunction(next).then(_uploadedFile => {
 			UploadQueue.pendingUploads.delete(next.hash);
+			UploadQueue.currentlyUploading = null;
+		}).catch(_e => {
+			UploadQueue.pendingUploads.delete(next.hash);
+			UploadQueue.currentlyUploading = null;
 		})
 	}
 
