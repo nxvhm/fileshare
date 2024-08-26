@@ -2,14 +2,23 @@ import { useState, useEffect } from "react";
 import { FileModel, FileToUpload } from "../../definitions";
 import toast from "react-hot-toast";
 import { uploadFile as uploadFileRequest } from "../../api/Files";
-import { ListSubheader, List, ListItemText, ListItem, Slide, Chip} from '@mui/material';
+import { ListSubheader, List, ListItemText, ListItem, Slide, Chip, ChipOwnProps} from '@mui/material';
 import { UploadDialogBox } from "../../components/files/styled";
 import UploadQueue from "../helpers/UploadQueue";
 
 export default function useFileUpload() {
+
+	enum StatusColorMap {
+		pending = 'warning',
+		error = 'error',
+		uploading = 'info',
+		uploaded = 'success',
+		na = 'grey'
+	};
+
 	const [uploadedFile, setUploadedFile] = useState<FileModel|null>(null)
 	const [filesToUpload, setFilesToUpload] = useState<FileToUpload[]|null>(null);
-	const [filesStatus, setFilesStatus] = useState<{[key: string]: string}>({});
+	const [filesStatus, setFilesStatus] = useState<{[key: string]: keyof typeof StatusColorMap}>({});
 	const [parentFolderId, setParentFolderId] = useState<undefined|number>();
 
 	useEffect(() => {
@@ -55,11 +64,7 @@ export default function useFileUpload() {
 	 * Function passed to UploadQueue class and executed from there
 	 */
 	const queueUploadHandler = (file: FileToUpload): Promise<FileModel> => {
-		setFilesStatus(filesStatus => {
-			const currentStatus = {...filesStatus};
-			currentStatus[file.hash] = 'uploading';
-			return {...currentStatus};
-		});
+		updateFileStatus(file.hash, 'uploading');
 
 		return new Promise((resolve, reject) => {
 			const formData = getUploadRequestFormData(file.file);
@@ -76,6 +81,7 @@ export default function useFileUpload() {
 						: (e instanceof Error ? e.message : 'Error Occured, please try again later'),
 					{duration: 3000, position: 'top-center'}
 				);
+				updateFileStatus(file.hash, 'error');
 				reject(e);
 			})
 		})
@@ -107,9 +113,10 @@ export default function useFileUpload() {
 	const handleSelectedFile = (e: React.ChangeEvent<HTMLInputElement>) => e.target.files && uploadFile(e.target.files[0])
 	const getFileToUploadDescription = (file: File): string => file.type + ' '+ file.size/1000 + ' KB';
 	const getUploadingStatus = (file: FileToUpload): JSX.Element | undefined => {
-		const status = filesStatus.hasOwnProperty(file.hash) ? filesStatus[file.hash] : 'N/A';
+		const status = filesStatus.hasOwnProperty(file.hash) ? filesStatus[file.hash] : 'na';
+		const color = StatusColorMap[status];
 		return (
-			<Chip label={status.toUpperCase()} size='small' color={status == 'pending' ? 'warning' : 'info'} />
+			<Chip label={status == 'na' ? 'N/A' : status.toUpperCase()} size='small' color={color as ChipOwnProps['color']} />
 		)
 	}
 
@@ -137,6 +144,14 @@ export default function useFileUpload() {
 			</UploadDialogBox>
 			</Slide>
 		)
+	}
+
+	const updateFileStatus = (hash: string, status: keyof typeof StatusColorMap) => {
+		setFilesStatus(filesStatus => {
+			const currentStatus = {...filesStatus};
+			currentStatus[hash] = status;
+			return {...currentStatus};
+		});
 	}
 
 	return {
